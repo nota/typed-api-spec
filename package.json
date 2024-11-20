@@ -40,7 +40,7 @@
     "@types/express": "^4",
     "express": "^4",
     "fastify": "^4 || ^5.0.0",
-    "fastify-type-provider-zod": "^2",
+    "fastify-type-provider-zod": "^2 || ^4.0.0",
     "typescript": "^5.3",
     "valibot": "^0",
     "zod": "^3.23.0"
