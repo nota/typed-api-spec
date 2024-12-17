@@ -1,8 +1,4 @@
 import "./style.css";
-import {
-  fetchInvalidResponseGitHub,
-  GITHUB_API_ORIGIN, fetchGitHub
-} from "./github/client.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -19,11 +15,17 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
+import { newFetch } from "@notainc/typed-api-spec/zod/validation";
+const GITHUB_API_ORIGIN = "https://api.github.com";
+
 const endpoint = `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics`;
 const result = document.querySelector<HTMLParagraphElement>("#result")!;
 
 const fetchButton = document.querySelector<HTMLButtonElement>("#fetch")!;
 const request = async () => {
+  const newFetchGitHub = newFetch(async () => (await import("./github/spec.ts")).ZodSpec, import.meta.env.DEV);
+  const fetchGitHub = await newFetchGitHub<typeof GITHUB_API_ORIGIN>();
+
   result.innerHTML = "Loading...";
   const response = await fetchGitHub(endpoint, {});
   if (!response.ok) {
@@ -40,6 +42,9 @@ const invalidFetchButton =
 const invalidRequest = async () => {
   result.innerHTML = "Loading...";
   try {
+    const newFetchInvalidResponseGitHub = newFetch( async () => (await import("./github/spec.ts")).InvalidResponseZodSpec, import.meta.env.DEV);
+    const fetchInvalidResponseGitHub = await newFetchInvalidResponseGitHub<typeof GITHUB_API_ORIGIN>();
+
     const response = await fetchInvalidResponseGitHub(endpoint, {});
     if (!response.ok) {
       result.innerHTML = `Error: ${response.status} ${response.statusText}`;
