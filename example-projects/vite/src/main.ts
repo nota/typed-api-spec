@@ -1,8 +1,7 @@
 import "./style.css";
 import {
-  fetchGitHub,
   fetchInvalidResponseGitHub,
-  GITHUB_API_ORIGIN,
+  GITHUB_API_ORIGIN, fetchGitHub
 } from "./github/client.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
