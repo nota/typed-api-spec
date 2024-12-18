@@ -40,11 +40,11 @@ fetchButton.addEventListener("click", () => request());
 const invalidFetchButton =
   document.querySelector<HTMLButtonElement>("#invalid-fetch")!;
 const invalidRequest = async () => {
+  const newFetchInvalidResponseGitHub = newFetch( async () => (await import("./github/spec.ts")).InvalidResponseZodSpec, import.meta.env.DEV);
+  const fetchInvalidResponseGitHub = await newFetchInvalidResponseGitHub<typeof GITHUB_API_ORIGIN>();
+
   result.innerHTML = "Loading...";
   try {
-    const newFetchInvalidResponseGitHub = newFetch( async () => (await import("./github/spec.ts")).InvalidResponseZodSpec, import.meta.env.DEV);
-    const fetchInvalidResponseGitHub = await newFetchInvalidResponseGitHub<typeof GITHUB_API_ORIGIN>();
-
     const response = await fetchInvalidResponseGitHub(endpoint, {});
     if (!response.ok) {
       result.innerHTML = `Error: ${response.status} ${response.statusText}`;
