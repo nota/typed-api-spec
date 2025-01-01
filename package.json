@@ -1,11 +1,11 @@
 {
   "workspaces": [
     "pkgs/*",
-    "example-projects/*"
+    "examples/*"
   ],
   "scripts": {
     "pkg:new": "npm init -y -w pkgs/${PKG}",
-    "test": "npm run test --workspaces",
+    "test": "npm run test --workspaces --if-present",
     "format": "npm run format --workspaces",
     "op:inject": "npm run op:inject --workspaces",
     "docs": "typedoc"
