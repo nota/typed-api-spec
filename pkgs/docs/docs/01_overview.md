@@ -38,7 +38,7 @@ const res = await fetchT("/users");
 const data = await res.json(); // data is { userNames: string[] }
 ```
  
-See [Client](/docs/client) page for more details.
+See [Client](/docs/client/overview) page for more details.
 
 ### Server Framework & Validation library integration
 typed-api-spec can be integrated with various server frameworks(like [Express](https://expressjs.com/), [Fastify](https://fastify.dev/)) and validation libraries(like [zod](https://zod.dev/), [Valibot](https://valibot.dev/)).
