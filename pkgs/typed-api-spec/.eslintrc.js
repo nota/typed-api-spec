@@ -12,7 +12,7 @@ const depRules = [
   },
   {
     module: "src/fetch",
-    allowReferenceFrom: [...dRef],
+    allowReferenceFrom: [...dRef, "src/zod"],
     allowSameModule: true,
   },
   {
