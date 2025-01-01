@@ -1,0 +1,8 @@
+{
+  "label": "Client",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "typed-api-spec provides `zero-fetch`, a type-safe, zero-runtime API client."
+  }
+}

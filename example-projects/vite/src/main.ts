@@ -23,8 +23,8 @@ const result = document.querySelector<HTMLParagraphElement>("#result")!;
 
 const fetchButton = document.querySelector<HTMLButtonElement>("#fetch")!;
 const request = async () => {
-  const newFetchGitHub = newFetch(async () => (await import("./github/spec.ts")).ZodSpec, import.meta.env.DEV);
-  const fetchGitHub = await newFetchGitHub<typeof GITHUB_API_ORIGIN>();
+  const specLoader = async () => (await import("./github/spec.ts")).ZodSpec;
+  const fetchGitHub = await newFetch(specLoader, import.meta.env.DEV)<typeof GITHUB_API_ORIGIN>();
 
   result.innerHTML = "Loading...";
   const response = await fetchGitHub(endpoint, {});
@@ -40,8 +40,8 @@ fetchButton.addEventListener("click", () => request());
 const invalidFetchButton =
   document.querySelector<HTMLButtonElement>("#invalid-fetch")!;
 const invalidRequest = async () => {
-  const newFetchInvalidResponseGitHub = newFetch( async () => (await import("./github/spec.ts")).InvalidResponseZodSpec, import.meta.env.DEV);
-  const fetchInvalidResponseGitHub = await newFetchInvalidResponseGitHub<typeof GITHUB_API_ORIGIN>();
+  const specLoader = async () => (await import("./github/spec.ts")).InvalidResponseZodSpec;
+  const fetchInvalidResponseGitHub = await newFetch( specLoader, import.meta.env.DEV)<typeof GITHUB_API_ORIGIN>();
 
   result.innerHTML = "Loading...";
   try {
