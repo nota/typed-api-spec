@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "node_modules/.bin/vite",
+    "build": "tsc && node_modules/.bin/vite build",
+    "preview": "node_modules/.bin/vite preview"
   },
   "devDependencies": {
     "rollup-plugin-visualizer": "^5.12.0",
