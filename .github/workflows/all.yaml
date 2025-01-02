@@ -25,5 +25,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
       - run: npm ci
-      - run: npm run build -w pkgs/typed-ai-spec
+      - run: npm run build -w pkgs/typed-api-spec
       - run: npm test -w examples/misc
