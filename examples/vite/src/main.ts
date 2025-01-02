@@ -15,7 +15,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
-import { newFetch } from "@notainc/typed-api-spec/zod/validation";
+import { newFetch } from "@notainc/typed-api-spec/zod";
 const GITHUB_API_ORIGIN = "https://api.github.com";
 
 const endpoint = `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics`;
