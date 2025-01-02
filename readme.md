@@ -6,5 +6,5 @@
 * pkgs/docs
   * documentation for the typed-api-spec package
   * hosted on nota.github.io/typed-api-spec/
-* pkgs/examples
+* examples
   * examples of using the typed-api-spec package
