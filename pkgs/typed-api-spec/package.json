@@ -116,11 +116,6 @@
       "require": "./dist/zod/index.js",
       "import": "./dist/zod/index.mjs"
     },
-    "./zod/validation": {
-      "types": "./dist/zod/validation.d.ts",
-      "require": "./dist/zod/validation.js",
-      "import": "./dist/zod/validation.mjs"
-    },
     "./valibot": {
       "types": "./dist/valibot/index.d.ts",
       "require": "./dist/valibot/index.js",
