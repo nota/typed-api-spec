@@ -1,4 +1,4 @@
-const dRef = ["src/index.ts", "examples/**/*"];
+const dRef = ["src/index.ts", "misc/**/*"];
 const depRules = [
   {
     module: "src/express",
