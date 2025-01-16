@@ -8,6 +8,7 @@
     "test:type-check": "tsc --noEmit",
     "ex:express:zod:server": "tsx express/zod/express.ts",
     "ex:express:zod:client": "tsx express/zod/fetch.ts",
+    "ex:express:openapi": "tsx express/openapi/index.ts",
     "ex:express:valibot:server": "tsx express/valibot/express.ts",
     "ex:express:valibot:client": "tsx express/valibot/fetch.ts",
     "ex:fastify:zod:server": "tsx fastify/zod/fastify.ts",
@@ -16,12 +17,14 @@
   },
   "dependencies": {
     "@types/express": "^4",
+    "cors": "^2.8.5",
     "express": "^4",
     "fastify-type-provider-zod": "^2.1.0",
     "valibot": "^0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.57.0",
