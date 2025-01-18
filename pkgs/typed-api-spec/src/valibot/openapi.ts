@@ -1,30 +1,40 @@
 import {
   ValibotAnyApiResponses,
   ValibotApiEndpoint,
+  ValibotApiEndpoints,
   ValibotApiSpec,
 } from "./index";
 import {
   Method,
-  OpenApiEndpoint,
   OpenApiSpec,
   StatusCode,
   toParameterObject,
   toPathItemObject,
   toResponse,
+  JsonSchemaApiEndpoints,
 } from "../core";
 import { toJsonSchema } from "@valibot/to-json-schema";
 import { OpenAPIV3 } from "openapi-types";
 
 export const toOpenApiDoc = (
   doc: Omit<OpenAPIV3.Document, "paths">,
-  endpoint: OpenApiEndpoint,
+  endpoints: JsonSchemaApiEndpoints,
 ): OpenAPIV3.Document => {
-  return {
-    ...doc,
-    paths: {
-      "/pets": toPathItemObject(endpoint),
-    },
-  };
+  const paths: OpenAPIV3.PathsObject = {};
+  for (const path of Object.keys(endpoints)) {
+    paths[path] = toPathItemObject(endpoints[path]);
+  }
+  return { ...doc, paths };
+};
+
+export const toOpenApiEndpoints = <E extends ValibotApiEndpoints>(
+  endpoints: E,
+): JsonSchemaApiEndpoints => {
+  const ret: JsonSchemaApiEndpoints = {};
+  for (const path of Object.keys(endpoints)) {
+    ret[path] = toOpenApiEndpoint(endpoints[path]);
+  }
+  return ret;
 };
 
 export const toOpenApiEndpoint = <E extends ValibotApiEndpoint>(

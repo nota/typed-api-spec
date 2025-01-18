@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toOpenApiDoc, toOpenApiEndpoint, toOpenApiSpec } from "./openapi";
+import { toOpenApiDoc, toOpenApiEndpoints, toOpenApiSpec } from "./openapi";
 import { ValibotApiEndpoints } from "./index";
 import * as v from "valibot";
 import { OpenAPIV3 } from "openapi-types";
@@ -77,8 +77,11 @@ describe("openapi", () => {
       servers: [],
       components: {},
     };
-    const openApiEndPoint = toOpenApiEndpoint(endpoints["/pets"]);
-    const doc = toOpenApiDoc(baseDoc, openApiEndPoint);
+    const openApiEndPoints = toOpenApiEndpoints(endpoints);
+    expect(openApiEndPoints).toEqual({
+      "/pets": { get: expectSpec },
+    });
+    const doc = toOpenApiDoc(baseDoc, openApiEndPoints);
     expect(doc).toEqual({
       ...baseDoc,
       paths: { "/pets": { get: expectPathObject } },

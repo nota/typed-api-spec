@@ -6,7 +6,7 @@ import * as v from "valibot";
 import cors from "cors";
 import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
 import { OpenAPIV3 } from "openapi-types";
-import { toOpenApiEndpoint } from "@notainc/typed-api-spec/valibot/openapi";
+import { toOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
 
 const apiEndpoints = {
   "/openapi": {
@@ -48,7 +48,7 @@ const newApp = () => {
   wApp.get("/openapi", (req, res) => {
     const openapi = toOpenApiDoc(
       openapiBaseDoc,
-      toOpenApiEndpoint(apiEndpoints["/pets"]),
+      toOpenApiEndpoints(apiEndpoints),
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.status(200).json(openapi as any);
