@@ -1,10 +1,11 @@
 import express from "express";
 import { typed } from "@notainc/typed-api-spec/express/valibot";
-// import { asAsync } from "@notainc/typed-api-spec/express";
+import { asAsync } from "@notainc/typed-api-spec/express";
 import { ValibotApiEndpoints } from "@notainc/typed-api-spec/valibot";
 import * as v from "valibot";
-import { toOpenApi } from "@notainc/typed-api-spec/core";
 import cors from "cors";
+import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
+import { OpenAPIV3 } from "openapi-types";
 
 const apiEndpoints = {
   "/openapi": {
@@ -14,28 +15,28 @@ const apiEndpoints = {
       },
     },
   },
+  "/pets": {
+    get: {
+      params: v.object({ page: v.string() }),
+      responses: {
+        200: { body: v.object({ message: v.string() }) },
+      },
+    },
+  },
 } satisfies ValibotApiEndpoints;
+
+const openapiBaseDoc: Omit<OpenAPIV3.Document, "paths"> = {
+  openapi: "3.1.0",
+  info: { title: "title", version: "1" },
+};
 
 const newApp = () => {
   const app = express();
   app.use(express.json());
   app.use(cors());
-  const wApp = typed(apiEndpoints, app);
+  const wApp = asAsync(typed(apiEndpoints, app));
   wApp.get("/openapi", (req, res) => {
-    const openapi = toOpenApi(
-      {
-        title: "Example API",
-        version: "1.0.0",
-      },
-      {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          age: { type: "number" },
-        },
-        required: ["name"],
-      },
-    );
+    const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints["/pets"].get);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.status(200).json(openapi as any);
   });

@@ -1,42 +1,41 @@
-import { OpenAPIV3_1 } from "openapi-types";
+import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
+import { OpenApiSpec } from "../spec";
+import { JSONSchema7 } from "json-schema";
 
-export const toOpenApi = (
-  info: OpenAPIV3_1.InfoObject,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: any,
-  // paths: OpenAPIV3_1.PathsObject,
-): OpenAPIV3_1.Document => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toPathItemObject = (
+  spec: OpenApiSpec,
+): OpenAPIV3.PathItemObject => {
   return {
-    openapi: "3.1.0",
-    info,
-    paths: {
-      "/pets": {
-        get: {
-          responses: {
-            200: {
-              description: "A list of pets.",
-              content: {
-                "application/json": {
-                  schema,
-                  // schema: {
-                  //   type: "array",
-                  //   items: {
-                  //     type: "object",
-                  //     properties: {
-                  //       name: { type: "string" },
-                  //       age: { type: "number" },
-                  //     },
-                  //   },
-                  // },
-                },
-              },
-            },
-          },
-        },
+    get: {
+      parameters: spec.params,
+      responses: spec.responses,
+    },
+  };
+};
+
+export const toParameterObject = (
+  schema: JSONSchema7,
+  name: string,
+  _in: "query" | "path" | "header",
+): OpenAPIV3_1.ParameterObject => {
+  return {
+    name,
+    in: _in,
+    content: {
+      "application/json": { schema: schema as OpenAPIV3.SchemaObject },
+    },
+  };
+};
+
+export const toResponse = (body: JSONSchema7): OpenAPIV3.ResponseObject => {
+  return {
+    description: "dummy-description",
+    content: {
+      "application/json": {
+        // FIXME
+        schema: body as OpenAPIV3.SchemaObject,
       },
     },
-    security: [],
-    servers: [],
-    components: {},
   };
 };

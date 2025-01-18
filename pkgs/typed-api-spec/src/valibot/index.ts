@@ -120,7 +120,7 @@ export type ToApiResponses<AR extends ValibotAnyApiResponses> = {
     headers: InferOrUndefined<NonNullable<AR[SC]>["headers"]>;
   };
 };
-type ValibotAnyApiResponse = DefineResponse<AnyV, AnyV>;
+export type ValibotAnyApiResponse = DefineResponse<AnyV, AnyV>;
 export type ValibotAnyApiResponses = DefineApiResponses<ValibotAnyApiResponse>;
 export type ValibotApiResponses = Partial<Record<StatusCode, AnyV>>;
 export type ValibotApiResSchema<

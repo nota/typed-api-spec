@@ -1,6 +1,8 @@
 import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
+import { JSONSchema4 } from "json-schema";
+import { OpenAPIV3 } from "openapi-types";
 
 /**
  * { // ApiEndpoints
@@ -98,6 +100,20 @@ export type UnknownApiSpec = BaseApiSpec<
   unknown,
   DefineApiResponses<DefineResponse<unknown, unknown>>
 >;
+export type JsonSchemaApiSpec = BaseApiSpec<
+  JSONSchema4,
+  JSONSchema4,
+  JSONSchema4,
+  JSONSchema4,
+  JsonSchemaApiResponses
+>;
+export type OpenApiSpec = BaseApiSpec<
+  OpenAPIV3.ParameterObject[],
+  JSONSchema4,
+  OpenAPIV3.RequestBodyObject,
+  JSONSchema4,
+  Record<string, OpenAPIV3.ResponseObject>
+>;
 
 type JsonHeader = {
   "Content-Type": "application/json";
@@ -176,12 +192,14 @@ export type ApiResHeaders<
   ? AResponses[SC]["headers"]
   : Record<string, never>;
 export type AnyApiResponses = DefineApiResponses<AnyResponse>;
+export type JsonSchemaApiResponses = DefineApiResponses<JsonSchemaResponse>;
 export type DefineApiResponses<Response extends AnyResponse> = Partial<
   Record<StatusCode, Response>
 >;
 export type DefineResponse<Body, Headers> = { body: Body; headers?: Headers };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyResponse = DefineResponse<any, any>;
+export type JsonSchemaResponse = DefineResponse<JSONSchema4, JSONSchema4>;
 export type ApiClientResponses<AResponses extends AnyApiResponses> = {
   [SC in keyof AResponses & StatusCode]: ClientResponse<
     ApiResBody<AResponses, SC>,
