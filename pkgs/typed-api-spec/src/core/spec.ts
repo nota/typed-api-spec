@@ -2,7 +2,7 @@ import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
 import { JSONSchema4 } from "json-schema";
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3_1 } from "openapi-types";
 
 /**
  * { // ApiEndpoints
@@ -111,11 +111,11 @@ export type JsonSchemaApiSpec = BaseApiSpec<
   JsonSchemaApiResponses
 >;
 export type OpenApiSpec = BaseApiSpec<
-  OpenAPIV3.ParameterObject[],
+  OpenAPIV3_1.ParameterObject[],
   JSONSchema4,
-  OpenAPIV3.RequestBodyObject,
+  OpenAPIV3_1.RequestBodyObject,
   JSONSchema4,
-  Record<string, OpenAPIV3.ResponseObject>
+  Record<string, OpenAPIV3_1.ResponseObject>
 >;
 
 type JsonHeader = {

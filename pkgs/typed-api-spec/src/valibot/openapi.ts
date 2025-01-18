@@ -14,13 +14,13 @@ import {
   JsonSchemaApiEndpoints,
 } from "../core";
 import { toJsonSchema } from "@valibot/to-json-schema";
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3_1 } from "openapi-types";
 
 export const toOpenApiDoc = (
-  doc: Omit<OpenAPIV3.Document, "paths">,
+  doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: JsonSchemaApiEndpoints,
-): OpenAPIV3.Document => {
-  const paths: OpenAPIV3.PathsObject = {};
+): OpenAPIV3_1.Document => {
+  const paths: OpenAPIV3_1.PathsObject = {};
   for (const path of Object.keys(endpoints)) {
     paths[path] = toPathItemObject(endpoints[path]);
   }
@@ -74,9 +74,9 @@ export const toOpenApiSpec = <Spec extends ValibotApiSpec>(
 
 const toResponses = (
   responses: ValibotAnyApiResponses,
-): Record<string, OpenAPIV3.ResponseObject> => {
+): Record<string, OpenAPIV3_1.ResponseObject> => {
   const statusCodes = Object.keys(responses).map(Number) as StatusCode[];
-  const ret: Record<string, OpenAPIV3.ResponseObject> = {};
+  const ret: Record<string, OpenAPIV3_1.ResponseObject> = {};
   for (const statusCode of statusCodes) {
     const r = responses[statusCode];
     if (!r) {

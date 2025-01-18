@@ -5,7 +5,7 @@ import { ValibotApiEndpoints } from "@notainc/typed-api-spec/valibot";
 import * as v from "valibot";
 import cors from "cors";
 import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3_1 } from "openapi-types";
 import { toOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
 
 const apiEndpoints = {
@@ -35,7 +35,7 @@ const apiEndpoints = {
   },
 } satisfies ValibotApiEndpoints;
 
-const openapiBaseDoc: Omit<OpenAPIV3.Document, "paths"> = {
+const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
   info: { title: "title", version: "1" },
 };
