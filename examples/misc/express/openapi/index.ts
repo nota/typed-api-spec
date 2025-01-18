@@ -4,9 +4,9 @@ import { asAsync } from "@notainc/typed-api-spec/express";
 import { ValibotApiEndpoints } from "@notainc/typed-api-spec/valibot";
 import * as v from "valibot";
 import cors from "cors";
-import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
 import { OpenAPIV3_1 } from "openapi-types";
-import { toOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
+import { toOpenApiDoc } from "@notainc/typed-api-spec";
+import { toJsonSchemaApiEndpoints } from "@notainc/typed-api-spec/valibot";
 
 const apiEndpoints = {
   "/openapi": {
@@ -48,7 +48,7 @@ const newApp = () => {
   wApp.get("/openapi", (req, res) => {
     const openapi = toOpenApiDoc(
       openapiBaseDoc,
-      toOpenApiEndpoints(apiEndpoints),
+      toJsonSchemaApiEndpoints(apiEndpoints),
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.status(200).json(openapi as any);

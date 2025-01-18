@@ -176,3 +176,5 @@ const toResult = <T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
     return Result.error(res.issues);
   }
 };
+
+export * from "./jsonschema";

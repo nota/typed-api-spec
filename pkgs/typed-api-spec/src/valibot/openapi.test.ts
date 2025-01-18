@@ -1,8 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { toOpenApiDoc, toOpenApiEndpoints, toOpenApiSpec } from "./openapi";
 import { ValibotApiEndpoints } from "./index";
 import * as v from "valibot";
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3_1 } from "openapi-types";
+import { toOpenApiDoc } from "../core";
+import { toJsonSchemaApiEndpoints } from "./jsonschema";
+// import { toOpenApiEndpoints } from "../core";
 describe("openapi", () => {
   const endpoints = {
     "/pets": {
@@ -56,32 +58,21 @@ describe("openapi", () => {
       description: "dummy-description",
     },
   };
-  const expectSpec = {
-    params: expectSpecParams,
-    responses: expectSpecResponses,
-  };
   const expectPathObject = {
     parameters: expectSpecParams,
     responses: expectSpecResponses,
   };
-  it("toOpenApiSpec", () => {
-    const oas = toOpenApiSpec(endpoints["/pets"].get);
-    expect(oas).toEqual(expectSpec);
-  });
 
   it("toOpenApiDoc", () => {
-    const baseDoc: Omit<OpenAPIV3.Document, "paths"> = {
+    const baseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
       openapi: "3.1.0",
       info: { title: "title", version: "1" },
       security: [],
       servers: [],
       components: {},
     };
-    const openApiEndPoints = toOpenApiEndpoints(endpoints);
-    expect(openApiEndPoints).toEqual({
-      "/pets": { get: expectSpec },
-    });
-    const doc = toOpenApiDoc(baseDoc, openApiEndPoints);
+    const jsonSchemaApiEndPoints = toJsonSchemaApiEndpoints(endpoints);
+    const doc = toOpenApiDoc(baseDoc, jsonSchemaApiEndPoints);
     expect(doc).toEqual({
       ...baseDoc,
       paths: { "/pets": { get: expectPathObject } },
