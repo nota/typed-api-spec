@@ -88,7 +88,7 @@ export type ToValibotResponseValidators<
 export type InferOrUndefined<T> = T extends AnyV ? v.InferOutput<T> : undefined;
 
 export type ValibotApiEndpoints = { [Path in string]: ValibotApiEndpoint };
-type ValibotApiEndpoint = Partial<Record<Method, ValibotApiSpec>>;
+export type ValibotApiEndpoint = Partial<Record<Method, ValibotApiSpec>>;
 export type ValibotApiSpec<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ParamKeys extends string = string,

@@ -1,16 +1,25 @@
 import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
-import { OpenApiSpec } from "../spec";
+import { AnyApiSpec, Method, OpenApiSpec } from "../spec";
 import { JSONSchema7 } from "json-schema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
-  spec: OpenApiSpec,
+  endpoint: Partial<Record<Method, AnyApiSpec>>,
 ): OpenAPIV3.PathItemObject => {
+  const ret: OpenAPIV3.PathItemObject = {};
+  for (const method of Method) {
+    const spec = endpoint[method];
+    if (spec) {
+      ret[method] = toOperationObject(spec);
+    }
+  }
+  return ret;
+};
+
+const toOperationObject = (spec: OpenApiSpec): OpenAPIV3.OperationObject => {
   return {
-    get: {
-      parameters: spec.params,
-      responses: spec.responses,
-    },
+    parameters: spec.params,
+    responses: spec.responses,
   };
 };
 

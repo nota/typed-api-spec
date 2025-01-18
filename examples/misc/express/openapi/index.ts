@@ -6,6 +6,7 @@ import * as v from "valibot";
 import cors from "cors";
 import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
 import { OpenAPIV3 } from "openapi-types";
+import { toOpenApiEndpoint } from "@notainc/typed-api-spec/valibot/openapi";
 
 const apiEndpoints = {
   "/openapi": {
@@ -15,9 +16,18 @@ const apiEndpoints = {
       },
     },
   },
-  "/pets": {
+  "/pets/:petId": {
     get: {
-      params: v.object({ page: v.string() }),
+      params: v.object({ petId: v.string() }),
+      query: v.object({ page: v.string() }),
+      responses: {
+        200: { body: v.object({ name: v.string() }) },
+      },
+    },
+  },
+  "/pets": {
+    post: {
+      body: v.object({ name: v.string() }),
       responses: {
         200: { body: v.object({ message: v.string() }) },
       },
@@ -36,7 +46,10 @@ const newApp = () => {
   app.use(cors());
   const wApp = asAsync(typed(apiEndpoints, app));
   wApp.get("/openapi", (req, res) => {
-    const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints["/pets"].get);
+    const openapi = toOpenApiDoc(
+      openapiBaseDoc,
+      toOpenApiEndpoint(apiEndpoints["/pets"]),
+    );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.status(200).json(openapi as any);
   });

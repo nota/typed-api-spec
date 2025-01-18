@@ -41,13 +41,13 @@ export const newMethodInvalidError = (method: string): MethodInvalidError => ({
 
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;
 export type AnyApiEndpoint = Partial<Record<Method, AnyApiSpec>>;
+export type OpenApiEndpoint = Partial<Record<Method, JsonSchemaApiSpec>>;
 type AsJsonApiEndpoint<AE extends ApiEndpoint> = {
   // FIXME: NonNullableでいいんだっけ?
   [M in keyof AE & Method]: AsJsonApiSpec<NonNullable<AE[M]>>;
 };
 export type ApiEndpoints = { [Path in string]: ApiEndpoint };
 export type AnyApiEndpoints = { [Path in string]: AnyApiEndpoint };
-
 export type UnknownApiEndpoints = {
   [Path in string]: Partial<Record<Method, UnknownApiSpec>>;
 };

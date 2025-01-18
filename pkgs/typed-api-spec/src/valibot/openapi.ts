@@ -1,5 +1,11 @@
-import { ValibotAnyApiResponses, ValibotApiSpec } from "./index";
 import {
+  ValibotAnyApiResponses,
+  ValibotApiEndpoint,
+  ValibotApiSpec,
+} from "./index";
+import {
+  Method,
+  OpenApiEndpoint,
   OpenApiSpec,
   StatusCode,
   toParameterObject,
@@ -11,14 +17,27 @@ import { OpenAPIV3 } from "openapi-types";
 
 export const toOpenApiDoc = (
   doc: Omit<OpenAPIV3.Document, "paths">,
-  spec: ValibotApiSpec,
+  endpoint: OpenApiEndpoint,
 ): OpenAPIV3.Document => {
   return {
     ...doc,
     paths: {
-      "/pets": toPathItemObject(toOpenApiSpec(spec)),
+      "/pets": toPathItemObject(endpoint),
     },
   };
+};
+
+export const toOpenApiEndpoint = <E extends ValibotApiEndpoint>(
+  endpoint: E,
+): Partial<Record<Method, OpenApiSpec>> => {
+  const ret: Partial<Record<Method, OpenApiSpec>> = {};
+  for (const method of Method) {
+    const spec = endpoint[method];
+    if (spec) {
+      ret[method] = toOpenApiSpec(spec);
+    }
+  }
+  return ret;
 };
 
 export const toOpenApiSpec = <Spec extends ValibotApiSpec>(
