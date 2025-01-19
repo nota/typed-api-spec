@@ -1,12 +1,12 @@
 import express from "express";
 import { typed } from "@notainc/typed-api-spec/express/valibot";
 import { asAsync } from "@notainc/typed-api-spec/express";
-import { ValibotApiEndpoints } from "@notainc/typed-api-spec/valibot";
 import * as v from "valibot";
 import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
 import { toOpenApiDoc } from "@notainc/typed-api-spec";
 import { toJsonSchemaApiEndpoints } from "@notainc/typed-api-spec/valibot";
+import { ValibotOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
 
 const apiEndpoints = {
   "/openapi": {
@@ -18,6 +18,8 @@ const apiEndpoints = {
   },
   "/pets/:petId": {
     get: {
+      summary: "Find pet by ID",
+      description: "Returns a single pet",
       params: v.object({ petId: v.string() }),
       query: v.object({ page: v.string() }),
       responses: {
@@ -27,13 +29,14 @@ const apiEndpoints = {
   },
   "/pets": {
     post: {
+      description: "Add new pet",
       body: v.object({ name: v.string() }),
       responses: {
         200: { body: v.object({ message: v.string() }) },
       },
     },
   },
-} satisfies ValibotApiEndpoints;
+} satisfies ValibotOpenApiEndpoints;
 
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",

@@ -1,9 +1,10 @@
 import { OpenAPIV3_1 } from "openapi-types";
 import {
-  AnyApiSpec,
-  JsonSchemaApiEndpoints,
+  AnyOpenApiSpec,
+  extractExtraApiSpecProps,
   JsonSchemaApiResponses,
-  JsonSchemaApiSpec,
+  JsonSchemaOpenApiEndpoints,
+  JsonSchemaOpenApiSpec,
   Method,
 } from "../spec";
 import { JSONSchema7 } from "json-schema";
@@ -11,7 +12,7 @@ import { StatusCode } from "../hono-types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
-  endpoint: Partial<Record<Method, AnyApiSpec>>,
+  endpoint: Partial<Record<Method, AnyOpenApiSpec>>,
 ): OpenAPIV3_1.PathItemObject => {
   const ret: OpenAPIV3_1.PathItemObject = {};
   for (const method of Method) {
@@ -26,19 +27,26 @@ export const toPathItemObject = (
 };
 
 const toOperationObject = (
-  spec: JsonSchemaApiSpec,
+  spec: JsonSchemaOpenApiSpec,
 ): OpenAPIV3_1.OperationObject => {
   const parameters = [];
+  const extraProps = extractExtraApiSpecProps(spec);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (spec.params) {
-    parameters.push(toParameterObject(spec.params, "test", "path"));
+    // FIXME name
+    // FIXME パラメータはオブジェクトないのプロパティ一つずつで追加する
+    parameters.push(toParameterObject(spec.params, "params-name", "path"));
   }
   if (spec.query) {
-    parameters.push(toParameterObject(spec.query, "test", "query"));
+    // FIXME
+    parameters.push(toParameterObject(spec.query, "query-name", "query"));
   }
   if (spec.headers) {
-    parameters.push(toParameterObject(spec.headers, "test", "header"));
+    // FIXME
+    parameters.push(toParameterObject(spec.headers, "headers-name", "header"));
   }
   return {
+    ...extraProps,
     parameters,
     responses: toResponses(spec.responses),
   };
@@ -89,7 +97,7 @@ const toResponses = (
 
 export const toOpenApiDoc = (
   doc: Omit<OpenAPIV3_1.Document, "paths">,
-  endpoints: JsonSchemaApiEndpoints,
+  endpoints: JsonSchemaOpenApiEndpoints,
 ): OpenAPIV3_1.Document => {
   const paths: OpenAPIV3_1.PathsObject = {};
   for (const path of Object.keys(endpoints)) {

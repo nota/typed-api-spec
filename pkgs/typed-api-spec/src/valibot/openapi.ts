@@ -1,9 +1,9 @@
 import { OpenAPIV3_1 } from "openapi-types";
 import { toJsonSchemaApiEndpoints } from "./jsonschema";
-import { toOpenApiDoc as toOpenApiDocOrg } from "../core";
-import { ValibotApiEndpoints } from "./index";
+import { Method, toOpenApiDoc as toOpenApiDocOrg } from "../core";
+import { ValibotApiSpec } from "./spec";
 
-export const toOpenApiDoc = <E extends ValibotApiEndpoints>(
+export const toOpenApiDoc = <E extends ValibotOpenApiEndpoints>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: E,
 ): OpenAPIV3_1.Document => {
@@ -11,4 +11,11 @@ export const toOpenApiDoc = <E extends ValibotApiEndpoints>(
   return toOpenApiDocOrg(doc, e);
 };
 
-// export const ValibotOpenApiSpec = ValibotA;
+export type ValibotOpenApiEndpoints = {
+  [Path in string]: ValibotOpenApiEndpoint;
+};
+export type ValibotOpenApiEndpoint = Partial<
+  Record<Method, ValibotOpenApiSpec>
+>;
+export type ValibotOpenApiSpec = ValibotApiSpec &
+  Omit<OpenAPIV3_1.PathItemObject, "parameters" | "responses" | "requestBody">;

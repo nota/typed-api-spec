@@ -42,10 +42,15 @@ export const newMethodInvalidError = (method: string): MethodInvalidError => ({
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;
 export type AnyApiEndpoint = Partial<Record<Method, AnyApiSpec>>;
 export type JsonSchemaApiEndpoint = Partial<Record<Method, JsonSchemaApiSpec>>;
+export type JsonSchemaOpenApiEndpoint = Partial<
+  Record<Method, JsonSchemaOpenApiSpec>
+>;
+
 type AsJsonApiEndpoint<AE extends ApiEndpoint> = {
   // FIXME: NonNullableでいいんだっけ?
   [M in keyof AE & Method]: AsJsonApiSpec<NonNullable<AE[M]>>;
 };
+
 export type ApiEndpoints = { [Path in string]: ApiEndpoint };
 export type AnyApiEndpoints = { [Path in string]: AnyApiEndpoint };
 export type UnknownApiEndpoints = {
@@ -53,6 +58,9 @@ export type UnknownApiEndpoints = {
 };
 export type JsonSchemaApiEndpoints = {
   [Path in string]: JsonSchemaApiEndpoint;
+};
+export type JsonSchemaOpenApiEndpoints = {
+  [Path in string]: JsonSchemaOpenApiEndpoint;
 };
 
 export const apiSpecRequestKeys = Object.freeze([
@@ -96,6 +104,9 @@ export type ApiSpec<
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyApiSpec = BaseApiSpec<any, any, any, any, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyOpenApiSpec = BaseApiSpec<any, any, any, any, any> &
+  PathItemObject;
 export type UnknownApiSpec = BaseApiSpec<
   unknown,
   unknown,
@@ -110,13 +121,25 @@ export type JsonSchemaApiSpec = BaseApiSpec<
   JSONSchema7,
   JsonSchemaApiResponses
 >;
-export type OpenApiSpec = BaseApiSpec<
-  OpenAPIV3_1.ParameterObject[],
-  JSONSchema7,
-  OpenAPIV3_1.RequestBodyObject,
-  JSONSchema7,
-  Record<string, OpenAPIV3_1.ResponseObject>
+type PathItemObject = Omit<
+  OpenAPIV3_1.PathItemObject,
+  "parameters" | "responses" | "requestBody"
 >;
+export type JsonSchemaOpenApiSpec = JsonSchemaApiSpec & PathItemObject;
+
+export const extractExtraApiSpecProps = (spec: AnyApiSpec) => {
+  return Object.entries(spec).reduce(
+    (acc, [key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!apiSpecKeys.includes(key as any)) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as Record<string, any>,
+  );
+};
 
 type JsonHeader = {
   "Content-Type": "application/json";

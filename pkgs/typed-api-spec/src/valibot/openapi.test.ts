@@ -1,12 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { ValibotApiEndpoints } from "./index";
+import { ValibotOpenApiEndpoints } from ".";
 import * as v from "valibot";
 import { OpenAPIV3_1 } from "openapi-types";
 import { toOpenApiDoc } from "./openapi";
+
 describe("openapi", () => {
   const endpoints = {
     "/pets": {
       get: {
+        description: "Get pet",
         body: undefined,
         headers: undefined,
         params: v.object({ page: v.string() }),
@@ -16,7 +18,7 @@ describe("openapi", () => {
         },
       },
     },
-  } satisfies ValibotApiEndpoints;
+  } satisfies ValibotOpenApiEndpoints;
   const expectSpecParams = [
     {
       content: {
@@ -57,6 +59,7 @@ describe("openapi", () => {
     },
   };
   const expectPathObject = {
+    description: "Get pet",
     parameters: expectSpecParams,
     responses: expectSpecResponses,
   };

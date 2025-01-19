@@ -5,6 +5,7 @@ import {
   ValibotApiSpec,
 } from "./index";
 import {
+  extractExtraApiSpecProps,
   JsonSchemaApiEndpoints,
   JsonSchemaApiResponses,
   JsonSchemaApiSpec,
@@ -39,6 +40,7 @@ export const toJsonSchemaEndpoint = <Endpoint extends ValibotApiEndpoint>(
 export const toJsonSchemaApiSpec = <Spec extends ValibotApiSpec>(
   spec: Spec,
 ): JsonSchemaApiSpec => {
+  const extraProps = extractExtraApiSpecProps(spec);
   const ret: JsonSchemaApiSpec = {
     responses: toJsonSchemaResponses(spec.responses),
   };
@@ -51,7 +53,7 @@ export const toJsonSchemaApiSpec = <Spec extends ValibotApiSpec>(
   if (spec.headers) {
     ret["headers"] = toJsonSchema(spec.headers);
   }
-  return ret;
+  return { ...extraProps, ...ret };
 };
 
 const toJsonSchemaResponses = (
