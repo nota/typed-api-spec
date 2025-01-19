@@ -6,6 +6,7 @@ import {
 } from "./index";
 import {
   extractExtraApiSpecProps,
+  extractExtraResponseProps,
   JsonSchemaApiEndpoints,
   JsonSchemaApiResponses,
   JsonSchemaApiSpec,
@@ -66,8 +67,8 @@ const toJsonSchemaResponses = (
     if (!r) {
       continue;
     }
-    // FIXME cast 7 to 4
     ret[statusCode] = {
+      ...extractExtraResponseProps(r),
       body: toJsonSchema(r.body),
       headers: r.headers ? toJsonSchema(r.headers) : undefined,
     };

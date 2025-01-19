@@ -1,14 +1,17 @@
 import { OpenAPIV3_1 } from "openapi-types";
 import {
-  AnyOpenApiSpec,
   extractExtraApiSpecProps,
+  extractExtraResponseProps,
   JsonSchemaApiResponses,
-  JsonSchemaOpenApiEndpoints,
-  JsonSchemaOpenApiSpec,
   Method,
 } from "../spec";
 import { JSONSchema7 } from "json-schema";
 import { StatusCode } from "../hono-types";
+import {
+  AnyOpenApiSpec,
+  JsonSchemaOpenApiEndpoints,
+  JsonSchemaOpenApiSpec,
+} from "./spec";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
@@ -61,6 +64,7 @@ export const toParameterObject = (
     name,
     in: _in,
     content: {
+      // FIXME: json決め打ちをやめる
       "application/json": {
         // FIXME: 安全にキャストすべき
         schema: schema as OpenAPIV3_1.ParameterObject["schema"],
@@ -69,10 +73,12 @@ export const toParameterObject = (
   };
 };
 
-export const toResponse = (body: JSONSchema7): OpenAPIV3_1.ResponseObject => {
+export const toResponse = (
+  body: JSONSchema7,
+): Omit<OpenAPIV3_1.ResponseObject, "description"> => {
   return {
-    description: "dummy-description",
     content: {
+      // FIXME json決め打ちをやめる
       "application/json": {
         schema: body as OpenAPIV3_1.SchemaObject,
       },
@@ -90,7 +96,12 @@ const toResponses = (
     if (!r) {
       continue;
     }
-    ret[statusCode] = toResponse(r.body);
+    const extraProps = extractExtraResponseProps(r);
+    // FIXME: ランタイムのチェックを入れたりしてもうちょっと安全にキャストできるような気もする
+    ret[statusCode] = {
+      ...extraProps,
+      ...toResponse(r.body),
+    } as unknown as OpenAPIV3_1.ResponseObject;
   }
   return ret;
 };

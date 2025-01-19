@@ -4,15 +4,14 @@ import { asAsync } from "@notainc/typed-api-spec/express";
 import * as v from "valibot";
 import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
-import { toOpenApiDoc } from "@notainc/typed-api-spec";
-import { toJsonSchemaApiEndpoints } from "@notainc/typed-api-spec/valibot";
 import { ValibotOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
+import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot";
 
 const apiEndpoints = {
   "/openapi": {
     get: {
       responses: {
-        200: { body: v.any() },
+        200: { body: v.any(), description: "openapi json" },
       },
     },
   },
@@ -23,7 +22,10 @@ const apiEndpoints = {
       params: v.object({ petId: v.string() }),
       query: v.object({ page: v.string() }),
       responses: {
-        200: { body: v.object({ name: v.string() }) },
+        200: {
+          body: v.object({ name: v.string() }),
+          description: "List of pets",
+        },
       },
     },
   },
@@ -32,7 +34,10 @@ const apiEndpoints = {
       description: "Add new pet",
       body: v.object({ name: v.string() }),
       responses: {
-        200: { body: v.object({ message: v.string() }) },
+        200: {
+          body: v.object({ message: v.string() }),
+          description: "Created pet",
+        },
       },
     },
   },
@@ -49,10 +54,7 @@ const newApp = () => {
   app.use(cors());
   const wApp = asAsync(typed(apiEndpoints, app));
   wApp.get("/openapi", (req, res) => {
-    const openapi = toOpenApiDoc(
-      openapiBaseDoc,
-      toJsonSchemaApiEndpoints(apiEndpoints),
-    );
+    const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.status(200).json(openapi as any);
   });

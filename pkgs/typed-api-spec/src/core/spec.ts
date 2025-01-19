@@ -2,7 +2,6 @@ import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
 import { JSONSchema7 } from "json-schema";
-import { OpenAPIV3_1 } from "openapi-types";
 
 /**
  * { // ApiEndpoints
@@ -42,9 +41,6 @@ export const newMethodInvalidError = (method: string): MethodInvalidError => ({
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;
 export type AnyApiEndpoint = Partial<Record<Method, AnyApiSpec>>;
 export type JsonSchemaApiEndpoint = Partial<Record<Method, JsonSchemaApiSpec>>;
-export type JsonSchemaOpenApiEndpoint = Partial<
-  Record<Method, JsonSchemaOpenApiSpec>
->;
 
 type AsJsonApiEndpoint<AE extends ApiEndpoint> = {
   // FIXME: NonNullableでいいんだっけ?
@@ -58,9 +54,6 @@ export type UnknownApiEndpoints = {
 };
 export type JsonSchemaApiEndpoints = {
   [Path in string]: JsonSchemaApiEndpoint;
-};
-export type JsonSchemaOpenApiEndpoints = {
-  [Path in string]: JsonSchemaOpenApiEndpoint;
 };
 
 export const apiSpecRequestKeys = Object.freeze([
@@ -104,9 +97,6 @@ export type ApiSpec<
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyApiSpec = BaseApiSpec<any, any, any, any, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyOpenApiSpec = BaseApiSpec<any, any, any, any, any> &
-  PathItemObject;
 export type UnknownApiSpec = BaseApiSpec<
   unknown,
   unknown,
@@ -121,11 +111,6 @@ export type JsonSchemaApiSpec = BaseApiSpec<
   JSONSchema7,
   JsonSchemaApiResponses
 >;
-type PathItemObject = Omit<
-  OpenAPIV3_1.PathItemObject,
-  "parameters" | "responses" | "requestBody"
->;
-export type JsonSchemaOpenApiSpec = JsonSchemaApiSpec & PathItemObject;
 
 export const extractExtraApiSpecProps = (spec: AnyApiSpec) => {
   return Object.entries(spec).reduce(
@@ -244,4 +229,18 @@ export type DefineApiEndpoints<E extends ApiEndpoints> = E;
 
 export type AsJsonApi<E extends ApiEndpoints> = {
   [Path in keyof E & string]: AsJsonApiEndpoint<E[Path]>;
+};
+
+export const extractExtraResponseProps = (response: AnyResponse) => {
+  return Object.entries(response).reduce(
+    (acc, [key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!apiSpecResponseKeys.includes(key as any)) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as Record<string, any>,
+  );
 };

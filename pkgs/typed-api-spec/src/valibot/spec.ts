@@ -1,5 +1,4 @@
 import {
-  AnyApiResponses,
   BaseApiSpec,
   DefineApiResponses,
   DefineResponse,
@@ -17,7 +16,7 @@ export type ValibotApiSpec<
   Query extends AnyV = AnyV,
   Body extends AnyV = AnyV,
   RequestHeaders extends AnyV = AnyV,
-  Responses extends AnyApiResponses = AnyApiResponses,
+  Responses extends ValibotAnyApiResponses = ValibotAnyApiResponses,
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 export type ToApiEndpoints<E extends ValibotApiEndpoints> = {
   [Path in keyof E & string]: ToApiEndpoint<E, Path>;
