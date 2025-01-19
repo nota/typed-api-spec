@@ -5,11 +5,9 @@ import {
   JsonSchemaApiResponses,
   JsonSchemaApiSpec,
   Method,
-  OpenApiSpec,
 } from "../spec";
-import { JSONSchema4 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import { StatusCode } from "../hono-types";
-import { ValibotApiEndpoint, ValibotApiEndpoints } from "../../valibot";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
@@ -27,12 +25,6 @@ export const toPathItemObject = (
   return ret;
 };
 
-// const toOperationObject = (spec: OpenApiSpec): OpenAPIV3_1.OperationObject => {
-//   return {
-//     parameters: spec.params,
-//     responses: spec.responses,
-//   };
-// };
 const toOperationObject = (
   spec: JsonSchemaApiSpec,
 ): OpenAPIV3_1.OperationObject => {
@@ -53,7 +45,7 @@ const toOperationObject = (
 };
 
 export const toParameterObject = (
-  schema: JSONSchema4,
+  schema: JSONSchema7,
   name: string,
   _in: "query" | "path" | "header",
 ): OpenAPIV3_1.ParameterObject => {
@@ -69,7 +61,7 @@ export const toParameterObject = (
   };
 };
 
-export const toResponse = (body: JSONSchema4): OpenAPIV3_1.ResponseObject => {
+export const toResponse = (body: JSONSchema7): OpenAPIV3_1.ResponseObject => {
   return {
     description: "dummy-description",
     content: {
@@ -95,28 +87,6 @@ const toResponses = (
   return ret;
 };
 
-// export const toOpenApiSpec = <Spec extends ValibotApiSpec>(
-//   spec: Spec,
-// ): OpenApiSpec => {
-//   const ret: OpenApiSpec = { responses: toResponses(spec.responses) };
-//   if (spec.params) {
-//     ret["params"] = spec.params
-//       ? [toParameterObject(toJsonSchema(spec.params), "test", "path")]
-//       : undefined;
-//   }
-//   if (spec.query) {
-//     ret["query"] = spec.query
-//       ? [toParameterObject(toJsonSchema(spec.query), "test", "query")]
-//       : undefined;
-//   }
-//   if (spec.headers) {
-//     ret["query"] = spec.headers
-//       ? [toParameterObject(toJsonSchema(spec.headers), "test", "header")]
-//       : undefined;
-//   }
-//   return ret;
-// };
-
 export const toOpenApiDoc = (
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: JsonSchemaApiEndpoints,
@@ -127,26 +97,3 @@ export const toOpenApiDoc = (
   }
   return { ...doc, paths };
 };
-
-// export const toOpenApiEndpoints = <E extends ValibotApiEndpoints>(
-//   endpoints: E,
-// ): JsonSchemaApiEndpoints => {
-//   const ret: JsonSchemaApiEndpoints = {};
-//   for (const path of Object.keys(endpoints)) {
-//     ret[path] = toOpenApiEndpoint(endpoints[path]);
-//   }
-//   return ret;
-// };
-//
-// export const toOpenApiEndpoint = <E extends ValibotApiEndpoint>(
-//   endpoint: E,
-// ): Partial<Record<Method, OpenApiSpec>> => {
-//   const ret: Partial<Record<Method, OpenApiSpec>> = {};
-//   for (const method of Method) {
-//     const spec = endpoint[method];
-//     if (spec) {
-//       ret[method] = toOpenApiSpec(spec);
-//     }
-//   }
-//   return ret;
-// };

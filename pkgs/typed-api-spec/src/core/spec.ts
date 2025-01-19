@@ -1,7 +1,7 @@
 import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
-import { JSONSchema4 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import { OpenAPIV3_1 } from "openapi-types";
 
 /**
@@ -104,17 +104,17 @@ export type UnknownApiSpec = BaseApiSpec<
   DefineApiResponses<DefineResponse<unknown, unknown>>
 >;
 export type JsonSchemaApiSpec = BaseApiSpec<
-  JSONSchema4,
-  JSONSchema4,
-  JSONSchema4,
-  JSONSchema4,
+  JSONSchema7,
+  JSONSchema7,
+  JSONSchema7,
+  JSONSchema7,
   JsonSchemaApiResponses
 >;
 export type OpenApiSpec = BaseApiSpec<
   OpenAPIV3_1.ParameterObject[],
-  JSONSchema4,
+  JSONSchema7,
   OpenAPIV3_1.RequestBodyObject,
-  JSONSchema4,
+  JSONSchema7,
   Record<string, OpenAPIV3_1.ResponseObject>
 >;
 
@@ -202,7 +202,7 @@ export type DefineApiResponses<Response extends AnyResponse> = Partial<
 export type DefineResponse<Body, Headers> = { body: Body; headers?: Headers };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyResponse = DefineResponse<any, any>;
-export type JsonSchemaResponse = DefineResponse<JSONSchema4, JSONSchema4>;
+export type JsonSchemaResponse = DefineResponse<JSONSchema7, JSONSchema7>;
 export type ApiClientResponses<AResponses extends AnyApiResponses> = {
   [SC in keyof AResponses & StatusCode]: ClientResponse<
     ApiResBody<AResponses, SC>,

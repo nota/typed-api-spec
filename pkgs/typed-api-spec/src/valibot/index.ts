@@ -9,6 +9,7 @@ import {
   DefineResponse,
   Method,
   StatusCode,
+  toOpenApiDoc as toOpenApiDocOrg,
 } from "../core";
 import {
   createValidator,
@@ -31,6 +32,8 @@ import {
   ResponseSpecValidator,
   ResponseSpecValidatorGeneratorRawInput,
 } from "../core/validator/response";
+import { toJsonSchemaApiEndpoints, toJsonSchemaEndpoint } from "./jsonschema";
+import { OpenAPIV3_1 } from "openapi-types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyV = BaseSchema<any, any, any>;
@@ -178,3 +181,11 @@ const toResult = <T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(
 };
 
 export * from "./jsonschema";
+
+export const toOpenApiDoc = <E extends ValibotApiEndpoints>(
+  doc: Omit<OpenAPIV3_1.Document, "paths">,
+  endpoints: E,
+): OpenAPIV3_1.Document => {
+  const e = toJsonSchemaApiEndpoints(endpoints);
+  return toOpenApiDocOrg(doc, e);
+};
