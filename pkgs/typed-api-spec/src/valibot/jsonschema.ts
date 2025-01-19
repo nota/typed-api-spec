@@ -5,6 +5,7 @@ import {
   ValibotApiSpec,
 } from "./index";
 import {
+  apiSpecRequestKeys,
   extractExtraApiSpecProps,
   extractExtraResponseProps,
   JsonSchemaApiEndpoints,
@@ -45,14 +46,11 @@ export const toJsonSchemaApiSpec = <Spec extends ValibotApiSpec>(
   const ret: JsonSchemaApiSpec = {
     responses: toJsonSchemaResponses(spec.responses),
   };
-  if (spec.params) {
-    ret["params"] = toJsonSchema(spec.params);
-  }
-  if (spec.query) {
-    ret["query"] = toJsonSchema(spec.query);
-  }
-  if (spec.headers) {
-    ret["headers"] = toJsonSchema(spec.headers);
+  for (const key of apiSpecRequestKeys) {
+    if (spec[key]) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ret[key] = toJsonSchema(spec[key] as any);
+    }
   }
   return { ...extraProps, ...ret };
 };

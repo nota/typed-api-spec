@@ -9,8 +9,6 @@ describe("openapi", () => {
     "/pets": {
       get: {
         description: "Get pet",
-        body: undefined,
-        headers: undefined,
         query: v.object({ page: v.string() }),
         responses: {
           200: {
@@ -19,54 +17,106 @@ describe("openapi", () => {
           },
         },
       },
+      post: {
+        description: "Add pet",
+        body: v.object({ name: v.string() }),
+        responses: {
+          200: {
+            description: "Added pet",
+            body: v.array(v.object({ message: v.string() })),
+          },
+        },
+      },
     },
   } satisfies ValibotOpenApiEndpoints;
-  const expectSpecParams = [
-    {
+
+  const expectGetPathObject = {
+    description: "Get pet",
+    parameters: [
+      {
+        content: {
+          "application/json": {
+            schema: {
+              $schema: "http://json-schema.org/draft-07/schema#",
+              properties: {
+                page: {
+                  type: "string",
+                },
+              },
+              required: ["page"],
+              type: "object",
+            },
+          },
+        },
+        in: "query",
+        name: "query-name",
+      },
+    ],
+    responses: {
+      "200": {
+        content: {
+          "application/json": {
+            schema: {
+              $schema: "http://json-schema.org/draft-07/schema#",
+              items: {
+                properties: {
+                  message: {
+                    type: "string",
+                  },
+                },
+                required: ["message"],
+                type: "object",
+              },
+              type: "array",
+            },
+          },
+        },
+        description: "List of pets",
+      },
+    },
+  };
+
+  const expectPostPathObject = {
+    description: "Add pet",
+    requestBody: {
       content: {
         "application/json": {
           schema: {
             $schema: "http://json-schema.org/draft-07/schema#",
             properties: {
-              page: {
+              name: {
                 type: "string",
               },
             },
-            required: ["page"],
+            required: ["name"],
             type: "object",
           },
         },
       },
-      in: "query",
-      name: "query-name",
     },
-  ];
-  const expectSpecResponses = {
-    "200": {
-      content: {
-        "application/json": {
-          schema: {
-            $schema: "http://json-schema.org/draft-07/schema#",
-            items: {
-              properties: {
-                message: {
-                  type: "string",
+    parameters: [],
+    responses: {
+      "200": {
+        content: {
+          "application/json": {
+            schema: {
+              $schema: "http://json-schema.org/draft-07/schema#",
+              items: {
+                properties: {
+                  message: {
+                    type: "string",
+                  },
                 },
+                required: ["message"],
+                type: "object",
               },
-              required: ["message"],
-              type: "object",
+              type: "array",
             },
-            type: "array",
           },
         },
+        description: "Added pet",
       },
-      description: "List of pets",
     },
-  };
-  const expectPathObject = {
-    description: "Get pet",
-    parameters: expectSpecParams,
-    responses: expectSpecResponses,
   };
 
   it("toOpenApiDoc", () => {
@@ -80,7 +130,9 @@ describe("openapi", () => {
     const doc = toOpenApiDoc(baseDoc, endpoints);
     expect(doc).toEqual({
       ...baseDoc,
-      paths: { "/pets": { get: expectPathObject } },
+      paths: {
+        "/pets": { get: expectGetPathObject, post: expectPostPathObject },
+      },
     });
   });
 });

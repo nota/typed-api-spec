@@ -48,10 +48,23 @@ const toOperationObject = (
     // FIXME
     parameters.push(toParameterObject(spec.headers, "headers-name", "header"));
   }
+  const reqBody = spec.body
+    ? {
+        requestBody: {
+          content: {
+            // FIXME json決め打ちをやめる
+            "application/json": {
+              schema: spec.body as OpenAPIV3_1.SchemaObject,
+            },
+          },
+        },
+      }
+    : {};
   return {
     ...extraProps,
     parameters,
     responses: toResponses(spec.responses),
+    ...reqBody,
   };
 };
 
@@ -73,19 +86,6 @@ export const toParameterObject = (
   };
 };
 
-export const toResponse = (
-  body: JSONSchema7,
-): Omit<OpenAPIV3_1.ResponseObject, "description"> => {
-  return {
-    content: {
-      // FIXME json決め打ちをやめる
-      "application/json": {
-        schema: body as OpenAPIV3_1.SchemaObject,
-      },
-    },
-  };
-};
-
 const toResponses = (
   responses: JsonSchemaApiResponses,
 ): Record<string, OpenAPIV3_1.ResponseObject> => {
@@ -100,7 +100,12 @@ const toResponses = (
     // FIXME: ランタイムのチェックを入れたりしてもうちょっと安全にキャストできるような気もする
     ret[statusCode] = {
       ...extraProps,
-      ...toResponse(r.body),
+      content: {
+        // FIXME json決め打ちをやめる
+        "application/json": {
+          schema: r.body as OpenAPIV3_1.SchemaObject,
+        },
+      },
     } as unknown as OpenAPIV3_1.ResponseObject;
   }
   return ret;
