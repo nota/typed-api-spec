@@ -7,6 +7,18 @@ import { OpenAPIV3_1 } from "openapi-types";
 import { ValibotOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
 import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot";
 
+const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
+  openapi: "3.1.0",
+  servers: [{ url: "http://locahost:3000" }],
+  info: {
+    title: "typed-api-spec OpenAPI Example",
+    version: "1",
+    description:
+      "This is a sample Pet Store Server based on the OpenAPI 3.1 specification.",
+  },
+  tags: [{ name: "pets", description: "Everything about your Pets" }],
+};
+
 const apiEndpoints = {
   "/openapi": {
     get: {
@@ -19,6 +31,7 @@ const apiEndpoints = {
     get: {
       summary: "Find pet by ID",
       description: "Returns a single pet",
+      tags: ["pets"],
       params: v.object({ petId: v.string() }),
       query: v.object({ page: v.string() }),
       responses: {
@@ -42,11 +55,6 @@ const apiEndpoints = {
     },
   },
 } satisfies ValibotOpenApiEndpoints;
-
-const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
-  openapi: "3.1.0",
-  info: { title: "title", version: "1" },
-};
 
 const newApp = () => {
   const app = express();

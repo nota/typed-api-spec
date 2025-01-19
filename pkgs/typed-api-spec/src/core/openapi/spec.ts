@@ -10,12 +10,19 @@ import { JSONSchema7 } from "json-schema";
 export type JsonSchemaOpenApiEndpoints = {
   [Path in string]: JsonSchemaOpenApiEndpoint;
 };
-export type JsonSchemaOpenApiEndpoint = Partial<
-  Record<Method, JsonSchemaOpenApiSpec>
->;
-export type PathItemObject = Omit<
-  OpenAPIV3_1.PathItemObject,
-  "parameters" | "responses" | "requestBody"
+export type JsonSchemaOpenApiEndpoint =
+  DefineOpenApiEndpoint<JsonSchemaOpenApiSpec>;
+export type DefineOpenApiEndpoint<Spec extends AnyOpenApiSpec> = Partial<
+  Record<Method, Spec>
+> & {
+  $ref?: string;
+  summary?: string;
+  description?: string;
+  servers?: OpenAPIV3_1.ServerObject[];
+};
+export type OperationObject = Omit<
+  OpenAPIV3_1.OperationObject,
+  "requestBody" | "parameters" | "responses"
 >;
 export type JsonSchemaOpenApiSpec = BaseOpenApiSpec<
   JSONSchema7,
@@ -47,7 +54,7 @@ export type BaseOpenApiSpec<
   body?: Body;
   responses: Responses;
   headers?: RequestHeaders;
-} & PathItemObject;
+} & OperationObject;
 export type ToOpenApiResponse<R extends AnyResponse> = R &
   OpenAPIV3_1.ResponseObject;
 export type AnyOpenApiResponses = DefineOpenApiResponses<AnyResponse>;
