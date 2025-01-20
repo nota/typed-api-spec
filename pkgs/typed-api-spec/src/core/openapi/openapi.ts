@@ -34,19 +34,14 @@ const toOperationObject = (
 ): OpenAPIV3_1.OperationObject => {
   const parameters = [];
   const extraProps = extractExtraApiSpecProps(spec);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (spec.params) {
-    // FIXME name
-    // FIXME パラメータはオブジェクトないのプロパティ一つずつで追加する
-    parameters.push(toParameterObject(spec.params, "params-name", "path"));
+    parameters.push(...schemaToParameterObject(spec.params, "path"));
   }
   if (spec.query) {
-    // FIXME
-    parameters.push(toParameterObject(spec.query, "query-name", "query"));
+    parameters.push(...schemaToParameterObject(spec.query, "query"));
   }
   if (spec.headers) {
-    // FIXME
-    parameters.push(toParameterObject(spec.headers, "headers-name", "header"));
+    parameters.push(...schemaToParameterObject(spec.headers, "header"));
   }
   const reqBody = spec.body
     ? {
@@ -66,6 +61,21 @@ const toOperationObject = (
     responses: toResponses(spec.responses),
     ...reqBody,
   };
+};
+
+const schemaToParameterObject = (
+  schema: JSONSchema7,
+  _in: "query" | "path" | "header",
+): OpenAPIV3_1.ParameterObject[] => {
+  if (schema.type !== "object") {
+    throw new Error("params should be object");
+  }
+  return Object.entries(schema.properties ?? {}).flatMap(([name, def]) => {
+    if (typeof def === "boolean" || !def.type || Array.isArray(def.type)) {
+      return [];
+    }
+    return [toParameterObject(def, name, _in)];
+  });
 };
 
 export const toParameterObject = (

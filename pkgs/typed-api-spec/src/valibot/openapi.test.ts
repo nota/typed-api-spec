@@ -34,22 +34,9 @@ describe("openapi", () => {
     description: "Get pet",
     parameters: [
       {
-        content: {
-          "application/json": {
-            schema: {
-              $schema: "http://json-schema.org/draft-07/schema#",
-              properties: {
-                page: {
-                  type: "string",
-                },
-              },
-              required: ["page"],
-              type: "object",
-            },
-          },
-        },
+        content: { "application/json": { schema: { type: "string" } } },
         in: "query",
-        name: "query-name",
+        name: "page",
       },
     ],
     responses: {
