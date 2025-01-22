@@ -1,10 +1,8 @@
 import {
-  ValibotAnyApiResponses,
-  ValibotApiEndpoint,
-  ValibotApiEndpoints,
-  ValibotApiSpec,
-} from "./index";
-import {
+  AnyApiEndpoint,
+  AnyApiEndpoints,
+  AnyApiResponses,
+  AnyApiSpec,
   apiSpecRequestKeys,
   extractExtraApiSpecProps,
   extractExtraResponseProps,
@@ -12,51 +10,58 @@ import {
   JsonSchemaApiResponses,
   JsonSchemaApiSpec,
   Method,
-  StatusCode,
-} from "../core";
-import { toJsonSchema } from "@valibot/to-json-schema";
+} from "./spec";
+import { StatusCode } from "./hono-types";
+import { JSONSchema7 } from "json-schema";
 
-export const toJsonSchemaApiEndpoints = <E extends ValibotApiEndpoints>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ToSchema = (schema: any) => JSONSchema7;
+
+export const toJsonSchemaApiEndpoints = <E extends AnyApiEndpoints>(
+  toSchema: ToSchema,
   endpoints: E,
 ): JsonSchemaApiEndpoints => {
   const ret: JsonSchemaApiEndpoints = {};
   for (const path of Object.keys(endpoints)) {
-    ret[path] = toJsonSchemaEndpoint(endpoints[path]);
+    ret[path] = toJsonSchemaEndpoint(toSchema, endpoints[path]);
   }
   return ret;
 };
 
-export const toJsonSchemaEndpoint = <Endpoint extends ValibotApiEndpoint>(
+export const toJsonSchemaEndpoint = <Endpoint extends AnyApiEndpoint>(
+  toSchema: ToSchema,
   endpoint: Endpoint,
 ) => {
   const ret: Partial<Record<Method, JsonSchemaApiSpec>> = {};
   for (const method of Method) {
     const spec = endpoint[method];
     if (spec) {
-      ret[method] = toJsonSchemaApiSpec(spec);
+      ret[method] = toJsonSchemaApiSpec(toSchema, spec);
     }
   }
   return ret;
 };
 
-export const toJsonSchemaApiSpec = <Spec extends ValibotApiSpec>(
+export const toJsonSchemaApiSpec = <Spec extends AnyApiSpec>(
+  toSchema: ToSchema,
   spec: Spec,
 ): JsonSchemaApiSpec => {
   const extraProps = extractExtraApiSpecProps(spec);
   const ret: JsonSchemaApiSpec = {
-    responses: toJsonSchemaResponses(spec.responses),
+    responses: toJsonSchemaResponses(toSchema, spec.responses),
   };
   for (const key of apiSpecRequestKeys) {
     if (spec[key]) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ret[key] = toJsonSchema(spec[key] as any);
+      ret[key] = toSchema(spec[key]);
     }
   }
   return { ...extraProps, ...ret };
 };
 
 const toJsonSchemaResponses = (
-  responses: ValibotAnyApiResponses,
+  toSchema: ToSchema,
+  responses: AnyApiResponses,
 ): JsonSchemaApiResponses => {
   const statusCodes = Object.keys(responses).map(Number) as StatusCode[];
   const ret: JsonSchemaApiResponses = {};
@@ -67,8 +72,8 @@ const toJsonSchemaResponses = (
     }
     ret[statusCode] = {
       ...extractExtraResponseProps(r),
-      body: toJsonSchema(r.body),
-      headers: r.headers ? toJsonSchema(r.headers) : undefined,
+      body: toSchema(r.body),
+      headers: r.headers ? toSchema(r.headers) : undefined,
     };
   }
   return ret;

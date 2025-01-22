@@ -1,6 +1,8 @@
 import { OpenAPIV3_1 } from "openapi-types";
-import { toJsonSchemaApiEndpoints } from "./jsonschema";
-import { toOpenApiDoc as toOpenApiDocOrg } from "../core";
+import {
+  JsonSchemaApiEndpoints,
+  toOpenApiDoc as toOpenApiDocOrg,
+} from "../core";
 import {
   BaseOpenApiSpec,
   DefineOpenApiEndpoint,
@@ -9,7 +11,10 @@ import {
   ToOpenApiResponse,
 } from "../core/openapi/spec";
 import { z } from "zod";
-import { ZodAnyApiResponse } from "./index";
+import { ZodAnyApiResponse, ZodApiEndpoints } from "./index";
+import { toJsonSchemaApiEndpoints as toEndpoints } from "../core/jsonschema";
+import { createSchema } from "zod-openapi";
+import { JSONSchema7 } from "json-schema";
 
 export const toOpenApiDoc = <E extends ZodOpenApiEndpoints>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
@@ -36,3 +41,11 @@ export type ZodOpenApiSpec<
   RequestHeaders extends z.ZodTypeAny = z.ZodTypeAny,
   Responses extends ZodAnyOpenApiResponses = ZodAnyOpenApiResponses,
 > = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
+
+export const toJsonSchemaApiEndpoints = <E extends ZodApiEndpoints>(
+  endpoints: E,
+): JsonSchemaApiEndpoints => toEndpoints(toSchema, endpoints);
+
+const toSchema = (s: z.ZodTypeAny) => {
+  return createSchema(s).schema as JSONSchema7;
+};
