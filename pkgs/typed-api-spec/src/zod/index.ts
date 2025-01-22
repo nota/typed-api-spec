@@ -100,7 +100,7 @@ export type ZodApiSpec<
   RequestHeaders extends z.ZodTypeAny = z.ZodTypeAny,
   Responses extends ZodAnyApiResponses = ZodAnyApiResponses,
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
-type ZodAnyApiResponse = DefineResponse<z.ZodTypeAny, z.ZodTypeAny>;
+export type ZodAnyApiResponse = DefineResponse<z.ZodTypeAny, z.ZodTypeAny>;
 export type ZodAnyApiResponses = DefineApiResponses<ZodAnyApiResponse>;
 
 // -- converter --

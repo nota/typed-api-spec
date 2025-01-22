@@ -8,9 +8,10 @@
     "test:type-check": "tsc --noEmit",
     "ex:express:zod:server": "tsx express/zod/express.ts",
     "ex:express:zod:client": "tsx express/zod/fetch.ts",
-    "ex:express:openapi": "tsx express/openapi/index.ts",
+    "ex:express:zod:openapi": "tsx express/zod/openapi/index.ts",
     "ex:express:valibot:server": "tsx express/valibot/express.ts",
     "ex:express:valibot:client": "tsx express/valibot/fetch.ts",
+    "ex:express:valibot:openapi": "tsx express/valibot/openapi/index.ts",
     "ex:fastify:zod:server": "tsx fastify/zod/fastify.ts",
     "ex:fasitify:zod:client": "tsx fastify/zod/fetch.ts",
     "ex:withValidation": "tsx simple/withValidation.ts"
