@@ -43,7 +43,6 @@ describe("openapi", () => {
         content: {
           "application/json": {
             schema: {
-              $schema: "http://json-schema.org/draft-07/schema#",
               items: {
                 properties: {
                   message: {
@@ -68,7 +67,6 @@ describe("openapi", () => {
       content: {
         "application/json": {
           schema: {
-            $schema: "http://json-schema.org/draft-07/schema#",
             properties: {
               name: {
                 type: "string",
@@ -86,7 +84,6 @@ describe("openapi", () => {
         content: {
           "application/json": {
             schema: {
-              $schema: "http://json-schema.org/draft-07/schema#",
               items: {
                 properties: {
                   message: {
