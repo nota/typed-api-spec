@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
+import "zod-openapi/extend";
 import z from "zod";
 import { toOpenApiDoc } from "@notainc/typed-api-spec/zod/openapi";
 import { ZodOpenApiEndpoints } from "@notainc/typed-api-spec/zod/openapi";
@@ -23,7 +24,9 @@ const apiEndpoints = {
       summary: "Find pet by ID",
       description: "Returns a single pet",
       tags: ["pets"],
-      params: z.object({ petId: z.string() }),
+      params: z.object({
+        petId: z.string().openapi({ description: "ID of pet", example: "1" }),
+      }),
       query: z.object({ page: z.string() }),
       responses: {
         200: {
