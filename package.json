@@ -9,5 +9,8 @@
     "format": "npm run format --workspaces",
     "op:inject": "npm run op:inject --workspaces",
     "docs": "typedoc"
+  },
+  "devDependencies": {
+    "openapi-types": "^12.1.3"
   }
 }

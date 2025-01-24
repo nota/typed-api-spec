@@ -1,6 +1,7 @@
 import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
+import { JSONSchema7 } from "json-schema";
 
 /**
  * { // ApiEndpoints
@@ -39,15 +40,20 @@ export const newMethodInvalidError = (method: string): MethodInvalidError => ({
 
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;
 export type AnyApiEndpoint = Partial<Record<Method, AnyApiSpec>>;
+export type JsonSchemaApiEndpoint = Partial<Record<Method, JsonSchemaApiSpec>>;
+
 type AsJsonApiEndpoint<AE extends ApiEndpoint> = {
   // FIXME: NonNullableでいいんだっけ?
   [M in keyof AE & Method]: AsJsonApiSpec<NonNullable<AE[M]>>;
 };
+
 export type ApiEndpoints = { [Path in string]: ApiEndpoint };
 export type AnyApiEndpoints = { [Path in string]: AnyApiEndpoint };
-
 export type UnknownApiEndpoints = {
   [Path in string]: Partial<Record<Method, UnknownApiSpec>>;
+};
+export type JsonSchemaApiEndpoints = {
+  [Path in string]: JsonSchemaApiEndpoint;
 };
 
 export const apiSpecRequestKeys = Object.freeze([
@@ -98,6 +104,27 @@ export type UnknownApiSpec = BaseApiSpec<
   unknown,
   DefineApiResponses<DefineResponse<unknown, unknown>>
 >;
+export type JsonSchemaApiSpec = BaseApiSpec<
+  JSONSchema7,
+  JSONSchema7,
+  JSONSchema7,
+  JSONSchema7,
+  JsonSchemaApiResponses
+>;
+
+export const extractExtraApiSpecProps = (spec: AnyApiSpec) => {
+  return Object.entries(spec).reduce(
+    (acc, [key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!apiSpecKeys.includes(key as any)) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as Record<string, any>,
+  );
+};
 
 type JsonHeader = {
   "Content-Type": "application/json";
@@ -176,12 +203,14 @@ export type ApiResHeaders<
   ? AResponses[SC]["headers"]
   : Record<string, never>;
 export type AnyApiResponses = DefineApiResponses<AnyResponse>;
+export type JsonSchemaApiResponses = DefineApiResponses<JsonSchemaResponse>;
 export type DefineApiResponses<Response extends AnyResponse> = Partial<
   Record<StatusCode, Response>
 >;
 export type DefineResponse<Body, Headers> = { body: Body; headers?: Headers };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyResponse = DefineResponse<any, any>;
+export type JsonSchemaResponse = DefineResponse<JSONSchema7, JSONSchema7>;
 export type ApiClientResponses<AResponses extends AnyApiResponses> = {
   [SC in keyof AResponses & StatusCode]: ClientResponse<
     ApiResBody<AResponses, SC>,
@@ -200,4 +229,18 @@ export type DefineApiEndpoints<E extends ApiEndpoints> = E;
 
 export type AsJsonApi<E extends ApiEndpoints> = {
   [Path in keyof E & string]: AsJsonApiEndpoint<E[Path]>;
+};
+
+export const extractExtraResponseProps = (response: AnyResponse) => {
+  return Object.entries(response).reduce(
+    (acc, [key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!apiSpecResponseKeys.includes(key as any)) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as Record<string, any>,
+  );
 };
