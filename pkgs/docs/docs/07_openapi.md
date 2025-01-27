@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# OpenAPI Support in typed-api-spec
+# OpenAPI (Experimental)
 
 The [OpenAPI](https://swagger.io/specification) Specification (OAS) defines a standard, language-agnostic interface to HTTP APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
 
@@ -29,7 +29,7 @@ const apiEndpoints = {
         },
       },
     },
-  }
+  },
 } satisfies ZodOpenApiEndpoints;
 ```
 
@@ -37,7 +37,7 @@ ZodOpenApiEndpoints allows to define extra properties that are required for Open
 
 ## Generating OpenAPI Documentation
 
-You can generate an OpenAPI specification using by the `toOpenApiDoc()` function. 
+You can generate an OpenAPI specification using by the `toOpenApiDoc()` function.
 You can serve OpenAPI endpoint by serving the generated OpenAPI object as JSON.
 Here is an example of how to serve OpenAPI documentation using Express.
 
@@ -68,3 +68,11 @@ app.get("/openapi", (req, res) => {
 You can use [Swagger UI](https://swagger.io/tools/swagger-ui/) to visualize and interact with the API's resources.
 
 [![Image from Gyazo](https://i.gyazo.com/e8489d011b00c4a635d269d09e37c237.png)](https://gyazo.com/e8489d011b00c4a635d269d09e37c237)
+
+## Supportted libraries
+
+OpenAPI integration depends on the validation library you use.
+Currently we support the following libraries:
+
+- [zod](/docs/validation/zod)
+- [valibot](/docs/validation/valibot)
