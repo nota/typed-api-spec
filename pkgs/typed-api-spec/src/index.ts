@@ -21,3 +21,12 @@ import JSONT, { JSON$stringifyT } from "./json";
 export { JSONT, JSON$stringifyT };
 
 export * from "./zod";
+export {
+  toOpenApiDoc as toZodOpenApiDoc,
+  toJsonSchemaApiEndpoints as toZodJsonSchemaApiEndpoints,
+  ZodOpenApiEndpoints,
+  ZodOpenApiEndpoint,
+  ZodAnyOpenApiResponse,
+  ZodAnyOpenApiResponses,
+  ZodOpenApiSpec,
+} from "./zod/openapi";
