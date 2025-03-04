@@ -30,8 +30,6 @@ type ValidateUrlTestCase = [
   >,
 ];
 
-// type A = ValidateUrl<{ a: string }, `/topics?a=b`>;
-
 {
   type Spec = DefineApiEndpoints<{
     "/users": {
@@ -337,6 +335,30 @@ type ValidateUrlTestCase = [
       if (res.ok) {
         (await res.json()).prop;
       }
+    }
+  })();
+}
+
+{
+  type Spec = DefineApiEndpoints<{
+    "/": {
+      get: {
+        responses: { 200: { body: { userId: string } } };
+      };
+    };
+    "/:org": {
+      get: {
+        responses: { 200: { body: { org: string } } };
+      };
+    };
+  }>;
+  (async () => {
+    const f = fetch as FetchT<"", Spec>;
+    {
+      // If path variable is empty, it should not be matched
+      // For example, "/" should not match to "/:org"
+      const res = await f("/", {});
+      (await res.json()).userId;
     }
   })();
 }
