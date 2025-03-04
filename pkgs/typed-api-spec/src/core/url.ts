@@ -67,6 +67,36 @@ export type ToUrlPattern<T extends string> = T extends `${infer O}?${infer R}`
 export type NoPathError = C.E<"no matched path found">;
 
 /**
+ * パスパターン内のパス変数が空文字列とマッチするかをチェックする型
+ *
+ * @example
+ * ```
+ * type T0 = HasEmptyPathVariableMatch<"/", "/:userId">; // true
+ * type T1 = HasEmptyPathVariableMatch<"/users/123", "/users/:userId">; // false
+ * ```
+ */
+export type HasEmptyPathVariableMatch<
+  InputPath extends string,
+  Pattern extends string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+> = Pattern extends `${infer Prefix}:${infer ParamName}/${infer Suffix}`
+  ? InputPath extends `${Prefix}${infer Segment}/${infer Rest}`
+    ? Segment extends ""
+      ? true // Empty segment before slash = empty path variable match
+      : HasEmptyPathVariableMatch<Rest, Suffix> // Non-empty segment, check rest
+    : InputPath extends `${Prefix}${string}`
+      ? true // Path ends here, but pattern continues with path variable
+      : false
+  : // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Pattern extends `${infer Prefix}:${infer ParamName}`
+    ? InputPath extends `${Prefix}${infer Segment}`
+      ? Segment extends ""
+        ? true // Empty segment at the end = empty path variable match
+        : false // Non-empty segment at the end = no empty match
+      : false
+    : false; // No path variables in pattern = no empty match
+
+/**
  * Extract matched URL pattern from URL
  * T: URL
  * Patterns: URL pattern candidates
@@ -78,16 +108,18 @@ export type NoPathError = C.E<"no matched path found">;
  * ```
  */
 export type MatchedPatterns<
-  T extends string,
-  Patterns extends string,
+  Path extends string,
+  Pattern extends string,
   Matched = {
-    [P in Patterns as T extends ToUrlPattern<P>
-      ? SameSlashNum<P, T> extends true
-        ? P
+    [P in Pattern as Path extends PathToUrlParamPattern<P>
+      ? SameSlashNum<P, Path> extends true
+        ? HasEmptyPathVariableMatch<Path, P> extends true
+          ? never
+          : P
         : never
       : never]: true;
   },
-> = Matched extends Record<string, never> ? NoPathError : keyof Matched;
+> = keyof Matched extends never ? NoPathError : keyof Matched;
 
 /**
  * Parse host and port

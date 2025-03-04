@@ -8,6 +8,7 @@ import {
   ParseUrlParams,
   ToUrlParamPattern,
   ToUrlPattern,
+  HasEmptyPathVariableMatch,
 } from "./url";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -83,6 +84,40 @@ type MatchedPatternsTestCases = [
       "/users/:userId/profile"
     >
   >,
+
+  // そもそもマッチしないケース (NoPathErrorを返す)
+  Expect<Equal<MatchedPatterns<"/", "/users/:userId">, NoPathError>>,
+  Expect<Equal<MatchedPatterns<"/users", "/users/:userId">, NoPathError>>,
+  Expect<Equal<MatchedPatterns<"/", "/:org/:repo">, NoPathError>>,
+  Expect<Equal<MatchedPatterns<"/org1", "/:org/:repo">, NoPathError>>,
+
+  // 空のパス変数があるケース (NoPathErrorを返す)
+  Expect<Equal<MatchedPatterns<"/", "/:userId">, NoPathError>>,
+  Expect<Equal<MatchedPatterns<"/users/", "/users/:userId">, NoPathError>>,
+  Expect<
+    Equal<MatchedPatterns<"/api/1/", "/api/:version/:resource">, NoPathError>
+  >,
+
+  // 空のパス変数がないケース (パターンを返す)
+  Expect<
+    Equal<MatchedPatterns<"/users/123", "/users/:userId">, "/users/:userId">
+  >,
+  Expect<Equal<MatchedPatterns<"/org1/repo1", "/:org/:repo">, "/:org/:repo">>,
+
+  // 完全一致するケース
+  Expect<Equal<MatchedPatterns<"/users", "/users">, "/users">>,
+  Expect<Equal<MatchedPatterns<"/", "/">, "/">>,
+
+  // パスパターンが複数あるケース
+  Expect<
+    Equal<
+      MatchedPatterns<"/users/123", "/users/:userId" | "/users">,
+      "/users/:userId"
+    >
+  >,
+  Expect<
+    Equal<MatchedPatterns<"/users", "/users/:userId" | "/users">, "/users">
+  >,
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -157,4 +192,39 @@ type ParseOriginAndPathCases = [
 type ParseURLTestCases = [
   Expect<Equal<ParseURL<"/user?a=b">["path"], "/user">>,
   Expect<Equal<ParseURL<"https://example.com/user">["path"], "/user">>,
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type HasEmptyPathVariableMatchTestCases = [
+  // 空のパス変数があるケース (trueを返す)
+  Expect<Equal<HasEmptyPathVariableMatch<"/", "/:userId">, true>>,
+  Expect<Equal<HasEmptyPathVariableMatch<"/users/", "/users/:userId">, true>>,
+  Expect<
+    Equal<HasEmptyPathVariableMatch<"/api/1/", "/api/:version/:resource">, true>
+  >,
+
+  // 空のパス変数がないケース (falseを返す)
+  Expect<
+    Equal<HasEmptyPathVariableMatch<"/users/123", "/users/:userId">, false>
+  >,
+  Expect<
+    Equal<
+      HasEmptyPathVariableMatch<"/api/v1/users", "/api/:version/:resource">,
+      false
+    >
+  >,
+  Expect<
+    Equal<
+      HasEmptyPathVariableMatch<"/users/123/posts", "/users/:userId/posts">,
+      false
+    >
+  >,
+
+  // 複数のセグメントがあるケース
+  Expect<Equal<HasEmptyPathVariableMatch<"/", "/:org/:repo">, true>>,
+  Expect<Equal<HasEmptyPathVariableMatch<"/org1", "/:org/:repo">, true>>,
+  Expect<Equal<HasEmptyPathVariableMatch<"/org1/repo1", "/:org/:repo">, false>>,
+
+  // そもそもマッチしないケース(falseを返す)
+  Expect<Equal<HasEmptyPathVariableMatch<"/", "/org/:repo">, false>>,
 ];
