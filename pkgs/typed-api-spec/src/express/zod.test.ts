@@ -2,7 +2,7 @@ import { describe, it, expect, vi, assert } from "vitest";
 import request from "supertest";
 import express from "express";
 import { asAsync, ValidateLocals, validatorMiddleware } from "./index";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
 import { ToHandlers, typed } from "./zod";
@@ -128,17 +128,15 @@ describe("validatorMiddleware", () => {
       {
         const r = await validate.query();
         if (r.issues) {
-          expect(r.issues).toEqual(
-            new ZodError([
-              {
-                code: "invalid_type",
-                expected: "string",
-                received: "undefined",
-                path: ["name"],
-                message: "Required",
-              },
-            ]),
-          );
+          expect(r.issues).toEqual([
+            {
+              code: "invalid_type",
+              expected: "string",
+              received: "undefined",
+              path: ["name"],
+              message: "Required",
+            },
+          ]);
         } else {
           assert.fail("issue must be exist");
         }
@@ -147,17 +145,15 @@ describe("validatorMiddleware", () => {
       {
         const r = await validate.body();
         if (r.issues) {
-          expect(r.issues).toEqual(
-            new ZodError([
-              {
-                code: "invalid_type",
-                expected: "string",
-                received: "undefined",
-                path: ["name"],
-                message: "Required",
-              },
-            ]),
-          );
+          expect(r.issues).toEqual([
+            {
+              code: "invalid_type",
+              expected: "string",
+              received: "undefined",
+              path: ["name"],
+              message: "Required",
+            },
+          ]);
         } else {
           assert.fail("issue must be exist");
         }
@@ -165,17 +161,15 @@ describe("validatorMiddleware", () => {
 
       const r = await validate.headers();
       if (r.issues) {
-        expect(r.issues).toEqual(
-          new ZodError([
-            {
-              code: "invalid_literal",
-              expected: "application/json",
-              received: undefined,
-              path: ["content-type"],
-              message: `Invalid literal value, expected "application/json"`,
-            },
-          ]),
-        );
+        expect(r.issues).toEqual([
+          {
+            code: "invalid_literal",
+            expected: "application/json",
+            received: undefined,
+            path: ["content-type"],
+            message: `Invalid literal value, expected "application/json"`,
+          },
+        ]);
       } else {
         assert.fail("issue must be exist");
       }
@@ -204,8 +198,8 @@ describe("validatorMiddleware", () => {
       >;
       const validate = locals.validate(req as Request);
       const pathErrorResult = {
-        data: undefined,
-        error: newValidatorPathNotFoundError("/users"),
+        value: undefined,
+        issues: [newValidatorPathNotFoundError("/users")],
       };
 
       expect(validate.query?.()).toEqual(pathErrorResult);
@@ -233,8 +227,8 @@ describe("validatorMiddleware", () => {
       const locals = res.locals as SSValidateLocals<any, ParseUrlParams<"">>;
       const validate = locals.validate(req as Request);
       const methodErrorResult = {
-        data: undefined,
-        error: newValidatorMethodNotFoundError("patch"),
+        value: undefined,
+        issues: [newValidatorMethodNotFoundError("patch")],
       };
 
       expect(validate.query?.()).toEqual(methodErrorResult);
@@ -273,7 +267,7 @@ describe("typed", () => {
           "content-type": z.literal("application/json"),
         }),
         query: z.object({
-          detail: z.union([z.literal("true"), z.literal("false")]),
+          detail: z.union([z.literal("true"), z.literal("false")]).optional(),
         }),
         responses: {
           200: { body: User },

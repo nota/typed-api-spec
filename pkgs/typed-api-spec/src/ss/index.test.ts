@@ -49,13 +49,21 @@ describe("newSSValidator", () => {
     if (error) {
       return;
     }
-    expect(await reqV["query"]()).toEqual({ data: { queryName: "queryName" } });
-    expect(await reqV["params"]()).toEqual({
-      data: { paramsName: "paramsName" },
+    expect(await reqV["query"]()).toEqual({
+      typed: true,
+      value: { queryName: "queryName" },
     });
-    expect(await reqV["body"]()).toEqual({ data: { bodyName: "bodyName" } });
+    expect(await reqV["params"]()).toEqual({
+      typed: true,
+      value: { paramsName: "paramsName" },
+    });
+    expect(await reqV["body"]()).toEqual({
+      typed: true,
+      value: { bodyName: "bodyName" },
+    });
     expect(await reqV["headers"]()).toEqual({
-      data: { headersName: "headersName" },
+      typed: true,
+      value: { headersName: "headersName" },
     });
 
     const { data: resV, error: resE } = await res(validResInput);
@@ -64,10 +72,12 @@ describe("newSSValidator", () => {
       return;
     }
     expect(await resV["body"]()).toEqual({
-      data: { bodyNameRes: "bodyNameRes" },
+      typed: true,
+      value: { bodyNameRes: "bodyNameRes" },
     });
     expect(await resV["headers"]()).toEqual({
-      data: { headersNameRes: "headersNameRes" },
+      typed: true,
+      value: { headersNameRes: "headersNameRes" },
     });
   });
 
