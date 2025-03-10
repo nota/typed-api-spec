@@ -1,8 +1,8 @@
 import { withValidation } from "./validation";
 import { describe, it, expect, vi } from "vitest";
-import { newZodValidator, ZodApiEndpoints } from "../zod";
 import { z } from "zod";
 import { toLCObj } from "../utils";
+import { newSSValidator, SSApiEndpoints } from "../ss";
 
 const newMockFetch = (
   body: Record<string, string>,
@@ -32,11 +32,11 @@ describe("withValidation", () => {
         responses: { 200: { body: z.object({ bodyNameRes: z.string() }) } },
       },
     },
-  } satisfies ZodApiEndpoints;
+  } satisfies SSApiEndpoints;
   const path = "/p?queryName=q";
   describe("invalid request", () => {
     const ft = newMockFetch({ bodyNameRes: "b" }, { headersNameRes: "h" });
-    const { req, res } = newZodValidator(pathMap);
+    const { req, res } = newSSValidator(pathMap);
     const fetchV = withValidation(ft, pathMap, req, res);
     it("query", async () => {
       await expect(() =>
@@ -65,7 +65,7 @@ describe("withValidation", () => {
   describe("status code 200", () => {
     it("valid response", async () => {
       const ft = newMockFetch({ bodyNameRes: "b" }, { headersNameRes: "h" });
-      const { req, res } = newZodValidator(pathMap);
+      const { req, res } = newSSValidator(pathMap);
       const fetchV = withValidation(ft, pathMap, req, res);
       const r = await fetchV(path, { headers: { headersName: "h" } });
       expect(await r.json()).toEqual({ bodyNameRes: "b" });
@@ -76,7 +76,7 @@ describe("withValidation", () => {
           { invalid: "invalid" },
           { headersNameRes: "h" },
         );
-        const { req, res } = newZodValidator(pathMap);
+        const { req, res } = newSSValidator(pathMap);
         const fetchV = withValidation(ft, pathMap, req, res);
         await expect(() =>
           fetchV(path, { headers: { headersName: "h" } }),
@@ -86,7 +86,7 @@ describe("withValidation", () => {
       });
       it("headers", async () => {
         const ft = newMockFetch({ bodyNameRes: "b" }, { invalid: "invalid" });
-        const { req, res } = newZodValidator(pathMap);
+        const { req, res } = newSSValidator(pathMap);
         const fetchV = withValidation(ft, pathMap, req, res);
         await expect(() =>
           fetchV(path, { headers: { headersName: "h" } }),
@@ -105,7 +105,7 @@ describe("withValidation", () => {
           status: 400,
         },
       );
-      const { req, res } = newZodValidator(pathMap);
+      const { req, res } = newSSValidator(pathMap);
       const fetchV = withValidation(ft, pathMap, req, res);
       const r = await fetchV(path, { headers: { headersName: "h" } });
       expect(await r.json()).toEqual({ message: "m" });

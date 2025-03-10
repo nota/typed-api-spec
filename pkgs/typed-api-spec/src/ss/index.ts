@@ -23,15 +23,12 @@ import {
   ResponseSpecValidatorGeneratorRawInput,
 } from "../core/validator/response";
 import { StandardSchemaV1 } from "@standard-schema/spec";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyStandardSchemaV1 = StandardSchemaV1<any>;
 
-export type SSValidator<V extends StandardSchemaV1 | undefined> =
-  V extends StandardSchemaV1
-    ? Validator<
-        NonNullable<
-          StandardSchemaV1.SuccessResult<StandardSchemaV1.InferOutput<V>>
-        >,
-        StandardSchemaV1.Issue[]
-      >
+export type SSValidator<V extends AnyStandardSchemaV1 | undefined> =
+  V extends AnyStandardSchemaV1
+    ? Validator<NonNullable<StandardSchemaV1.InferOutput<V>>>
     : undefined;
 export type SSValidators<
   AS extends SSApiSpec,
@@ -79,7 +76,7 @@ export type ToSSValidators<
   : Record<string, never>;
 
 export type InferOrUndefined<T> = T extends StandardSchemaV1
-  ? StandardSchemaV1.InferOutput<T>
+  ? StandardSchemaV1.InferInput<T>
   : undefined;
 
 // -- spec --
@@ -88,10 +85,10 @@ export type SSApiEndpoint = Partial<Record<Method, SSApiSpec>>;
 export type SSApiSpec<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ParamKeys extends string = string,
-  Params extends StandardSchemaV1 = StandardSchemaV1,
-  Query extends StandardSchemaV1 = StandardSchemaV1,
-  Body extends StandardSchemaV1 = StandardSchemaV1,
-  RequestHeaders extends StandardSchemaV1 = StandardSchemaV1,
+  Params extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Query extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Body extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  RequestHeaders extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   Responses extends SSAnyApiResponses = SSAnyApiResponses,
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 export type SSAnyApiResponse = DefineResponse<
@@ -149,13 +146,13 @@ export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
     async (spec: SSApiSpec, input, key) => {
       let r = spec[key]!["~standard"].validate(input[key]);
       if (r instanceof Promise) r = await r;
-      return toResult(r);
+      return r;
     },
     async (spec: SSApiSpec, input, key) => {
       const schema = spec["responses"][input.statusCode as StatusCode]?.[key];
       let r = schema!["~standard"].validate(input[key]);
       if (r instanceof Promise) r = await r;
-      return toResult(r);
+      return r;
     },
   ) as {
     req: SSRequestValidatorsGenerator<E>;
@@ -163,12 +160,12 @@ export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
   };
 };
 
-const toResult = <T>(
-  res: StandardSchemaV1.Result<T>,
-): Result<T, ReadonlyArray<StandardSchemaV1.Issue>> => {
-  if (res.issues) {
-    return Result.error(res.issues);
-  } else {
-    return Result.data(res.value);
-  }
-};
+// const toResult = <T>(
+//   res: StandardSchemaV1.Result<T>,
+// ): Result<T, ReadonlyArray<StandardSchemaV1.Issue>> => {
+//   if (res.issues) {
+//     return Result.error(res.issues);
+//   } else {
+//     return Result.data(res.value);
+//   }
+// };

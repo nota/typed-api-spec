@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, assert } from "vitest";
 import { newSSValidator, SSApiEndpoints } from "./index";
 import * as v from "valibot";
 import { newValidatorPathNotFoundError } from "../core/validator/validate";
@@ -71,7 +71,10 @@ describe("newSSValidator", () => {
     });
   });
 
-  const checkSSError = (issues: StandardSchemaV1.Issue[], path: string) => {
+  const checkSSError = (
+    issues: Readonly<StandardSchemaV1.Issue[]>,
+    path: string,
+  ) => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toEqual({
       abortEarly: undefined,
@@ -116,19 +119,19 @@ describe("newSSValidator", () => {
       if (error) {
         return;
       }
-      const { data, error: error2 } = await reqV[key]();
-      expect(data).toBeUndefined();
-      if (data) {
-        return;
+      const r = await reqV[key]();
+      if (r.issues) {
+        checkSSError(r.issues, `${key}Name`);
+      } else {
+        assert.fail("issues must be exist");
       }
-      checkSSError(error2, `${key}Name`);
     });
   });
   describe("invalid response input", () => {
     const { res } = newSSValidator(pathMap);
     const keys: (keyof AnyResponseSpecValidator)[] = ["body", "headers"];
     it.each(keys)("%s", async (key) => {
-      const { data: reqV, error } = await res({
+      const { data: resV, error } = await res({
         ...validResInput,
         [key]: { invalid: "invalidValue" },
       });
@@ -136,13 +139,12 @@ describe("newSSValidator", () => {
       if (error) {
         return;
       }
-      const { data, error: error2 } = await reqV[key]();
-      expect(data).toBeUndefined();
-      if (data) {
-        return;
+      const r = await resV[key]();
+      if (r.issues) {
+        checkSSError(r.issues, `${key}NameRes`);
+      } else {
+        assert.fail("issues must be exist");
       }
-      console.log("invalidt response input", key, error2);
-      checkSSError(error2, `${key}NameRes`);
     });
   });
 

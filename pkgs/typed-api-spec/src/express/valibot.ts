@@ -1,5 +1,4 @@
 import {
-  newValibotValidator,
   ToApiEndpoints,
   ValibotApiEndpoints,
   ValibotApiSpec,
@@ -13,6 +12,7 @@ import {
   validatorMiddleware,
 } from "./index";
 import { Router } from "express";
+import { newSSValidator } from "../ss";
 
 /**
  * Convert ValibotApiSpec to Express Request Handler type.
@@ -65,7 +65,7 @@ export const typed = <const Endpoints extends ValibotApiEndpoints>(
   pathMap: Endpoints,
   router: Router,
 ): RouterT<ToApiEndpoints<Endpoints>, ToValidatorsMap<Endpoints>> => {
-  const { req: reqValidator } = newValibotValidator(pathMap);
+  const { req: reqValidator } = newSSValidator(pathMap);
   router.use(validatorMiddleware(reqValidator));
   return router;
 };

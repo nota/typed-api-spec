@@ -16,10 +16,12 @@ import {
   RequestValidatorGenerator,
   SpecValidatorGeneratorInput,
 } from "./request";
+import type { StandardSchemaV1 as SS } from "@standard-schema/spec";
+export type SSResult<Data> = SS.Result<Data> | Promise<SS.Result<Data>>;
 
-export type Validator<Data, Error> = () => Result<Data, Error>;
+export type Validator<Data> = () => SSResult<Data>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyValidator = Validator<any, any>;
+export type AnyValidator = Validator<any>;
 
 export const checkValidatorsInput = <
   E extends AnyApiEndpoints,
