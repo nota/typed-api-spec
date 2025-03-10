@@ -20,7 +20,7 @@ import {
   RequestSpecValidatorGenerator,
   SpecValidatorMap,
 } from "../core/validator/request";
-import { Result } from "../utils";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -112,11 +112,24 @@ export const validatorMiddleware = <V extends RequestSpecValidatorGenerator>(
         body: req.body,
       });
       if (error) {
+        // TODO: StandardSchemV1のFailureResultのフォーマットに合わせる
         return {
-          query: () => Result.error(error),
-          params: () => Result.error(error),
-          body: () => Result.error(error),
-          headers: () => Result.error(error),
+          query: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          params: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          body: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          headers: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
         };
       }
       return v2;

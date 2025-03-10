@@ -11,10 +11,10 @@ import {
   ToOpenApiResponse,
 } from "../core/openapi/spec";
 import { z } from "zod";
-import { ZodAnyApiResponse, ZodApiEndpoints } from "./index";
 import { toJsonSchemaApiEndpoints as toEndpoints } from "../core/jsonschema";
 import { createSchema } from "zod-openapi";
 import { JSONSchema7 } from "json-schema";
+import { SSAnyApiResponse } from "../ss";
 
 export const toOpenApiDoc = <E extends ZodOpenApiEndpoints>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
@@ -28,7 +28,7 @@ export type ZodOpenApiEndpoints = {
   [Path in string]: ZodOpenApiEndpoint;
 };
 export type ZodOpenApiEndpoint = DefineOpenApiEndpoint<ZodOpenApiSpec>;
-export type ZodAnyOpenApiResponse = ToOpenApiResponse<ZodAnyApiResponse>;
+export type ZodAnyOpenApiResponse = ToOpenApiResponse<SSAnyApiResponse>;
 export type ZodAnyOpenApiResponses =
   DefineOpenApiResponses<ZodAnyOpenApiResponse>;
 
@@ -42,7 +42,7 @@ export type ZodOpenApiSpec<
   Responses extends ZodAnyOpenApiResponses = ZodAnyOpenApiResponses,
 > = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
-export const toJsonSchemaApiEndpoints = <E extends ZodApiEndpoints>(
+export const toJsonSchemaApiEndpoints = <E extends ZodOpenApiEndpoints>(
   endpoints: E,
 ): JsonSchemaApiEndpoints => toEndpoints(toSchema, endpoints);
 

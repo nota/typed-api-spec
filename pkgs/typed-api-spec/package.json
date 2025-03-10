@@ -139,6 +139,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.7.3",
+    "@standard-schema/spec": "^1.0.0",
     "json-schema": "^0.4.0",
     "json-schema-walker": "^2.0.0",
     "path-to-regexp": "^8.2.0"

@@ -23,7 +23,7 @@ import {
 import { Result } from "../utils";
 
 export type ValibotValidator<V extends AnyV | undefined> = V extends AnyV
-  ? Validator<v.InferOutput<V>, [v.InferIssue<V>, ...v.InferIssue<V>[]]>
+  ? Validator<v.InferOutput<V>>
   : undefined;
 export type ValibotValidators<
   AS extends ValibotApiSpec,

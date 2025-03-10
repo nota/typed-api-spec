@@ -12,6 +12,7 @@ import {
   ValidatorInputError,
 } from "./validate";
 import { ParsedQs } from "qs";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 export const listDefinedRequestApiSpecKeys = <Spec extends AnyApiSpec>(
   spec: Spec,
@@ -62,7 +63,8 @@ export type SpecValidatorGeneratorInput<
 };
 
 export const runSpecValidator = (validators: AnySpecValidator | undefined) => {
-  const newD = () => Result.data(undefined);
+  const newD = () =>
+    ({ value: undefined }) as StandardSchemaV1.SuccessResult<undefined>;
   return {
     params: validators?.params?.() ?? newD(),
     query: validators?.query?.() ?? newD(),

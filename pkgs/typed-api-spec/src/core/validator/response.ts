@@ -14,6 +14,7 @@ import {
   ValidatorInputError,
 } from "./validate";
 import { AnySpecValidator } from "./request";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 export const listDefinedResponseApiSpecKeys = <Response extends AnyResponse>(
   res: Response,
@@ -66,7 +67,8 @@ export type AnyResponseSpecValidator = Partial<
 export const runResponseSpecValidator = (
   r: Result<AnyResponseSpecValidator, ValidatorInputError>,
 ) => {
-  const newD = () => Result.data(undefined);
+  const newD = () =>
+    ({ value: undefined }) as StandardSchemaV1.SuccessResult<undefined>;
   return {
     // TODO: スキーマが間違っていても、bodyのvalidatorがなぜか定義されていない
     preCheck: r.error,
