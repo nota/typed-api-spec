@@ -2,6 +2,7 @@ import {
   AnyResponse,
   ApiResBody,
   ApiResHeaders,
+  ApiResponses,
   BaseApiSpec,
   DefineApiResponses,
   DefineResponse,
@@ -21,10 +22,9 @@ import {
   SpecValidatorGeneratorRawInput,
 } from "../core/validator/request";
 import {
-  AnyResponseSpecValidator,
   listDefinedResponseApiSpecKeys,
   ResponseSpecValidator,
-  ResponseSpecValidatorGeneratorInput,
+  ResponseSpecValidatorGeneratorRawInput,
 } from "../core/validator/response";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,9 +128,9 @@ export type ToApiResponses<AR extends SSAnyApiResponses> = {
  * @param endpoints API endpoints
  */
 export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
-  const req = (
-    input: SpecValidatorGeneratorRawInput<string, string>,
-  ): Result<AnySpecValidator, ValidatorInputError> => {
+  const req = <Path extends string, M extends string>(
+    input: SpecValidatorGeneratorRawInput<Path, M>,
+  ): Result<ToSSValidators<E, Path, M>, ValidatorInputError> => {
     const { data: vInput, error } = checkValidatorsInput(endpoints, input);
     if (error) {
       return Result.error(error);
@@ -144,11 +144,14 @@ export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
         return r;
       };
     });
-    return Result.data(validators);
+    return Result.data(validators as ToSSValidators<E, Path, M>);
   };
-  const res = (
-    input: ResponseSpecValidatorGeneratorInput<string, Method, StatusCode>,
-  ): Result<AnyResponseSpecValidator, ValidatorInputError> => {
+  const res = <Path extends string, M extends string, SC extends number>(
+    input: ResponseSpecValidatorGeneratorRawInput<Path, M, SC>,
+  ): Result<
+    ToSSResponseValidators<ApiResponses<E, Path, M>, SC>,
+    ValidatorInputError
+  > => {
     const { data: vInput, error } = checkValidatorsInput(endpoints, input);
     if (error) {
       return Result.error(error);
@@ -165,7 +168,9 @@ export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
         return r;
       };
     });
-    return Result.data(validator);
+    return Result.data(
+      validator as ToSSResponseValidators<ApiResponses<E, Path, M>, SC>,
+    );
   };
   return { req, res };
   // return createValidator(

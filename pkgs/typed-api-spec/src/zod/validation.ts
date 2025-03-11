@@ -3,9 +3,10 @@ import { SSApiEndpoints, ToApiEndpoints } from "../ss/index.js";
 
 export const withZodValidation = async (spec: SSApiEndpoints, ft = fetch) => {
   const { withValidation } = await import("../fetch/index.js");
-  const { newSSValidator } = await import("../ss/index.js");
-  const v = newSSValidator(spec);
-  return withValidation(ft, spec, v.req, v.res);
+  // const { newSSValidator } = await import("../ss/index.js");
+  // const v = newSSValidator(spec);
+  return withValidation(ft, spec);
+  // return withValidation(ft, spec, v.req, v.res);
 };
 
 export const newFetch = <E extends SSApiEndpoints = SSApiEndpoints>(

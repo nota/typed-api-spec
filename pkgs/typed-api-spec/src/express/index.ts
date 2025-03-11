@@ -15,12 +15,9 @@ import {
 } from "express-serve-static-core";
 import { StatusCode } from "../core";
 import { ParsedQs } from "qs";
-import {
-  AnySpecValidator,
-  RequestSpecValidatorGenerator,
-  SpecValidatorMap,
-} from "../core/validator/request";
+import { AnySpecValidator, SpecValidatorMap } from "../core/validator/request";
 import { StandardSchemaV1 } from "@standard-schema/spec";
+import { newSSValidator, SSApiEndpoints } from "../ss";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -98,12 +95,12 @@ export type RouterT<
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validatorMiddleware = <V extends RequestSpecValidatorGenerator>(
-  validator: V,
+export const validatorMiddleware = <const E extends SSApiEndpoints>(
+  pathMap: E,
 ) => {
   return (_req: Request, res: Response, next: NextFunction) => {
     res.locals.validate = (req: Request) => {
-      const { data: v2, error } = validator({
+      const { data: v2, error } = newSSValidator(pathMap).req({
         path: req.route?.path?.toString(),
         method: req.method.toLowerCase(),
         headers: req.headers,

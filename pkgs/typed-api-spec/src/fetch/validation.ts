@@ -1,17 +1,10 @@
 import { memoize, tupleIteratorToObject, unreachable } from "../utils";
 import { match } from "path-to-regexp";
-import { SSResult, UnknownApiEndpoints } from "../core";
-import {
-  AnySpecValidator,
-  RequestSpecValidatorGenerator,
-  runSpecValidator,
-} from "../core";
-import {
-  AnyResponseSpecValidator,
-  ResponseSpecValidatorGenerator,
-  runResponseSpecValidator,
-} from "../core";
+import { Method, SSResult, StatusCode, UnknownApiEndpoints } from "../core";
+import { AnySpecValidator, runSpecValidator } from "../core";
+import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
+import { newSSValidator, SSApiEndpoints } from "../ss";
 
 const dummyHost = "https://example.com";
 
@@ -126,23 +119,24 @@ const newResponseErrorHandler = (policy: "throw" | "log") => {
 
 export const withValidation = <
   Fetch extends typeof fetch,
-  Validators extends RequestSpecValidatorGenerator,
-  ResponseValidators extends ResponseSpecValidatorGenerator,
-  Endpoints extends UnknownApiEndpoints,
+  // Validators extends RequestSpecValidatorGenerator,
+  // ResponseValidators extends ResponseSpecValidatorGenerator,
+  Endpoints extends SSApiEndpoints,
 >(
   f: Fetch,
   endpoints: Endpoints,
-  validatorGenerator: Validators,
-  responseValidatorGenerator: ResponseValidators,
+  // validatorGenerator: Validators,
+  // responseValidatorGenerator: ResponseValidators,
   options: { policy: "throw" | "log" } = { policy: "throw" },
 ): Fetch => {
   const toInputWithMatcher = toInput(newPathMather(endpoints));
   const handleError = newErrorHandler(options.policy);
   const handleResponseError = newResponseErrorHandler(options.policy);
+  const validator0 = newSSValidator(endpoints);
   const ftc = async (...args: Parameters<Fetch>) => {
     const [input, init] = args;
     const vInput = toInputWithMatcher(input, init);
-    const { data: validator, error } = validatorGenerator(vInput);
+    const { data: validator, error } = validator0.req(vInput);
     // FIXME
     handleError(runSpecValidator(validator), [{ message: "", ...error }]);
     const res = await f(input, init);
@@ -153,10 +147,11 @@ export const withValidation = <
     res1.headers.forEach((value, key) => {
       headers[key] = value;
     });
-    const responseValidator = responseValidatorGenerator({
+    const responseValidator = validator0.res({
       path: vInput.path,
-      method: vInput.method,
-      statusCode: res1.status,
+      // FIXME: 雑にキャストしていいんだっけ?
+      method: vInput.method as Method,
+      statusCode: res1.status as StatusCode,
       body: await res1.json(),
       headers: headersToRecord(res1.headers ?? {}),
     });

@@ -9,7 +9,7 @@ import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
 } from "../core/validator/validate";
-import { newSSValidator, SSApiEndpoints, SSApiSpec, SSValidators } from "../ss";
+import { SSApiEndpoints, SSApiSpec, SSValidators } from "../ss";
 import { ToHandlers, typed } from "./ss";
 
 type SSValidateLocals<
@@ -57,8 +57,9 @@ describe("valibot", () => {
         },
       },
     } satisfies SSApiEndpoints;
-    const { req: reqValidator } = newSSValidator(pathMap);
-    const middleware = validatorMiddleware(reqValidator);
+    // const { req: reqValidator } = newSSValidator(pathMap);
+    // const middleware = validatorMiddleware(reqValidator);
+    const middleware = validatorMiddleware(pathMap);
     const next = vi.fn();
 
     describe("request to endpoint which is defined in ApiSpec", () => {

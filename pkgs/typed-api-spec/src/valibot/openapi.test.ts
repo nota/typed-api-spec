@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { ValibotOpenApiEndpoints } from ".";
 import * as v from "valibot";
 import { OpenAPIV3_1 } from "openapi-types";
 import { toOpenApiDoc } from "./openapi";
+import { SSOpenApiEndpoints } from "../core";
 
 describe("openapi", () => {
   const endpoints = {
@@ -28,7 +28,7 @@ describe("openapi", () => {
         },
       },
     },
-  } satisfies ValibotOpenApiEndpoints;
+  } satisfies SSOpenApiEndpoints;
 
   const expectGetPathObject = {
     description: "Get pet",

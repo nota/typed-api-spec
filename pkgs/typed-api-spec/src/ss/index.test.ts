@@ -44,7 +44,7 @@ describe("newSSValidator", () => {
 
   it("ok", async () => {
     const { req, res } = newSSValidator(pathMap);
-    const { data: reqV, error } = await req(validReqInput);
+    const { data: reqV, error } = req(validReqInput);
     expect(error).toBeUndefined();
     if (error) {
       return;
@@ -66,7 +66,7 @@ describe("newSSValidator", () => {
       value: { headersName: "headersName" },
     });
 
-    const { data: resV, error: resE } = await res(validResInput);
+    const { data: resV, error: resE } = res(validResInput);
     expect(resE).toBeUndefined();
     if (resE) {
       return;

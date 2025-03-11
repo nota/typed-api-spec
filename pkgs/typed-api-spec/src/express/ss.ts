@@ -59,7 +59,9 @@ export const typed = <const Endpoints extends SSApiEndpoints>(
   pathMap: Endpoints,
   router: Router,
 ): RouterT<ToApiEndpoints<Endpoints>, ToValidatorsMap<Endpoints>> => {
-  const { req: reqValidator } = newSSValidator(pathMap);
-  router.use(validatorMiddleware(reqValidator));
+  // const { req: reqValidator } = newSSValidator(pathMap);
+  // router.use(validatorMiddleware(reqValidator));
+  // const { req: reqValidator } = newSSValidator(pathMap);
+  router.use(validatorMiddleware(pathMap));
   return router;
 };

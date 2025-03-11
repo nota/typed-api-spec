@@ -7,15 +7,7 @@ import {
   MethodInvalidError,
   newMethodInvalidError,
 } from "../spec";
-import {
-  createResponseSpecValidatorGenerator,
-  ResponseValidatorGenerator,
-} from "./response";
-import {
-  createRequestSpecValidatorGenerator,
-  RequestValidatorGenerator,
-  SpecValidatorGeneratorInput,
-} from "./request";
+import { SpecValidatorGeneratorInput } from "./request";
 import type { StandardSchemaV1 as SS } from "@standard-schema/spec";
 export type SSResult<Data> = SS.Result<Data> | Promise<SS.Result<Data>>;
 
@@ -90,18 +82,18 @@ type ValidatorInputPathNotFoundError = ReturnType<
   typeof newValidatorPathNotFoundError
 >;
 
-export const createValidator = <E extends AnyApiEndpoints>(
-  endpoints: E,
-  reqV: RequestValidatorGenerator,
-  resV: ResponseValidatorGenerator,
-) => {
-  const req = createRequestSpecValidatorGenerator<typeof endpoints>(
-    endpoints,
-    reqV,
-  );
-  const res = createResponseSpecValidatorGenerator<typeof endpoints>(
-    endpoints,
-    resV,
-  );
-  return { req, res };
-};
+// export const createValidator = <E extends AnyApiEndpoints>(
+//   endpoints: E,
+//   reqV: RequestValidatorGenerator,
+//   resV: ResponseValidatorGenerator,
+// ) => {
+//   const req = createRequestSpecValidatorGenerator<typeof endpoints>(
+//     endpoints,
+//     reqV,
+//   );
+//   const res = createResponseSpecValidatorGenerator<typeof endpoints>(
+//     endpoints,
+//     resV,
+//   );
+//   return { req, res };
+// };
