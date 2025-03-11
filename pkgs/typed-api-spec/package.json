@@ -132,6 +132,11 @@
       "types": "./dist/valibot/openapi.d.ts",
       "require": "./dist/valibot/openapi.js",
       "import": "./dist/valibot/openapi.mjs"
+    },
+    "./ss": {
+      "types": "./dist/ss/index.d.ts",
+      "require": "./dist/ss/index.js",
+      "import": "./dist/ss/index.mjs"
     }
   },
   "main": "./dist/index.js",

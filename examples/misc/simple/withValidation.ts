@@ -1,7 +1,7 @@
-import { newZodValidator, ZodApiEndpoints } from "@notainc/typed-api-spec/zod";
 import { withValidation } from "@notainc/typed-api-spec/fetch";
 import { z } from "zod";
 import { SpecValidatorError } from "@notainc/typed-api-spec/fetch";
+import { newSSValidator, SSApiEndpoints } from "@notainc/typed-api-spec/ss";
 
 const GITHUB_API_ORIGIN = "https://api.github.com";
 
@@ -12,7 +12,7 @@ const spec = {
       responses: { 200: { body: z.object({ names: z.string().array() }) } },
     },
   },
-} satisfies ZodApiEndpoints;
+} satisfies SSApiEndpoints;
 const spec2 = {
   "/repos/:owner/:repo/topics": {
     get: {
@@ -20,16 +20,16 @@ const spec2 = {
       responses: { 200: { body: z.object({ noexist: z.string() }) } },
     },
   },
-} satisfies ZodApiEndpoints;
+} satisfies SSApiEndpoints;
 
 const main = async () => {
   {
     // const fetchT = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
-    const { req: reqValidator, res: resValidator } = newZodValidator(spec);
+    const { req: reqValidator, res: resValidator } = newSSValidator(spec);
     const fetchWithV = withValidation(fetch, spec, reqValidator, resValidator);
     const response = await fetchWithV(
       `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-      { headers: { Accept: "application/vnd.github+json" } },
+      { headers: { Accept: "application/vnd.github+json" } }
     );
     if (!response.ok) {
       const { message } = await response.json();
@@ -41,16 +41,16 @@ const main = async () => {
 
   {
     // const fetchT = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
-    const { req: reqValidator, res: resValidator } = newZodValidator(spec2);
+    const { req: reqValidator, res: resValidator } = newSSValidator(spec2);
     const fetchWithV = withValidation(fetch, spec2, reqValidator, resValidator);
     try {
       await fetchWithV(
         `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-        { headers: { Accept: "application/vnd.github+json" } },
+        { headers: { Accept: "application/vnd.github+json" } }
       );
     } catch (e) {
       if (e instanceof SpecValidatorError) {
-        console.log("error thrown", e.error);
+        console.log("error thrown", e);
       } else {
         throw e;
       }

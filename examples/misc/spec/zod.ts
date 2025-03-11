@@ -1,5 +1,5 @@
+import { SSApiEndpoints, ToApiEndpoints } from "@notainc/typed-api-spec/ss";
 import { z } from "zod";
-import { ToApiEndpoints, ZodApiEndpoints } from "@notainc/typed-api-spec/zod";
 
 const JsonHeader = z.union([
   z.object({ "content-type": z.literal("application/json") }),
@@ -42,5 +42,5 @@ export const pathMap = {
       },
     },
   },
-} satisfies ZodApiEndpoints;
+} satisfies SSApiEndpoints;
 export type PathMap = ToApiEndpoints<typeof pathMap>;

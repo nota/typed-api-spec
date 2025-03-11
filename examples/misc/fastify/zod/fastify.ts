@@ -31,7 +31,8 @@ const routes = toRoutes(pathMap);
 server.route({
   ...routes["/users"]["get"],
   handler: async (request, reply) => {
-    const page = request.query.page;
+    type Query = { page: string };
+    const { page } = request.query as Query;
     if (Number.isNaN(Number(page))) {
       return reply.status(400).send({ errorMessage: "page is not a number" });
     }
@@ -52,16 +53,18 @@ const _noExecution = () => {
         // @ts-expect-error noexist is not defined in pathMap["/users"]["get"]
         request.query.noexist;
       }
-      const page = request.query.page;
+      type Query = { page: string };
+      const { page } = request.query as Query;
       return { userNames: [`page${page}#user1`] };
-    },
+    }
   );
 };
 
 server.route({
   ...routes["/users"]["post"],
   handler: async (request, reply) => {
-    const userName = request.body.userName;
+    type Body = { userName: string };
+    const { userName } = request.body as Body;
     return reply
       .header("Content-Type", "application/json")
       .send({ userId: userName + "#0" });
@@ -71,7 +74,8 @@ server.route({
 server.route({
   ...routes["/users/:userId"]["get"],
   handler: async (request) => {
-    const userId = request.params.userId;
+    type Params = { userId: string };
+    const { userId } = request.params as Params;
     return { userName: `user#${userId}` };
   },
 });
