@@ -1,9 +1,8 @@
-import { ZodApiEndpoints } from "@notainc/typed-api-spec";
 import z from "zod";
-import { ToApiEndpoints } from "@notainc/typed-api-spec/zod";
+import { SSApiEndpoints, ToApiEndpoints } from "@notainc/typed-api-spec/ss";
 
 // See https://docs.github.com/ja/rest/repos/repos?apiVersion=2022-11-28#get-all-repository-topics
-export const ZodSpec = {
+export const GitHubSpec = {
   "/repos/:owner/:repo/topics": {
     get: {
       responses: {
@@ -19,11 +18,11 @@ export const ZodSpec = {
       },
     },
   },
-} satisfies ZodApiEndpoints;
-export type Spec = ToApiEndpoints<typeof ZodSpec>;
+} satisfies SSApiEndpoints;
+export type Spec = ToApiEndpoints<typeof GitHubSpec>;
 
 // See https://docs.github.com/ja/rest/repos/repos?apiVersion=2022-11-28#get-all-repository-topics
-export const InvalidResponseZodSpec = {
+export const InvalidResponseGitHubSpec = {
   "/repos/:owner/:repo/topics": {
     get: {
       responses: {
@@ -31,5 +30,7 @@ export const InvalidResponseZodSpec = {
       },
     },
   },
-} satisfies ZodApiEndpoints;
-export type InvalidResponseSpec = ToApiEndpoints<typeof InvalidResponseZodSpec>;
+} satisfies SSApiEndpoints;
+export type InvalidResponseSpec = ToApiEndpoints<
+  typeof InvalidResponseGitHubSpec
+>;
