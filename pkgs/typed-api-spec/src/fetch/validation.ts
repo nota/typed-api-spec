@@ -1,6 +1,6 @@
 import { memoize, tupleIteratorToObject, unreachable } from "../utils";
 import { match } from "path-to-regexp";
-import { Method, SSResult, StatusCode, UnknownApiEndpoints } from "../core";
+import { Method, SSResult, StatusCode } from "../core";
 import { AnySpecValidator, runSpecValidator } from "../core";
 import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
