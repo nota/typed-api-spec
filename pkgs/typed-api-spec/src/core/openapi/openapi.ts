@@ -9,9 +9,35 @@ import { JSONSchema7 } from "json-schema";
 import { StatusCode } from "../hono-types";
 import {
   AnyOpenApiSpec,
+  BaseOpenApiSpec,
+  DefineOpenApiEndpoint,
+  DefineOpenApiResponses,
   JsonSchemaOpenApiEndpoints,
   JsonSchemaOpenApiSpec,
+  ToOpenApiResponse,
 } from "./spec";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { SSAnyApiResponse } from "../../ss";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyStandardSchemaV1 = StandardSchemaV1<any>;
+export type SSOpenApiEndpoints = {
+  [Path in string]: SSOpenApiEndpoint;
+};
+export type SSOpenApiEndpoint = DefineOpenApiEndpoint<SSOpenApiSpec>;
+export type SSAnyOpenApiResponse = ToOpenApiResponse<SSAnyApiResponse>;
+export type SSAnyOpenApiResponses =
+  DefineOpenApiResponses<SSAnyOpenApiResponse>;
+
+export type SSOpenApiSpec<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ParamKeys extends string = string,
+  Params extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Query extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Body extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  RequestHeaders extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Responses extends SSAnyOpenApiResponses = SSAnyOpenApiResponses,
+> = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (

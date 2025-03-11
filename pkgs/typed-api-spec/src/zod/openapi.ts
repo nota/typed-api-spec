@@ -1,22 +1,16 @@
 import { OpenAPIV3_1 } from "openapi-types";
 import {
   JsonSchemaApiEndpoints,
+  SSOpenApiEndpoints,
   toOpenApiDoc as toOpenApiDocOrg,
 } from "../core";
-import {
-  BaseOpenApiSpec,
-  DefineOpenApiEndpoint,
-  DefineOpenApiResponses,
-  JsonSchemaOpenApiEndpoints,
-  ToOpenApiResponse,
-} from "../core/openapi/spec";
+import { JsonSchemaOpenApiEndpoints } from "../core/openapi/spec";
 import { z } from "zod";
 import { toJsonSchemaApiEndpoints as toEndpoints } from "../core/jsonschema";
 import { createSchema } from "zod-openapi";
 import { JSONSchema7 } from "json-schema";
-import { SSAnyApiResponse } from "../ss";
 
-export const toOpenApiDoc = <E extends ZodOpenApiEndpoints>(
+export const toOpenApiDoc = <E extends SSOpenApiEndpoints>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: E,
 ): OpenAPIV3_1.Document => {
@@ -24,25 +18,7 @@ export const toOpenApiDoc = <E extends ZodOpenApiEndpoints>(
   return toOpenApiDocOrg(doc, e as JsonSchemaOpenApiEndpoints);
 };
 
-export type ZodOpenApiEndpoints = {
-  [Path in string]: ZodOpenApiEndpoint;
-};
-export type ZodOpenApiEndpoint = DefineOpenApiEndpoint<ZodOpenApiSpec>;
-export type ZodAnyOpenApiResponse = ToOpenApiResponse<SSAnyApiResponse>;
-export type ZodAnyOpenApiResponses =
-  DefineOpenApiResponses<ZodAnyOpenApiResponse>;
-
-export type ZodOpenApiSpec<
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ParamKeys extends string = string,
-  Params extends z.ZodTypeAny = z.ZodTypeAny,
-  Query extends z.ZodTypeAny = z.ZodTypeAny,
-  Body extends z.ZodTypeAny = z.ZodTypeAny,
-  RequestHeaders extends z.ZodTypeAny = z.ZodTypeAny,
-  Responses extends ZodAnyOpenApiResponses = ZodAnyOpenApiResponses,
-> = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
-
-export const toJsonSchemaApiEndpoints = <E extends ZodOpenApiEndpoints>(
+export const toJsonSchemaApiEndpoints = <E extends SSOpenApiEndpoints>(
   endpoints: E,
 ): JsonSchemaApiEndpoints => toEndpoints(toSchema, endpoints);
 
