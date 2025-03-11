@@ -17,7 +17,7 @@ import { StatusCode } from "../core";
 import { ParsedQs } from "qs";
 import { AnySpecValidator, SpecValidatorMap } from "../core/validator/request";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { newSSValidator, SSApiEndpoints } from "../ss";
+import { newSSValidator, SSApiEndpoints } from "../core/ss";
 
 /**
  * Express Request Handler, but with more strict type information.

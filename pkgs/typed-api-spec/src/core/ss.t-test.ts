@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Equal, Expect } from "../core/type-test";
+import { Equal, Expect } from "./type-test";
 import { z } from "zod";
-import { ApiP } from "../core";
+import { ApiP } from ".";
 import {
   SSApiEndpoints,
   SSResponseValidators,
   SSValidators,
   ToSSResponseValidators,
   ToSSValidators,
-} from "../ss";
+} from "./ss";
 
 const SSResponse = z.object({ a: z.string() });
 const SSEndpoints = {

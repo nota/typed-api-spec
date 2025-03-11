@@ -1,5 +1,5 @@
 import { Method } from "../core";
-import { SSApiEndpoints, ToApiEndpoints, ToSSValidators } from "../ss";
+import { SSApiEndpoints, ToApiEndpoints, ToSSValidators } from "../core/ss";
 import {
   RouterT,
   ToHandler as ToPureHandler,

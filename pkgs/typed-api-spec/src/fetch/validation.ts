@@ -4,7 +4,7 @@ import { Method, SSResult, StatusCode } from "../core";
 import { AnySpecValidator, runSpecValidator } from "../core";
 import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { newSSValidator, SSApiEndpoints } from "../ss";
+import { newSSValidator, SSApiEndpoints } from "../core/ss";
 
 const dummyHost = "https://example.com";
 

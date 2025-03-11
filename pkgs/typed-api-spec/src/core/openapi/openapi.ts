@@ -17,7 +17,7 @@ import {
   ToOpenApiResponse,
 } from "./spec";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { SSAnyApiResponse } from "../../ss";
+import { SSAnyApiResponse } from "../ss";
 import { toJsonSchemaApiEndpoints } from "../jsonschema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

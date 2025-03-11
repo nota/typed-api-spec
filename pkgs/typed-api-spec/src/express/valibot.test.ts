@@ -9,7 +9,7 @@ import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
 } from "../core/validator/validate";
-import { SSApiEndpoints, SSApiSpec, SSValidators } from "../ss";
+import { SSApiEndpoints, SSApiSpec, SSValidators } from "../core/ss";
 import { ToHandlers, typed } from "./ss";
 
 type SSValidateLocals<

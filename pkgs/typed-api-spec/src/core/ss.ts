@@ -8,24 +8,24 @@ import {
   DefineResponse,
   Method,
   StatusCode,
-} from "../core";
+} from ".";
 import {
   checkValidatorsInput,
   Validator,
   ValidatorInputError,
-} from "../core/validator/validate";
+} from "./validator/validate";
 import { Result } from "../utils";
 import {
   AnySpecValidator,
   listDefinedRequestApiSpecKeys,
   SpecValidator,
   SpecValidatorGeneratorRawInput,
-} from "../core/validator/request";
+} from "./validator/request";
 import {
   listDefinedResponseApiSpecKeys,
   ResponseSpecValidator,
   ResponseSpecValidatorGeneratorRawInput,
-} from "../core/validator/response";
+} from "./validator/response";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyStandardSchemaV1 = StandardSchemaV1<any>;
@@ -173,31 +173,4 @@ export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
     );
   };
   return { req, res };
-  // return createValidator(
-  //   endpoints,
-  //   async (spec: SSApiSpec, input, key) => {
-  //     let r = spec[key]!["~standard"].validate(input[key]);
-  //     if (r instanceof Promise) r = await r;
-  //     return r;
-  //   },
-  //   async (spec: SSApiSpec, input, key) => {
-  //     const schema = spec["responses"][input.statusCode as StatusCode]?.[key];
-  //     let r = schema!["~standard"].validate(input[key]);
-  //     if (r instanceof Promise) r = await r;
-  //     return r;
-  //   },
-  // ) as {
-  //   req: SSRequestValidatorsGenerator<E>;
-  //   res: SSResponseValidatorsGenerator<E>;
-  // };
 };
-
-// const toResult = <T>(
-//   res: StandardSchemaV1.Result<T>,
-// ): Result<T, ReadonlyArray<StandardSchemaV1.Issue>> => {
-//   if (res.issues) {
-//     return Result.error(res.issues);
-//   } else {
-//     return Result.data(res.value);
-//   }
-// };

@@ -1,10 +1,10 @@
 import { describe, it, expect, assert } from "vitest";
-import { newSSValidator, SSApiEndpoints } from "./index";
+import { newSSValidator, SSApiEndpoints } from "./ss";
 import * as v from "valibot";
-import { newValidatorPathNotFoundError } from "../core/validator/validate";
-import { AnyResponseSpecValidator } from "../core/validator/response";
-import { AnySpecValidator } from "../core/validator/request";
-import { newMethodInvalidError } from "../core";
+import { newValidatorPathNotFoundError } from "./validator/validate";
+import { AnyResponseSpecValidator } from "./validator/response";
+import { AnySpecValidator } from "./validator/request";
+import { newMethodInvalidError } from ".";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
 describe("newSSValidator", () => {

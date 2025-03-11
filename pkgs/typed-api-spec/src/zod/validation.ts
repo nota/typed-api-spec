@@ -1,5 +1,5 @@
 import type FetchT from "../fetch/index.js";
-import { SSApiEndpoints, ToApiEndpoints } from "../ss/index.js";
+import { SSApiEndpoints, ToApiEndpoints } from "../core/ss.js";
 
 export const withZodValidation = async (spec: SSApiEndpoints, ft = fetch) => {
   const { withValidation } = await import("../fetch/index.js");

@@ -1,5 +1,5 @@
 import { AnyApiResponses, Method, StatusCode } from "../core";
-import { SSApiEndpoint, SSApiEndpoints, SSApiSpec } from "../ss";
+import { SSApiEndpoint, SSApiEndpoints, SSApiSpec } from "../core/ss";
 
 const toFastifyResponse = <Responses extends AnyApiResponses>(
   responses: Responses,
