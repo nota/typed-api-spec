@@ -6,7 +6,7 @@ import { asAsync } from "@notainc/typed-api-spec/express";
 const emptyMiddleware = (
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ) => next();
 type Handlers = ToHandlers<typeof pathMap>;
 const newApp = () => {
@@ -56,7 +56,7 @@ const newApp = () => {
 
   const getUserHandler: Handlers["/users/:userId"]["get"] = async (
     req,
-    res
+    res,
   ) => {
     const r = await res.locals.validate(req).params();
     if (r.issues) {

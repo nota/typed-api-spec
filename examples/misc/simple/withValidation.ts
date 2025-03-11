@@ -29,7 +29,7 @@ const main = async () => {
     const fetchWithV = withValidation(fetch, spec, reqValidator, resValidator);
     const response = await fetchWithV(
       `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-      { headers: { Accept: "application/vnd.github+json" } }
+      { headers: { Accept: "application/vnd.github+json" } },
     );
     if (!response.ok) {
       const { message } = await response.json();
@@ -46,7 +46,7 @@ const main = async () => {
     try {
       await fetchWithV(
         `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-        { headers: { Accept: "application/vnd.github+json" } }
+        { headers: { Accept: "application/vnd.github+json" } },
       );
     } catch (e) {
       if (e instanceof SpecValidatorError) {

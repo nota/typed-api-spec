@@ -56,7 +56,7 @@ const _noExecution = () => {
       type Query = { page: string };
       const { page } = request.query as Query;
       return { userNames: [`page${page}#user1`] };
-    }
+    },
   );
 };
 
