@@ -1,10 +1,9 @@
-import { IRouter, RequestHandler } from "express";
+import { IRouter, RequestHandler, Router } from "express";
 import {
   Method,
   AnyApiResponses,
   ApiResBody,
   ApiSpec,
-  AnyApiSpec,
   AnyApiEndpoints,
 } from "../index";
 import {
@@ -15,9 +14,14 @@ import {
 } from "express-serve-static-core";
 import { StatusCode } from "../core";
 import { ParsedQs } from "qs";
-import { AnySpecValidator, SpecValidatorMap } from "../core/validator/request";
+import { AnySpecValidator } from "../core/validator/request";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { newSSValidator, SSApiEndpoints } from "../core/ss";
+import {
+  newSSValidator,
+  SSApiEndpoints,
+  ToApiEndpoints,
+  ToSSValidators,
+} from "../core/ss";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -37,23 +41,64 @@ export type Handler<
 ) => void;
 
 export type ToHandler<
-  Spec extends AnyApiSpec | undefined,
-  Validators extends AnySpecValidator | undefined,
+  E extends SSApiEndpoints,
+  Path extends keyof E & string,
+  M extends Method,
 > = Handler<
-  Spec,
+  ToApiEndpoints<E>[Path][M],
   ValidateLocals<
-    Validators extends AnySpecValidator ? Validators : Record<string, never>
+    ToSSValidators<E, Path, M> extends AnySpecValidator
+      ? ToSSValidators<E, Path, M>
+      : Record<string, never>
   >
 >;
+// export type ToHandler<
+//   Spec extends AnyApiSpec | undefined,
+//   Validators extends AnySpecValidator | undefined,
+// > = Handler<
+//   Spec,
+//   ValidateLocals<
+//     Validators extends AnySpecValidator ? Validators : Record<string, never>
+//   >
+// >;
 
-export type ToHandlers<
-  E extends AnyApiEndpoints,
-  V extends SpecValidatorMap,
-> = {
+/**
+ * Convert ZodApiSpec to Express Request Handler type.
+ */
+// export type ToHandler<
+//   ZodE extends SSApiEndpoints,
+//   Path extends keyof ZodE & string,
+//   M extends Method,
+// > = ToPureHandler<ToApiEndpoints<ZodE>[Path][M], ToSSValidators<ZodE, Path, M>>;
+
+export type ToHandlers<E extends SSApiEndpoints> = {
   [Path in keyof E & string]: {
-    [M in Method]: ToHandler<E[Path][M], V[Path][M]>;
+    [M in Method]: ToHandler<E, Path, M>;
   };
 };
+// export type ToHandlers<
+//   E extends AnyApiEndpoints,
+//   V extends SpecValidatorMap,
+// > = {
+//   [Path in keyof E & string]: {
+//     [M in Method]: ToHandler<E[Path][M], V[Path][M]>;
+//   };
+// };
+
+/**
+ * Convert SSApiEndpoints to Express Request Handler type map.
+ */
+// export type ToHandlers<
+//   ZodE extends SSApiEndpoints,
+//   E extends ToApiEndpoints<ZodE> = ToApiEndpoints<ZodE>,
+//   V extends ToValidatorsMap<ZodE> = ToValidatorsMap<ZodE>,
+// > = ToPureHandlers<E, V>;
+
+// export type ToValidatorsMap<ESchema extends SSApiEndpoints> = {
+//   [Path in keyof ESchema & string]: {
+//     [M in Method]: ToSSValidators<ESchema, Path, M>;
+//   };
+// };
 
 /**
  * Express Response, but with more strict type information.
@@ -80,7 +125,6 @@ export type ValidateLocals<
  */
 export type RouterT<
   E extends AnyApiEndpoints,
-  V extends SpecValidatorMap,
   SC extends StatusCode = StatusCode,
 > = Omit<IRouter, Method> & {
   [M in Method]: <Path extends string & keyof E>(
@@ -89,9 +133,9 @@ export type RouterT<
       // Middlewareは複数のエンドポイントで実装を使い回されることがあるので、型チェックはゆるくする
       ...Array<RequestHandler>,
       // Handlerは厳密に型チェックする
-      ToHandler<E[Path][M], V[Path][M]>,
+      ToHandler<E, Path, M>,
     ]
-  ) => RouterT<E, V, SC>;
+  ) => RouterT<E, SC>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -211,4 +255,30 @@ export const asAsync = <Router extends IRouter | RouterT<any, any>>(
       };
     },
   });
+};
+
+/**
+ * Set validator and add more strict type information to router.
+ *
+ * @param pathMap API endpoints
+ * @param router Express Router
+ *
+ * @example
+ * ```
+ * const router = typed(pathMap, express.Router())
+ * router.get('/path', (req, res) => {
+ *   const {data, error} = res.locals.validate(req).query()
+ *   if (error) {
+ *     return res.status(400).json({ message: 'Invalid query' })
+ *   }
+ *   return res.status(200).json({ message: 'success', value: r.data.value })
+ * })
+ * ```
+ */
+export const typed = <const Endpoints extends SSApiEndpoints>(
+  pathMap: Endpoints,
+  router: Router,
+): RouterT<Endpoints> => {
+  router.use(validatorMiddleware(pathMap));
+  return router;
 };

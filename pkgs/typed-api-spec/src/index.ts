@@ -13,5 +13,3 @@ export { FetchT, RequestInitT };
 
 import JSONT, { JSON$stringifyT } from "./json";
 export { JSONT, JSON$stringifyT };
-
-export * from "./zod";

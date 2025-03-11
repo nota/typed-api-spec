@@ -107,21 +107,6 @@
       "types": "./dist/json/index.d.ts",
       "require": "./dist/json/index.js",
       "import": "./dist/json/index.mjs"
-    },
-    "./zod": {
-      "types": "./dist/zod/index.d.ts",
-      "require": "./dist/zod/index.js",
-      "import": "./dist/zod/index.mjs"
-    },
-    "./valibot": {
-      "types": "./dist/valibot/index.d.ts",
-      "require": "./dist/valibot/index.js",
-      "import": "./dist/valibot/index.mjs"
-    },
-    "./ss": {
-      "types": "./dist/ss/index.d.ts",
-      "require": "./dist/ss/index.js",
-      "import": "./dist/ss/index.mjs"
     }
   },
   "main": "./dist/index.js",

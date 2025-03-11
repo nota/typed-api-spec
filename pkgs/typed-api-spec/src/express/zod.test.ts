@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, assert } from "vitest";
 import request from "supertest";
 import express from "express";
-import { asAsync, ValidateLocals, validatorMiddleware } from "./index";
+import {
+  asAsync,
+  RouterT,
+  ToHandlers,
+  typed,
+  ValidateLocals,
+  validatorMiddleware,
+} from "./index";
 import { z } from "zod";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
@@ -10,7 +17,6 @@ import {
   newValidatorPathNotFoundError,
 } from "../core/validator/validate";
 import { SSApiEndpoints, SSApiSpec, SSValidators } from "../core/ss";
-import { ToHandlers, typed } from "./ss";
 
 type SSValidateLocals<
   AS extends SSApiSpec,
@@ -50,8 +56,7 @@ describe("validatorMiddleware", () => {
       },
     },
   } satisfies SSApiEndpoints;
-  // const { req: reqValidator } = newSSValidator(pathMap);
-  // const middleware = validatorMiddleware(reqValidator);
+
   const middleware = validatorMiddleware(pathMap);
   const next = vi.fn();
 
@@ -278,6 +283,25 @@ describe("typed", () => {
     },
   } satisfies SSApiEndpoints;
 
+  type R = RouterT<typeof pathMap, 200>;
+  const r = {} as R;
+  r.get("/users", (req, res) => {
+    res.json([{ id: "1", name: "alice" }]);
+  });
+  // type A = ToHandlers<typeof pathMap>["/users"]["get"];
+  // const a: A = (req, res) => {
+  //   res.json([{ id: "1", name: "alice" }]);
+  // };
+  // type A = ToHandler<typeof pathMap, "/users", "get">;
+  // type B = ToApiEndpoints<
+  //   typeof pathMap
+  // >["/users"]["get"]["responses"][200]["body"];
+  // type ERes = ExpressResponse<
+  //   ToApiEndpoints<typeof pathMap>["/users"]["get"]["responses"],
+  //   200
+  // >;
+  // const eres = {} as ERes;
+  // eres.json([{ id: "1", name: "alice" }]);
   it("ok", async () => {
     const app = newApp();
     const wApp = typed(pathMap, app);

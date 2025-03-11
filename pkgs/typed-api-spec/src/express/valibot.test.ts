@@ -1,7 +1,13 @@
 import { describe, it, expect, vi, assert } from "vitest";
 import request from "supertest";
 import express from "express";
-import { asAsync, ValidateLocals, validatorMiddleware } from "./index";
+import {
+  asAsync,
+  ToHandlers,
+  typed,
+  ValidateLocals,
+  validatorMiddleware,
+} from "./index";
 import * as v from "valibot";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
@@ -10,7 +16,6 @@ import {
   newValidatorPathNotFoundError,
 } from "../core/validator/validate";
 import { SSApiEndpoints, SSApiSpec, SSValidators } from "../core/ss";
-import { ToHandlers, typed } from "./ss";
 
 type SSValidateLocals<
   AS extends SSApiSpec,
