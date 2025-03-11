@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as v from "valibot";
 import { OpenAPIV3_1 } from "openapi-types";
-import { toOpenApiDoc } from "./openapi";
-import { SSOpenApiEndpoints } from "../core";
+import { SSOpenApiEndpoints, toOpenApiDoc } from "../core";
 
 describe("openapi", () => {
   const endpoints = {
@@ -106,7 +105,7 @@ describe("openapi", () => {
     },
   };
 
-  it("toOpenApiDoc", () => {
+  it("toOpenApiDoc", async () => {
     const baseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
       openapi: "3.1.0",
       info: { title: "title", version: "1" },
@@ -114,7 +113,7 @@ describe("openapi", () => {
       servers: [],
       components: {},
     };
-    const doc = toOpenApiDoc(baseDoc, endpoints);
+    const doc = await toOpenApiDoc(baseDoc, endpoints);
     expect(doc).toEqual({
       ...baseDoc,
       paths: {

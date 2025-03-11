@@ -15,7 +15,3 @@ import JSONT, { JSON$stringifyT } from "./json";
 export { JSONT, JSON$stringifyT };
 
 export * from "./zod";
-export {
-  toOpenApiDoc as toZodOpenApiDoc,
-  toJsonSchemaApiEndpoints as toZodJsonSchemaApiEndpoints,
-} from "./zod/openapi";

@@ -1,7 +1,7 @@
 import { withValidation } from "@notainc/typed-api-spec/fetch";
 import { z } from "zod";
 import { SpecValidatorError } from "@notainc/typed-api-spec/fetch";
-import { newSSValidator, SSApiEndpoints } from "@notainc/typed-api-spec/ss";
+import { SSApiEndpoints } from "@notainc/typed-api-spec/ss";
 
 const GITHUB_API_ORIGIN = "https://api.github.com";
 
@@ -25,11 +25,10 @@ const spec2 = {
 const main = async () => {
   {
     // const fetchT = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
-    const { req: reqValidator, res: resValidator } = newSSValidator(spec);
-    const fetchWithV = withValidation(fetch, spec, reqValidator, resValidator);
+    const fetchWithV = withValidation(fetch, spec);
     const response = await fetchWithV(
       `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-      { headers: { Accept: "application/vnd.github+json" } },
+      { headers: { Accept: "application/vnd.github+json" } }
     );
     if (!response.ok) {
       const { message } = await response.json();
@@ -41,12 +40,11 @@ const main = async () => {
 
   {
     // const fetchT = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
-    const { req: reqValidator, res: resValidator } = newSSValidator(spec2);
-    const fetchWithV = withValidation(fetch, spec2, reqValidator, resValidator);
+    const fetchWithV = withValidation(fetch, spec2);
     try {
       await fetchWithV(
         `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics?page=1`,
-        { headers: { Accept: "application/vnd.github+json" } },
+        { headers: { Accept: "application/vnd.github+json" } }
       );
     } catch (e) {
       if (e instanceof SpecValidatorError) {

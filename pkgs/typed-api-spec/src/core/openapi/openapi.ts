@@ -18,6 +18,7 @@ import {
 } from "./spec";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { SSAnyApiResponse } from "../../ss";
+import { toJsonSchemaApiEndpoints } from "../jsonschema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyStandardSchemaV1 = StandardSchemaV1<any>;
@@ -147,7 +148,7 @@ const toResponses = (
   return ret;
 };
 
-export const toOpenApiDoc = (
+export const jsonSchemaToOpenApiDoc = (
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: JsonSchemaOpenApiEndpoints,
 ): OpenAPIV3_1.Document => {
@@ -156,4 +157,30 @@ export const toOpenApiDoc = (
     paths[path] = toPathItemObject(endpoints[path]);
   }
   return { ...doc, paths };
+};
+
+export const toOpenApiDoc = async <E extends SSOpenApiEndpoints>(
+  doc: Omit<OpenAPIV3_1.Document, "paths">,
+  endpoints: E,
+): Promise<OpenAPIV3_1.Document> => {
+  const e = await toJsonSchemaApiEndpoints(toSchema, endpoints);
+  return jsonSchemaToOpenApiDoc(doc, e as JsonSchemaOpenApiEndpoints);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toSchema = async (s: StandardSchemaV1<any>) => {
+  switch (s["~standard"].vendor) {
+    case "zod": {
+      const { createSchema } = await import("zod-openapi");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return createSchema(s as any).schema as JSONSchema7;
+    }
+    case "valibot": {
+      const { toJsonSchema } = await import("@valibot/to-json-schema");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return toJsonSchema(s as any);
+    }
+    default:
+      throw new Error(`Unsupported vendor: ${s["~standard"].vendor}`);
+  }
 };

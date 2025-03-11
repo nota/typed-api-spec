@@ -113,20 +113,10 @@
       "require": "./dist/zod/index.js",
       "import": "./dist/zod/index.mjs"
     },
-    "./zod/openapi": {
-      "types": "./dist/zod/openapi.d.ts",
-      "require": "./dist/zod/openapi.js",
-      "import": "./dist/zod/openapi.mjs"
-    },
     "./valibot": {
       "types": "./dist/valibot/index.d.ts",
       "require": "./dist/valibot/index.js",
       "import": "./dist/valibot/index.mjs"
-    },
-    "./valibot/openapi": {
-      "types": "./dist/valibot/openapi.d.ts",
-      "require": "./dist/valibot/openapi.js",
-      "import": "./dist/valibot/openapi.mjs"
     },
     "./ss": {
       "types": "./dist/ss/index.d.ts",
