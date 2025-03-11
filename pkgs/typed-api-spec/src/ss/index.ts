@@ -1,7 +1,7 @@
 import {
+  AnyResponse,
   ApiResBody,
   ApiResHeaders,
-  ApiResponses,
   BaseApiSpec,
   DefineApiResponses,
   DefineResponse,
@@ -9,18 +9,22 @@ import {
   StatusCode,
 } from "../core";
 import {
-  createValidator,
+  checkValidatorsInput,
   Validator,
   ValidatorInputError,
 } from "../core/validator/validate";
 import { Result } from "../utils";
 import {
+  AnySpecValidator,
+  listDefinedRequestApiSpecKeys,
   SpecValidator,
   SpecValidatorGeneratorRawInput,
 } from "../core/validator/request";
 import {
+  AnyResponseSpecValidator,
+  listDefinedResponseApiSpecKeys,
   ResponseSpecValidator,
-  ResponseSpecValidatorGeneratorRawInput,
+  ResponseSpecValidatorGeneratorInput,
 } from "../core/validator/response";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,46 +122,69 @@ export type ToApiResponses<AR extends SSAnyApiResponses> = {
   };
 };
 
-type SSRequestValidatorsGenerator<E extends SSApiEndpoints> = <
-  Path extends string,
-  M extends string,
->(
-  input: SpecValidatorGeneratorRawInput<Path, M>,
-) => Result<ToSSValidators<E, Path, M>, ValidatorInputError>;
-type SSResponseValidatorsGenerator<E extends SSApiEndpoints> = <
-  Path extends string,
-  M extends string,
-  SC extends number,
->(
-  input: ResponseSpecValidatorGeneratorRawInput<Path, M, SC>,
-) => Result<
-  ToSSResponseValidators<ApiResponses<E, Path, M>, SC>,
-  ValidatorInputError
->;
-
 /**
  * Create a new validator for the given endpoints.
  *
  * @param endpoints API endpoints
  */
 export const newSSValidator = <E extends SSApiEndpoints>(endpoints: E) => {
-  return createValidator(
-    endpoints,
-    async (spec: SSApiSpec, input, key) => {
-      let r = spec[key]!["~standard"].validate(input[key]);
-      if (r instanceof Promise) r = await r;
-      return r;
-    },
-    async (spec: SSApiSpec, input, key) => {
-      const schema = spec["responses"][input.statusCode as StatusCode]?.[key];
-      let r = schema!["~standard"].validate(input[key]);
-      if (r instanceof Promise) r = await r;
-      return r;
-    },
-  ) as {
-    req: SSRequestValidatorsGenerator<E>;
-    res: SSResponseValidatorsGenerator<E>;
+  const req = (
+    input: SpecValidatorGeneratorRawInput<string, string>,
+  ): Result<AnySpecValidator, ValidatorInputError> => {
+    const { data: vInput, error } = checkValidatorsInput(endpoints, input);
+    if (error) {
+      return Result.error(error);
+    }
+    const validators: AnySpecValidator = {};
+    const spec = endpoints[vInput.path][vInput.method]!;
+    listDefinedRequestApiSpecKeys(spec).forEach((key) => {
+      validators[key] = async () => {
+        let r = spec[key]!["~standard"].validate(input[key]);
+        if (r instanceof Promise) r = await r;
+        return r;
+      };
+    });
+    return Result.data(validators);
   };
+  const res = (
+    input: ResponseSpecValidatorGeneratorInput<string, Method, StatusCode>,
+  ): Result<AnyResponseSpecValidator, ValidatorInputError> => {
+    const { data: vInput, error } = checkValidatorsInput(endpoints, input);
+    if (error) {
+      return Result.error(error);
+    }
+    const validator: AnySpecValidator = {};
+    const spec = endpoints[vInput.path][vInput.method]!;
+    const response =
+      spec?.responses?.[input.statusCode as StatusCode] ?? ({} as AnyResponse);
+    listDefinedResponseApiSpecKeys(response).forEach((key) => {
+      validator[key] = async () => {
+        const schema = spec["responses"][input.statusCode as StatusCode]?.[key];
+        let r = schema!["~standard"].validate(input[key]);
+        if (r instanceof Promise) r = await r;
+        return r;
+      };
+    });
+    return Result.data(validator);
+  };
+  return { req, res };
+  // return createValidator(
+  //   endpoints,
+  //   async (spec: SSApiSpec, input, key) => {
+  //     let r = spec[key]!["~standard"].validate(input[key]);
+  //     if (r instanceof Promise) r = await r;
+  //     return r;
+  //   },
+  //   async (spec: SSApiSpec, input, key) => {
+  //     const schema = spec["responses"][input.statusCode as StatusCode]?.[key];
+  //     let r = schema!["~standard"].validate(input[key]);
+  //     if (r instanceof Promise) r = await r;
+  //     return r;
+  //   },
+  // ) as {
+  //   req: SSRequestValidatorsGenerator<E>;
+  //   res: SSResponseValidatorsGenerator<E>;
+  // };
 };
 
 // const toResult = <T>(

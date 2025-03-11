@@ -1,6 +1,4 @@
 import {
-  AnyApiEndpoints,
-  AnyApiSpec,
   AnyResponse,
   ApiSpecResponseKey,
   apiSpecResponseKeys,
@@ -8,48 +6,13 @@ import {
 } from "../spec";
 import { StatusCode } from "../hono-types";
 import { Result } from "../../utils";
-import {
-  AnyValidator,
-  checkValidatorsInput,
-  ValidatorInputError,
-} from "./validate";
-import { AnySpecValidator } from "./request";
+import { AnyValidator, ValidatorInputError } from "./validate";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
 export const listDefinedResponseApiSpecKeys = <Response extends AnyResponse>(
   res: Response,
 ): ApiSpecResponseKey[] => {
   return apiSpecResponseKeys.filter((key) => res[key] !== undefined);
-};
-
-export type ResponseSpecValidatorGenerator = (
-  input: ResponseSpecValidatorGeneratorRawInput<string, string, number>,
-) => Result<AnyResponseSpecValidator, ValidatorInputError>;
-export type ResponseValidatorGenerator = (
-  spec: AnyApiSpec,
-  input: ResponseSpecValidatorGeneratorInput<string, Method, StatusCode>,
-  key: ApiSpecResponseKey,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => any;
-export const createResponseSpecValidatorGenerator = <E extends AnyApiEndpoints>(
-  endpoints: E,
-  resValidatorGenerator: ResponseValidatorGenerator,
-) => {
-  return (
-    input: ResponseSpecValidatorGeneratorInput<string, Method, StatusCode>,
-  ): Result<AnyResponseSpecValidator, ValidatorInputError> => {
-    const { data: vInput, error } = checkValidatorsInput(endpoints, input);
-    if (error) {
-      return Result.error(error);
-    }
-    const validator: AnySpecValidator = {};
-    const spec = endpoints[vInput.path][vInput.method]!;
-    const response = spec?.responses?.[input.statusCode as StatusCode] ?? {};
-    listDefinedResponseApiSpecKeys(response).forEach((key) => {
-      validator[key] = () => resValidatorGenerator(spec, input, key);
-    });
-    return Result.data(validator);
-  };
 };
 
 export type ResponseSpecValidator<
