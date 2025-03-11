@@ -112,7 +112,6 @@ export const validatorMiddleware = <V extends RequestSpecValidatorGenerator>(
         body: req.body,
       });
       if (error) {
-        // TODO: StandardSchemV1のFailureResultのフォーマットに合わせる
         return {
           query: () =>
             ({

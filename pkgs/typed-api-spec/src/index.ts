@@ -8,12 +8,6 @@ export {
   Handler as ExpressHandler,
 } from "./express";
 
-export {
-  ToHandlers as ExpressToZodHandlers,
-  ToHandler as ExpressToZodHandler,
-  typed as expressZodTyped,
-} from "./express/zod";
-
 import FetchT, { RequestInitT } from "./fetch";
 export { FetchT, RequestInitT };
 

@@ -5,12 +5,12 @@ import { asAsync, ValidateLocals, validatorMiddleware } from "./index";
 import * as v from "valibot";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
-import { ToHandlers, typed } from "./valibot";
 import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
 } from "../core/validator/validate";
 import { newSSValidator, SSApiEndpoints, SSApiSpec, SSValidators } from "../ss";
+import { ToHandlers, typed } from "./ss";
 
 type SSValidateLocals<
   AS extends SSApiSpec,

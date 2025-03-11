@@ -1,6 +1,6 @@
 import express from "express";
 import { pathMap } from "../../spec/zod";
-import { ToHandlers, typed } from "@notainc/typed-api-spec/express/zod";
+import { ToHandlers, typed } from "@notainc/typed-api-spec/express/ss";
 import { asAsync } from "@notainc/typed-api-spec/express";
 
 const emptyMiddleware = (
