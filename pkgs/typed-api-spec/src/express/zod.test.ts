@@ -288,20 +288,6 @@ describe("typed", () => {
   r.get("/users", (req, res) => {
     res.json([{ id: "1", name: "alice" }]);
   });
-  // type A = ToHandlers<typeof pathMap>["/users"]["get"];
-  // const a: A = (req, res) => {
-  //   res.json([{ id: "1", name: "alice" }]);
-  // };
-  // type A = ToHandler<typeof pathMap, "/users", "get">;
-  // type B = ToApiEndpoints<
-  //   typeof pathMap
-  // >["/users"]["get"]["responses"][200]["body"];
-  // type ERes = ExpressResponse<
-  //   ToApiEndpoints<typeof pathMap>["/users"]["get"]["responses"],
-  //   200
-  // >;
-  // const eres = {} as ERes;
-  // eres.json([{ id: "1", name: "alice" }]);
   it("ok", async () => {
     const app = newApp();
     const wApp = typed(pathMap, app);
