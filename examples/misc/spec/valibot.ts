@@ -1,4 +1,4 @@
-import { SSApiEndpoints, ToApiEndpoints } from "@notainc/typed-api-spec/ss";
+import { SSApiEndpoints, ToApiEndpoints } from "@notainc/typed-api-spec/core";
 import * as v from "valibot";
 
 const JsonHeader = v.object({

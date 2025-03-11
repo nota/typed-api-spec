@@ -3,7 +3,6 @@ import request from "supertest";
 import express from "express";
 import {
   asAsync,
-  RouterT,
   ToHandlers,
   typed,
   ValidateLocals,
@@ -283,11 +282,6 @@ describe("typed", () => {
     },
   } satisfies SSApiEndpoints;
 
-  type R = RouterT<typeof pathMap, 200>;
-  const r = {} as R;
-  r.get("/users", (req, res) => {
-    res.json([{ id: "1", name: "alice" }]);
-  });
   it("ok", async () => {
     const app = newApp();
     const wApp = typed(pathMap, app);

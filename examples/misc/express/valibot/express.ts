@@ -1,6 +1,6 @@
 import express from "express";
 import { asAsync } from "@notainc/typed-api-spec/express";
-import { ToHandlers, typed } from "@notainc/typed-api-spec/express/ss";
+import { ToHandlers, typed } from "@notainc/typed-api-spec/express";
 import { pathMap } from "../../spec/valibot";
 
 const emptyMiddleware = (
