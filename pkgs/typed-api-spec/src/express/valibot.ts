@@ -1,9 +1,3 @@
-import {
-  ToApiEndpoints,
-  ValibotApiEndpoints,
-  ValibotApiSpec,
-  ValibotValidators,
-} from "../valibot";
 import { Method } from "../core";
 import {
   RouterT,
@@ -12,32 +6,36 @@ import {
   validatorMiddleware,
 } from "./index";
 import { Router } from "express";
-import { newSSValidator } from "../ss";
+import {
+  newSSValidator,
+  SSApiEndpoints,
+  SSApiSpec,
+  SSValidators,
+  ToApiEndpoints,
+} from "../ss";
 
 /**
- * Convert ValibotApiSpec to Express Request Handler type.
+ * Convert SSApiSpec to Express Request Handler type.
  */
 export type ToHandler<
-  ZodE extends ValibotApiEndpoints,
+  ZodE extends SSApiEndpoints,
   Path extends keyof ZodE & string,
   M extends Method,
 > = ToPureHandler<ToApiEndpoints<ZodE>[Path][M], ToValidators<ZodE[Path][M]>>;
 
-export type ToValidators<Spec extends ValibotApiSpec | undefined> =
-  Spec extends ValibotApiSpec
-    ? ValibotValidators<Spec, string>
-    : Record<string, never>;
+export type ToValidators<Spec extends SSApiSpec | undefined> =
+  Spec extends SSApiSpec ? SSValidators<Spec, string> : Record<string, never>;
 
 /**
- * Convert ValibotApiEndpoints to Express Request Handler type map.
+ * Convert SSApiEndpoints to Express Request Handler type map.
  */
 export type ToHandlers<
-  ZodE extends ValibotApiEndpoints,
+  ZodE extends SSApiEndpoints,
   E extends ToApiEndpoints<ZodE> = ToApiEndpoints<ZodE>,
   V extends ToValidatorsMap<ZodE> = ToValidatorsMap<ZodE>,
 > = ToPureHandlers<E, V>;
 
-export type ToValidatorsMap<ZodE extends ValibotApiEndpoints> = {
+export type ToValidatorsMap<ZodE extends SSApiEndpoints> = {
   [Path in keyof ZodE & string]: {
     [M in Method]: ToValidators<ZodE[Path][M]>;
   };
@@ -61,7 +59,7 @@ export type ToValidatorsMap<ZodE extends ValibotApiEndpoints> = {
  * })
  * ```
  */
-export const typed = <const Endpoints extends ValibotApiEndpoints>(
+export const typed = <const Endpoints extends SSApiEndpoints>(
   pathMap: Endpoints,
   router: Router,
 ): RouterT<ToApiEndpoints<Endpoints>, ToValidatorsMap<Endpoints>> => {

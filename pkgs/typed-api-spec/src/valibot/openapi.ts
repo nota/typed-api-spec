@@ -11,9 +11,9 @@ import {
   JsonSchemaOpenApiEndpoints,
   ToOpenApiResponse,
 } from "../core/openapi/spec";
-import { ValibotAnyApiResponse, ValibotApiEndpoints } from "./spec";
 import { toJsonSchemaApiEndpoints as toEndpoints } from "../core/jsonschema";
 import { toJsonSchema } from "@valibot/to-json-schema";
+import { SSAnyApiResponse, SSApiEndpoints } from "../ss";
 
 export const toOpenApiDoc = <E extends ValibotOpenApiEndpoints>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
@@ -27,8 +27,7 @@ export type ValibotOpenApiEndpoints = {
   [Path in string]: ValibotOpenApiEndpoint;
 };
 export type ValibotOpenApiEndpoint = DefineOpenApiEndpoint<ValibotOpenApiSpec>;
-export type ValibotAnyOpenApiResponse =
-  ToOpenApiResponse<ValibotAnyApiResponse>;
+export type ValibotAnyOpenApiResponse = ToOpenApiResponse<SSAnyApiResponse>;
 export type ValibotAnyOpenApiResponses =
   DefineOpenApiResponses<ValibotAnyOpenApiResponse>;
 
@@ -42,6 +41,6 @@ export type ValibotOpenApiSpec<
   Responses extends ValibotAnyOpenApiResponses = ValibotAnyOpenApiResponses,
 > = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
-export const toJsonSchemaApiEndpoints = <E extends ValibotApiEndpoints>(
+export const toJsonSchemaApiEndpoints = <E extends SSApiEndpoints>(
   endpoints: E,
 ): JsonSchemaApiEndpoints => toEndpoints(toJsonSchema, endpoints);
