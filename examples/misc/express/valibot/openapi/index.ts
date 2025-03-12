@@ -2,8 +2,10 @@ import express from "express";
 import * as v from "valibot";
 import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
-import { ValibotOpenApiEndpoints } from "@notainc/typed-api-spec/valibot/openapi";
-import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot";
+import {
+  OpenApiEndpointsSchema,
+  toOpenApiDoc,
+} from "@notainc/typed-api-spec/core";
 
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
@@ -45,7 +47,7 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies ValibotOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 
 const newApp = () => {
   const app = express();

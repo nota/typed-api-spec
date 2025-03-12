@@ -11,7 +11,7 @@ In typed-api-spec, you can generate OpenAPI documentation from API schema writte
 ## Define API Endpoints
 
 For example, consider the case of defining a schema using zod.
-If you want to generate an OpenAPI schema, use `ZodOpenApiEndpoints` instead of `ZodApiEndpoints`.
+If you want to generate an OpenAPI schema, use `OpenApiEndpointsSchema` instead of `ApiEndpointsSchema`.
 
 ```typescript
 const apiEndpoints = {
@@ -30,10 +30,10 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies ZodOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 ```
 
-ZodOpenApiEndpoints allows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
+OpenApiEndpointsSchema allows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
 
 ## Generating OpenAPI Documentation
 
@@ -68,11 +68,3 @@ app.get("/openapi", (req, res) => {
 You can use [Swagger UI](https://swagger.io/tools/swagger-ui/) to visualize and interact with the API's resources.
 
 [![Image from Gyazo](https://i.gyazo.com/e8489d011b00c4a635d269d09e37c237.png)](https://gyazo.com/e8489d011b00c4a635d269d09e37c237)
-
-## Supportted libraries
-
-OpenAPI integration depends on the validation library you use.
-Currently we support the following libraries:
-
-- [zod](/docs/validation/zod)
-- [valibot](/docs/validation/valibot)

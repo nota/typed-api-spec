@@ -9,6 +9,7 @@ You can use zod to define the API specification of typed-api-spec.
 
 ```typescript
 import { z } from "zod";
+import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const Spec = {
   "/users/:id": {
@@ -24,7 +25,7 @@ const Spec = {
       },
     },
   },
-} satisfies ZodApiEndpoints;
+} satisfies ApiEndpointsSchema;
 ```
 
 ## Using server integration
@@ -37,7 +38,7 @@ See the [express](/docs/server/express) or [fastify](/docs/server/fastify) page 
 You can generate OpenAPI documentation from the API schema written by TypeScript and zod.
 If you do so, you should:
 
-- Use `ZodOpenApiEndpoints` instead of `ZodApiEndpoints`
+- Use `OpenApiEndpointsSchema` instead of `ApiEndpointsSchema`
 - Define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
 - Install `zod-openapi` package and import it.
 - Use `toOpenApiDoc()` function to generate OpenAPI documentation.
@@ -59,10 +60,10 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies ZodOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 ```
 
-ZodOpenApiEndpoints allows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
+OpenApiEndpointsSchema allows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
 
 ### Generating OpenAPI Documentation
 
@@ -71,7 +72,7 @@ You can serve OpenAPI endpoint by serving the generated OpenAPI object as JSON.
 Here is an example of how to serve OpenAPI documentation using Express.
 
 ```typescript
-import { toOpenApiDoc } from "@notainc/typed-api-spec/zod/openapi";
+import { toOpenApiDoc } from "@notainc/typed-api-spec/openapi";
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
   servers: [{ url: "http://locahost:3000" }],

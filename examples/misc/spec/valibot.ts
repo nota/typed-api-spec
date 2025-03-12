@@ -1,8 +1,8 @@
-import * as v from "valibot";
 import {
+  ApiEndpointsSchema,
   ToApiEndpoints,
-  ValibotApiEndpoints,
-} from "@notainc/typed-api-spec/valibot";
+} from "@notainc/typed-api-spec/core";
+import * as v from "valibot";
 
 const JsonHeader = v.object({
   "Content-Type": v.literal("application/json"),
@@ -44,5 +44,5 @@ export const pathMap = {
       },
     },
   },
-} satisfies ValibotApiEndpoints;
+} satisfies ApiEndpointsSchema;
 export type PathMap = ToApiEndpoints<typeof pathMap>;

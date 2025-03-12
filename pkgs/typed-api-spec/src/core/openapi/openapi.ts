@@ -9,9 +9,34 @@ import { JSONSchema7 } from "json-schema";
 import { StatusCode } from "../hono-types";
 import {
   AnyOpenApiSpec,
+  BaseOpenApiSpec,
+  DefineOpenApiEndpoint,
+  DefineOpenApiResponses,
   JsonSchemaOpenApiEndpoints,
   JsonSchemaOpenApiSpec,
+  ToOpenApiResponse,
 } from "./spec";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { AnyStandardSchemaV1, ApiResponseSchema } from "../schema";
+import { toJsonSchemaApiEndpoints } from "../jsonschema";
+
+export type OpenApiEndpointsSchema = {
+  [Path in string]: OpenApiEndpointSchema;
+};
+export type OpenApiEndpointSchema = DefineOpenApiEndpoint<OpenApiSpecSchema>;
+export type OpenApiResponseSchema = ToOpenApiResponse<ApiResponseSchema>;
+export type OpenApiResponsesSchema =
+  DefineOpenApiResponses<OpenApiResponseSchema>;
+
+export type OpenApiSpecSchema<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ParamKeys extends string = string,
+  Params extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Query extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Body extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  RequestHeaders extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
+  Responses extends OpenApiResponsesSchema = OpenApiResponsesSchema,
+> = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
@@ -121,7 +146,7 @@ const toResponses = (
   return ret;
 };
 
-export const toOpenApiDoc = (
+export const jsonSchemaToOpenApiDoc = (
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: JsonSchemaOpenApiEndpoints,
 ): OpenAPIV3_1.Document => {
@@ -130,4 +155,30 @@ export const toOpenApiDoc = (
     paths[path] = toPathItemObject(endpoints[path]);
   }
   return { ...doc, paths };
+};
+
+export const toOpenApiDoc = async <E extends OpenApiEndpointsSchema>(
+  doc: Omit<OpenAPIV3_1.Document, "paths">,
+  endpoints: E,
+): Promise<OpenAPIV3_1.Document> => {
+  const e = await toJsonSchemaApiEndpoints(toSchema, endpoints);
+  return jsonSchemaToOpenApiDoc(doc, e as JsonSchemaOpenApiEndpoints);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toSchema = async (s: StandardSchemaV1<any>) => {
+  switch (s["~standard"].vendor) {
+    case "zod": {
+      const { createSchema } = await import("zod-openapi");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return createSchema(s as any).schema as JSONSchema7;
+    }
+    case "valibot": {
+      const { toJsonSchema } = await import("@valibot/to-json-schema");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return toJsonSchema(s as any);
+    }
+    default:
+      throw new Error(`Unsupported vendor: ${s["~standard"].vendor}`);
+  }
 };

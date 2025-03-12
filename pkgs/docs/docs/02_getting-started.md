@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Getting Started
 
-Let's assume you have a npm project with code like this that __fetch__ from GitHub:
+Let's assume you have a npm project with code like this that **fetch** from GitHub:
 
 ```typescript
 const GITHUB_API_ORIGIN = "https://api.github.com";
@@ -12,18 +12,18 @@ const url = `/repos/mpppk/typed-api-spec/topics?page=1`;
 const response = await fetch(`${GITHUB_API_ORIGIN}${url}`);
 if (!response.ok) {
   // response.json() returns any
-  const { message } = await response.json()
+  const { message } = await response.json();
   return console.error(message);
 }
 // response.json() returns any
-const { names } = await response.json()
+const { names } = await response.json();
 console.log(names); // => ["api-spec", "fetch", "typescript"]
 ```
 
 ## Installation
 
 ```bash
-npm install @mpppk/typed-api-spec
+npm install @notainc/typed-api-spec
 ```
 
 ## Define API Spec
@@ -34,8 +34,8 @@ type Spec = DefineApiEndpoints<{
     get: {
       query: { page?: string };
       responses: {
-        200: { body: { names: string[] }; };
-        400: { body: { message: string; }; };
+        200: { body: { names: string[] } };
+        400: { body: { message: string } };
       };
     };
   };
@@ -45,7 +45,7 @@ type Spec = DefineApiEndpoints<{
 ## Add types to fetch function
 
 ```typescript
-import { fetchT } from "@mpppk/typed-api-spec";
+import { fetchT } from "@notainc/typed-api-spec";
 const fetch = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
 ```
 
@@ -58,15 +58,15 @@ const fetchT = fetch as FetchT<typeof GITHUB_API_ORIGIN, Spec>;
 const response = await fetchT(`${GITHUB_API_ORIGIN}${url}`);
 if (!response.ok) {
   // response.json() is typed as { message: string } because response is not ok
-  const { message } = await response.json()
+  const { message } = await response.json();
   return console.error(message);
 }
 // response.json() is typed as { names: string[] } because response is ok
-const { names } = await response.json()
+const { names } = await response.json();
 console.log(names); // => ["api-spec", "fetch", "typescript"]
 ```
 
-Notice that only few (highlighted) lines have been changed from original, but now the __fetch__ is type-safe.
+Notice that only few (highlighted) lines have been changed from original, but now the **fetch** is type-safe.
 
 ## Playground
 

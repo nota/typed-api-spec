@@ -1,17 +1,10 @@
-import { memoize, Result, tupleIteratorToObject, unreachable } from "../utils";
+import { memoize, tupleIteratorToObject, unreachable } from "../utils";
 import { match } from "path-to-regexp";
-import { UnknownApiEndpoints } from "../core";
-import {
-  AnySpecValidator,
-  RequestSpecValidatorGenerator,
-  runSpecValidator,
-} from "../core";
-import {
-  AnyResponseSpecValidator,
-  ResponseSpecValidatorGenerator,
-  runResponseSpecValidator,
-} from "../core";
-import { ValidatorInputError } from "../core";
+import { Method, newValidator, SSResult, StatusCode } from "../core";
+import { AnySpecValidator, runSpecValidator } from "../core";
+import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { ApiEndpointsSchema } from "../core/schema";
 
 const dummyHost = "https://example.com";
 
@@ -80,7 +73,7 @@ const toInput =
 const newErrorHandler = (policy: "throw" | "log") => {
   return (
     results: ReturnType<typeof runSpecValidator>,
-    error: ValidatorInputError | undefined,
+    error: Readonly<StandardSchemaV1.Issue[]>,
   ) => {
     switch (policy) {
       case "throw":
@@ -126,24 +119,26 @@ const newResponseErrorHandler = (policy: "throw" | "log") => {
 
 export const withValidation = <
   Fetch extends typeof fetch,
-  Validators extends RequestSpecValidatorGenerator,
-  ResponseValidators extends ResponseSpecValidatorGenerator,
-  Endpoints extends UnknownApiEndpoints,
+  // Validators extends RequestSpecValidatorGenerator,
+  // ResponseValidators extends ResponseSpecValidatorGenerator,
+  Endpoints extends ApiEndpointsSchema,
 >(
   f: Fetch,
   endpoints: Endpoints,
-  validatorGenerator: Validators,
-  responseValidatorGenerator: ResponseValidators,
+  // validatorGenerator: Validators,
+  // responseValidatorGenerator: ResponseValidators,
   options: { policy: "throw" | "log" } = { policy: "throw" },
 ): Fetch => {
   const toInputWithMatcher = toInput(newPathMather(endpoints));
   const handleError = newErrorHandler(options.policy);
   const handleResponseError = newResponseErrorHandler(options.policy);
+  const validator0 = newValidator(endpoints);
   const ftc = async (...args: Parameters<Fetch>) => {
     const [input, init] = args;
     const vInput = toInputWithMatcher(input, init);
-    const { data: validator, error } = validatorGenerator(vInput);
-    handleError(runSpecValidator(validator), error);
+    const { data: validator, error } = validator0.req(vInput);
+    // FIXME
+    handleError(runSpecValidator(validator), [{ message: "", ...error }]);
     const res = await f(input, init);
     const res1 = res.clone();
     // TODO: jsonじゃない時どうするか
@@ -152,10 +147,11 @@ export const withValidation = <
     res1.headers.forEach((value, key) => {
       headers[key] = value;
     });
-    const responseValidator = responseValidatorGenerator({
+    const responseValidator = validator0.res({
       path: vInput.path,
-      method: vInput.method,
-      statusCode: res1.status,
+      // FIXME: 雑にキャストしていいんだっけ?
+      method: vInput.method as Method,
+      statusCode: res1.status as StatusCode,
       body: await res1.json(),
       headers: headersToRecord(res1.headers ?? {}),
     });
@@ -168,45 +164,74 @@ export const withValidation = <
 export class SpecValidatorError extends Error {
   constructor(
     public reason: keyof AnySpecValidator | "preCheck",
-    public error: ValidatorInputError,
+    public error: Readonly<StandardSchemaV1.Issue[]>,
     public message: string = JSON.stringify({ reason, ...error }),
   ) {
     super("Validation error");
   }
 }
 
-const handleValidatorsError = (
-  results: Record<
-    Exclude<keyof AnySpecValidator, "responses">,
-    Result<unknown, ValidatorInputError>
-  >,
-  cb: (reason: keyof AnySpecValidator, error: ValidatorInputError) => void,
+const handleValidatorsError = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  results: Record<Exclude<keyof AnySpecValidator, "responses">, SSResult<any>>,
+  cb: (
+    reason: keyof AnySpecValidator,
+    error: Readonly<StandardSchemaV1.Issue[]>,
+  ) => void,
 ) => {
-  if (results.params?.error) {
-    cb("params", results.params.error);
+  let params = results.params;
+  if (params instanceof Promise) {
+    params = await params;
   }
-  if (results.query?.error) {
-    cb("query", results.query.error);
+  if (params.issues) {
+    cb("params", params.issues);
   }
-  if (results.body?.error) {
-    cb("body", results.body.error);
+  let query = results.query;
+  if (query instanceof Promise) {
+    query = await query;
   }
-  if (results.headers?.error) {
-    cb("headers", results.headers.error);
+  if (query.issues) {
+    cb("query", query.issues);
+  }
+  let body = results.body;
+  if (body instanceof Promise) {
+    body = await body;
+  }
+  if (body.issues) {
+    cb("body", body.issues);
+  }
+  let headers = results.headers;
+  if (headers instanceof Promise) {
+    headers = await headers;
+  }
+  if (headers.issues) {
+    cb("headers", headers.issues);
   }
 };
 
-const handleResponseValidatorsError = (
+const handleResponseValidatorsError = async (
   results: Record<
     Exclude<keyof AnyResponseSpecValidator, "responses">,
-    Result<unknown, ValidatorInputError>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SSResult<any>
   >,
-  cb: (reason: keyof AnySpecValidator, error: ValidatorInputError) => void,
+  cb: (
+    reason: keyof AnySpecValidator,
+    error: Readonly<StandardSchemaV1.Issue[]>,
+  ) => void,
 ) => {
-  if (results.body?.error) {
-    cb("body", results.body.error);
+  let body = results.body;
+  if (body instanceof Promise) {
+    body = await body;
   }
-  if (results.headers?.error) {
-    cb("headers", results.headers.error);
+  if (body.issues) {
+    cb("body", body.issues);
+  }
+  let headers = results.headers;
+  if (headers instanceof Promise) {
+    headers = await headers;
+  }
+  if (headers.issues) {
+    cb("headers", headers.issues);
   }
 };

@@ -1,26 +1,27 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, assert } from "vitest";
 import request from "supertest";
 import express from "express";
-import { asAsync, ValidateLocals, validatorMiddleware } from "./index";
 import {
-  newZodValidator,
-  ZodApiEndpoints,
-  ZodApiSpec,
-  ZodValidators,
-} from "../zod";
-import { z, ZodError } from "zod";
+  asAsync,
+  ToHandlers,
+  typed,
+  ValidateLocals,
+  validatorMiddleware,
+} from "./index";
+import { z } from "zod";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
-import { ToHandlers, typed } from "./zod";
 import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
+  Validators,
 } from "../core/validator/validate";
+import { ApiEndpointsSchema, ApiSpecSchema } from "../core/schema";
 
-type ZodValidateLocals<
-  AS extends ZodApiSpec,
+type SSValidateLocals<
+  AS extends ApiSpecSchema,
   ParamKeys extends string,
-> = ValidateLocals<ZodValidators<AS, ParamKeys>>;
+> = ValidateLocals<Validators<AS, ParamKeys>>;
 
 describe("validatorMiddleware", () => {
   const pathMap = {
@@ -54,13 +55,13 @@ describe("validatorMiddleware", () => {
         },
       },
     },
-  } satisfies ZodApiEndpoints;
-  const { req: reqValidator } = newZodValidator(pathMap);
-  const middleware = validatorMiddleware(reqValidator);
+  } satisfies ApiEndpointsSchema;
+
+  const middleware = validatorMiddleware(pathMap);
   const next = vi.fn();
 
   describe("request to endpoint which is defined in ApiSpec", () => {
-    it("should success to validate request", () => {
+    it("should success to validate request", async () => {
       const req: Partial<Request> = {
         query: { name: "alice" },
         body: { name: "alice" },
@@ -75,32 +76,41 @@ describe("validatorMiddleware", () => {
       middleware(req as Request, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.locals.validate).toEqual(expect.any(Function));
-      const locals = res.locals as ZodValidateLocals<
+      const locals = res.locals as SSValidateLocals<
         (typeof pathMap)["/"]["get"],
         ParseUrlParams<"/">
       >;
       const validate = locals.validate(req as Request);
 
       {
-        const r = validate.query();
-        expect(r.error).toBeUndefined();
-        expect(r.data?.name).toBe("alice");
+        const r = await validate.query();
+        if (r.issues) {
+          assert.fail("issue must be empty");
+        } else {
+          expect(r.value.name).toBe("alice");
+        }
       }
 
       {
-        const r = validate.body();
-        expect(r.error).toBeUndefined();
-        expect(r.data?.name).toBe("alice");
+        const r = await validate.body();
+        if (r.issues) {
+          assert.fail("issue must be empty");
+        } else {
+          expect(r.value.name).toBe("alice");
+        }
       }
 
       {
-        const r = validate.headers();
-        expect(r.error).toBeUndefined();
-        expect(r.data?.["content-type"]).toBe("application/json");
+        const r = await validate.headers();
+        if (r.issues) {
+          assert.fail("issue must be empty");
+        } else {
+          expect(r.value["content-type"]).toBe("application/json");
+        }
       }
     });
 
-    it("should fail if request schema is invalid", () => {
+    it("should fail if request schema is invalid", async () => {
       const req: Partial<Request> = {
         query: { desc: "test" },
         body: { desc: "test" },
@@ -115,16 +125,16 @@ describe("validatorMiddleware", () => {
       middleware(req as Request, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.locals.validate).toEqual(expect.any(Function));
-      const locals = res.locals as ZodValidateLocals<
+      const locals = res.locals as SSValidateLocals<
         (typeof pathMap)["/"]["get"],
         ParseUrlParams<"/">
       >;
       const validate = locals.validate(req as Request);
 
       {
-        const r = validate.query();
-        expect(r.error).toEqual(
-          new ZodError([
+        const r = await validate.query();
+        if (r.issues) {
+          expect(r.issues).toEqual([
             {
               code: "invalid_type",
               expected: "string",
@@ -132,15 +142,16 @@ describe("validatorMiddleware", () => {
               path: ["name"],
               message: "Required",
             },
-          ]),
-        );
-        expect(r.data).toBeUndefined();
+          ]);
+        } else {
+          assert.fail("issue must be exist");
+        }
       }
 
       {
-        const r = validate.body();
-        expect(r.error).toEqual(
-          new ZodError([
+        const r = await validate.body();
+        if (r.issues) {
+          expect(r.issues).toEqual([
             {
               code: "invalid_type",
               expected: "string",
@@ -148,14 +159,15 @@ describe("validatorMiddleware", () => {
               path: ["name"],
               message: "Required",
             },
-          ]),
-        );
-        expect(r.data).toBeUndefined();
+          ]);
+        } else {
+          assert.fail("issue must be exist");
+        }
       }
 
-      const r = validate.headers();
-      expect(r.error).toEqual(
-        new ZodError([
+      const r = await validate.headers();
+      if (r.issues) {
+        expect(r.issues).toEqual([
           {
             code: "invalid_literal",
             expected: "application/json",
@@ -163,9 +175,10 @@ describe("validatorMiddleware", () => {
             path: ["content-type"],
             message: `Invalid literal value, expected "application/json"`,
           },
-        ]),
-      );
-      expect(r.data).toBeUndefined();
+        ]);
+      } else {
+        assert.fail("issue must be exist");
+      }
     });
   });
 
@@ -185,14 +198,14 @@ describe("validatorMiddleware", () => {
       middleware(req as Request, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.locals.validate).toEqual(expect.any(Function));
-      const locals = res.locals as ZodValidateLocals<
-        ZodApiSpec,
+      const locals = res.locals as SSValidateLocals<
+        ApiSpecSchema,
         ParseUrlParams<"">
       >;
       const validate = locals.validate(req as Request);
       const pathErrorResult = {
-        data: undefined,
-        error: newValidatorPathNotFoundError("/users"),
+        value: undefined,
+        issues: [newValidatorPathNotFoundError("/users")],
       };
 
       expect(validate.query?.()).toEqual(pathErrorResult);
@@ -217,11 +230,11 @@ describe("validatorMiddleware", () => {
       expect(next).toHaveBeenCalled();
       expect(res.locals.validate).toEqual(expect.any(Function));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const locals = res.locals as ZodValidateLocals<any, ParseUrlParams<"">>;
+      const locals = res.locals as SSValidateLocals<any, ParseUrlParams<"">>;
       const validate = locals.validate(req as Request);
       const methodErrorResult = {
-        data: undefined,
-        error: newValidatorMethodNotFoundError("patch"),
+        value: undefined,
+        issues: [newValidatorMethodNotFoundError("patch")],
       };
 
       expect(validate.query?.()).toEqual(methodErrorResult);
@@ -260,7 +273,7 @@ describe("typed", () => {
           "content-type": z.literal("application/json"),
         }),
         query: z.object({
-          detail: z.union([z.literal("true"), z.literal("false")]),
+          detail: z.union([z.literal("true"), z.literal("false")]).optional(),
         }),
         responses: {
           200: { body: User },
@@ -268,7 +281,7 @@ describe("typed", () => {
         },
       },
     },
-  } satisfies ZodApiEndpoints;
+  } satisfies ApiEndpointsSchema;
 
   it("ok", async () => {
     const app = newApp();
@@ -276,23 +289,24 @@ describe("typed", () => {
     wApp.get("/users", (req, res) => {
       return res.json([{ id: "1", name: "alice" }]);
     });
-    wApp.post("/users", (req, res) => {
-      const { data } = res.locals.validate(req).body();
-      if (data === undefined) {
+    wApp.post("/users", async (req, res) => {
+      const r = await res.locals.validate(req).body();
+      if (r.issues) {
         return res.status(400).json({ message: "invalid body" });
       }
-      return res.json({ id: "1", name: data.name });
+
+      return res.json({ id: "1", name: r.value.name });
     });
-    wApp.get("/users/:id", (req, res) => {
-      const qResult = res.locals.validate(req).query();
-      const pResult = res.locals.validate(req).params();
-      if (pResult.data === undefined) {
+    wApp.get("/users/:id", async (req, res) => {
+      const qResult = await res.locals.validate(req).query();
+      const pResult = await res.locals.validate(req).params();
+      if (qResult.issues) {
         return res.status(400).json({ message: "invalid query" });
       }
-      if (qResult.data !== undefined) {
-        return res.status(200).json({ id: pResult.data.id, name: "alice" });
+      if (pResult.issues) {
+        return res.status(400).json({ message: "invalid params" });
       }
-      return res.status(200).json({ id: pResult.data.id, name: "alice" });
+      return res.status(200).json({ id: pResult.value.id, name: "alice" });
     });
 
     {
@@ -413,36 +427,40 @@ describe("Handler", () => {
           },
         },
       },
-    } satisfies ZodApiEndpoints;
+    } satisfies ApiEndpointsSchema;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const getHandler: ToHandlers<typeof pathMap>["/users"]["get"] = (
+    const getHandler: ToHandlers<typeof pathMap>["/users"]["get"] = async (
       req,
       res,
     ) => {
-      const { data: query, error: queryErr } = res.locals.validate(req).query();
-      if (queryErr) {
+      const queryResult = await res.locals.validate(req).query();
+      if (queryResult.issues) {
         return res.status(400).json({ message: "invalid query" });
       }
-      const { data: params, error: paramsErr } = res.locals
-        .validate(req)
-        .params();
-      if (paramsErr) {
+      const paramsResult = await res.locals.validate(req).params();
+      if (paramsResult.issues) {
         return res.status(400).json({ message: "invalid params" });
       }
-      return res.json([{ id: "1", name: query.name, active: params.active }]);
+      return res.json([
+        {
+          id: "1",
+          name: queryResult.value.name,
+          active: paramsResult.value.active,
+        },
+      ]);
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const postHandler: ToHandlers<typeof pathMap>["/users"]["post"] = (
+    const postHandler: ToHandlers<typeof pathMap>["/users"]["post"] = async (
       req,
       res,
     ) => {
-      const { data: body, error: bodyError } = res.locals.validate(req).body();
-      if (bodyError) {
+      const bodyResult = await res.locals.validate(req).body();
+      if (bodyResult.issues) {
         return res.status(400).json({ message: "invalid query" });
       }
-      return res.json([{ id: "1", name: body.name }]);
+      return res.json([{ id: "1", name: bodyResult.value.name }]);
     };
   });
 });

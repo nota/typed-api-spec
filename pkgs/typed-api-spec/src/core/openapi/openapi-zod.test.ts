@@ -1,9 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { OpenAPIV3_1 } from "openapi-types";
-import { toOpenApiDoc, ZodOpenApiEndpoints } from "./openapi";
 import "zod-openapi/extend";
 import z from "zod";
-
+import { OpenApiEndpointsSchema, toOpenApiDoc } from "..";
 describe("openapi", () => {
   const endpoints = {
     "/pets": {
@@ -28,7 +27,7 @@ describe("openapi", () => {
         },
       },
     },
-  } satisfies ZodOpenApiEndpoints;
+  } satisfies OpenApiEndpointsSchema;
 
   const expectGetPathObject = {
     description: "Get pet",
@@ -103,7 +102,7 @@ describe("openapi", () => {
     },
   };
 
-  it("toOpenApiDoc", () => {
+  it("toOpenApiDoc", async () => {
     const baseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
       openapi: "3.1.0",
       info: { title: "title", version: "1" },
@@ -111,7 +110,7 @@ describe("openapi", () => {
       servers: [],
       components: {},
     };
-    const doc = toOpenApiDoc(baseDoc, endpoints);
+    const doc = await toOpenApiDoc(baseDoc, endpoints);
     expect(doc).toEqual({
       ...baseDoc,
       paths: {

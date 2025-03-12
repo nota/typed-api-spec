@@ -3,8 +3,10 @@ import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
 import "zod-openapi/extend";
 import z from "zod";
-import { toOpenApiDoc } from "@notainc/typed-api-spec/zod/openapi";
-import { ZodOpenApiEndpoints } from "@notainc/typed-api-spec/zod/openapi";
+import {
+  OpenApiEndpointsSchema,
+  toOpenApiDoc,
+} from "@notainc/typed-api-spec/core";
 
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
@@ -48,15 +50,15 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies ZodOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 
 const newApp = () => {
   const app = express();
   app.use(express.json());
   app.use(cors());
   // const wApp = asAsync(typed(apiEndpoints, app));
-  app.get("/openapi", (req, res) => {
-    const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints);
+  app.get("/openapi", async (req, res) => {
+    const openapi = await toOpenApiDoc(openapiBaseDoc, apiEndpoints);
     res.status(200).json(openapi);
   });
   return app;

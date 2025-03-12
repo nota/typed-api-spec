@@ -1,10 +1,9 @@
-import { IRouter, RequestHandler } from "express";
+import { IRouter, RequestHandler, Router } from "express";
 import {
   Method,
   AnyApiResponses,
   ApiResBody,
   ApiSpec,
-  AnyApiSpec,
   AnyApiEndpoints,
 } from "../index";
 import {
@@ -13,14 +12,11 @@ import {
   Request,
   Response,
 } from "express-serve-static-core";
-import { StatusCode } from "../core";
+import { newValidator, StatusCode, ToValidators } from "../core";
 import { ParsedQs } from "qs";
-import {
-  AnySpecValidator,
-  RequestSpecValidatorGenerator,
-  SpecValidatorMap,
-} from "../core/validator/request";
-import { Result } from "../utils";
+import { AnySpecValidator } from "../core/validator/request";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -40,21 +36,21 @@ export type Handler<
 ) => void;
 
 export type ToHandler<
-  Spec extends AnyApiSpec | undefined,
-  Validators extends AnySpecValidator | undefined,
+  E extends ApiEndpointsSchema,
+  Path extends keyof E & string,
+  M extends Method,
 > = Handler<
-  Spec,
+  ToApiEndpoints<E>[Path][M],
   ValidateLocals<
-    Validators extends AnySpecValidator ? Validators : Record<string, never>
+    ToValidators<E, Path, M> extends AnySpecValidator
+      ? ToValidators<E, Path, M>
+      : Record<string, never>
   >
 >;
 
-export type ToHandlers<
-  E extends AnyApiEndpoints,
-  V extends SpecValidatorMap,
-> = {
+export type ToHandlers<E extends ApiEndpointsSchema> = {
   [Path in keyof E & string]: {
-    [M in Method]: ToHandler<E[Path][M], V[Path][M]>;
+    [M in Method]: ToHandler<E, Path, M>;
   };
 };
 
@@ -83,7 +79,6 @@ export type ValidateLocals<
  */
 export type RouterT<
   E extends AnyApiEndpoints,
-  V extends SpecValidatorMap,
   SC extends StatusCode = StatusCode,
 > = Omit<IRouter, Method> & {
   [M in Method]: <Path extends string & keyof E>(
@@ -92,18 +87,18 @@ export type RouterT<
       // Middlewareは複数のエンドポイントで実装を使い回されることがあるので、型チェックはゆるくする
       ...Array<RequestHandler>,
       // Handlerは厳密に型チェックする
-      ToHandler<E[Path][M], V[Path][M]>,
+      ToHandler<E, Path, M>,
     ]
-  ) => RouterT<E, V, SC>;
+  ) => RouterT<E, SC>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validatorMiddleware = <V extends RequestSpecValidatorGenerator>(
-  validator: V,
+export const validatorMiddleware = <const E extends ApiEndpointsSchema>(
+  pathMap: E,
 ) => {
   return (_req: Request, res: Response, next: NextFunction) => {
     res.locals.validate = (req: Request) => {
-      const { data: v2, error } = validator({
+      const { data: v2, error } = newValidator(pathMap).req({
         path: req.route?.path?.toString(),
         method: req.method.toLowerCase(),
         headers: req.headers,
@@ -113,10 +108,22 @@ export const validatorMiddleware = <V extends RequestSpecValidatorGenerator>(
       });
       if (error) {
         return {
-          query: () => Result.error(error),
-          params: () => Result.error(error),
-          body: () => Result.error(error),
-          headers: () => Result.error(error),
+          query: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          params: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          body: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
+          headers: () =>
+            ({
+              issues: [{ message: "", ...error }],
+            }) satisfies StandardSchemaV1.FailureResult,
         };
       }
       return v2;
@@ -202,4 +209,30 @@ export const asAsync = <Router extends IRouter | RouterT<any, any>>(
       };
     },
   });
+};
+
+/**
+ * Set validator and add more strict type information to router.
+ *
+ * @param pathMap API endpoints
+ * @param router Express Router
+ *
+ * @example
+ * ```
+ * const router = typed(pathMap, express.Router())
+ * router.get('/path', (req, res) => {
+ *   const {data, error} = res.locals.validate(req).query()
+ *   if (error) {
+ *     return res.status(400).json({ message: 'Invalid query' })
+ *   }
+ *   return res.status(200).json({ message: 'success', value: r.data.value })
+ * })
+ * ```
+ */
+export const typed = <const Endpoints extends ApiEndpointsSchema>(
+  pathMap: Endpoints,
+  router: Router,
+): RouterT<Endpoints> => {
+  router.use(validatorMiddleware(pathMap));
+  return router;
 };

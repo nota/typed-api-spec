@@ -88,20 +88,10 @@
       "require": "./dist/express/index.js",
       "import": "./dist/express/index.mjs"
     },
-    "./express/zod": {
-      "types": "./dist/express/zod.d.ts",
-      "require": "./dist/express/zod.js",
-      "import": "./dist/express/zod.mjs"
-    },
-    "./express/valibot": {
-      "types": "./dist/express/valibot.d.ts",
-      "require": "./dist/express/valibot.js",
-      "import": "./dist/express/valibot.mjs"
-    },
-    "./fastify/zod": {
-      "types": "./dist/fastify/zod.d.ts",
-      "require": "./dist/fastify/zod.js",
-      "import": "./dist/fastify/zod.mjs"
+    "./fastify": {
+      "types": "./dist/fastify/index.d.ts",
+      "require": "./dist/fastify/index.js",
+      "import": "./dist/fastify/index.mjs"
     },
     "./fetch": {
       "types": "./dist/fetch/index.d.ts",
@@ -112,26 +102,6 @@
       "types": "./dist/json/index.d.ts",
       "require": "./dist/json/index.js",
       "import": "./dist/json/index.mjs"
-    },
-    "./zod": {
-      "types": "./dist/zod/index.d.ts",
-      "require": "./dist/zod/index.js",
-      "import": "./dist/zod/index.mjs"
-    },
-    "./zod/openapi": {
-      "types": "./dist/zod/openapi.d.ts",
-      "require": "./dist/zod/openapi.js",
-      "import": "./dist/zod/openapi.mjs"
-    },
-    "./valibot": {
-      "types": "./dist/valibot/index.d.ts",
-      "require": "./dist/valibot/index.js",
-      "import": "./dist/valibot/index.mjs"
-    },
-    "./valibot/openapi": {
-      "types": "./dist/valibot/openapi.d.ts",
-      "require": "./dist/valibot/openapi.js",
-      "import": "./dist/valibot/openapi.mjs"
     }
   },
   "main": "./dist/index.js",
@@ -139,6 +109,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.7.3",
+    "@standard-schema/spec": "^1.0.0",
     "json-schema": "^0.4.0",
     "json-schema-walker": "^2.0.0",
     "path-to-regexp": "^8.2.0"

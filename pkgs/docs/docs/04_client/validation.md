@@ -15,38 +15,39 @@ export const Spec = {
       responses: {
         // ↓:This is the actual response from server
         // 200: { body: z.object({ names: z.string().array() }) },
-        
+
         // But we intentionally define an incorrect schema for this example
         200: { body: z.object({ noexistProps: z.string().array() }) },
         400: { body: z.object({ message: z.string() }) },
       },
     },
   },
-} satisfies ZodApiEndpoints;
+} satisfies ApiEndpointsSchema;
 ```
 
 You can add type-check to the fetch function by using `fetch as FetchT<...>`
 
 ```typescript
-import { ZodApiEndpoints } from "@notainc/typed-api-spec";
+import { ApiEndpoints Schema} from "@notainc/typed-api-spec";
 
 // added type, but no runtime validation, so you can't detect the incorrect schema definition
-const fetchGitHub = fetch as FetchT<typeof GITHUB_API_ORIGIN, typeof ToApiEndpoints<ZodApiEndpoints>>;
+const fetchGitHub = fetch as FetchT<typeof GITHUB_API_ORIGIN, typeof ToApiEndpoints<ApiEndpointsSchema>>;
 ```
 
 But it does not provide any runtime validation.  
 If you want to validate the response at runtime, you can use `newFetch` as follows:
 
 ```typescript
-  const fetchGitHub = await newFetch(async () => Spec, true)<typeof GITHUB_API_ORIGIN>();
+const fetchGitHub = await newFetch(async () => Spec, true)<
+  typeof GITHUB_API_ORIGIN
+>();
 ```
 
-`newFetch` returns a type-safe `fetch` that is identical to `FetchT<typeof GITHUB_API_ORIGIN, typeof ToApiEndpoints<ZodApiEndpoints>>` above in type-level.
+`newFetch` returns a type-safe `fetch` that is identical to `FetchT<typeof GITHUB_API_ORIGIN, typeof ToApiEndpoints<ApiEndpointsSchema>>` above in type-level.
 The difference is that if `true` is passed as the second argument, it will perform additional runtime validation.
 
 ```typescript
-await fetchGitHub("/repos/notainc/typed-api-spec/topics");
-// → Error: {"reason":"body","issues":[{"code":"invalid_type","expected":"array","received":"undefined","path":["noexistProps"],"message":"Required"}],"name":"ZodError"}
+await fetchGitHub("/repos/notainc/typed-api-spec/topics"); // → Error
 ```
 
 In this example we are using Zod, so of course we need to bundle zod to perform client-side validation.
@@ -54,7 +55,10 @@ However, in many cases, client-side validation is only needed during development
 So we'll rewrite the code as follows (assuming you are using Vite):
 
 ```typescript
-  const fetchGitHub = newFetch(() => import("./gh.ts").then(m => m.Spec), import.meta.env.DEV)<typeof GITHUB_API_ORIGIN>();;
+const fetchGitHub = newFetch(
+  () => import("./gh.ts").then((m) => m.Spec),
+  import.meta.env.DEV
+)<typeof GITHUB_API_ORIGIN>();
 ```
 
 In this case, the client-side validation is only enabled in development mode, and the production build will not include the zod library.
@@ -66,7 +70,11 @@ In this case, the client-side validation is only enabled in development mode, an
 newFetch() is a function that generates a type-safe fetch function with runtime validation.
 
 ```typescript
-type newFetch = ( specLoader: () => Promise<Spec>, validation: boolean, ft = fetch ) => () => FetchT<Origin, Spec>;
+type newFetch = (
+  specLoader: () => Promise<Spec>,
+  validation: boolean,
+  ft = fetch
+) => () => FetchT<Origin, Spec>;
 ```
 
 - specLoader: async function that returns the API specification. If validation is false, this function is not called.

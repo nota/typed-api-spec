@@ -1,13 +1,16 @@
-import { describe, it, expect } from "vitest";
-import { newValibotValidator, ValibotApiEndpoints } from "./index";
+import { describe, it, expect, assert } from "vitest";
+import { ApiEndpointsSchema } from "./schema";
 import * as v from "valibot";
-import { newValidatorPathNotFoundError } from "../core/validator/validate";
-import { InferIssue } from "valibot";
-import { AnyResponseSpecValidator } from "../core/validator/response";
-import { AnySpecValidator } from "../core/validator/request";
-import { newMethodInvalidError } from "../core";
+import {
+  newValidator,
+  newValidatorPathNotFoundError,
+} from "./validator/validate";
+import { AnyResponseSpecValidator } from "./validator/response";
+import { AnySpecValidator } from "./validator/request";
+import { newMethodInvalidError } from ".";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
-describe("newValibotValidator", () => {
+describe("newSSValidator", () => {
   const pathMap = {
     "/": {
       get: {
@@ -23,7 +26,7 @@ describe("newValibotValidator", () => {
         },
       },
     },
-  } satisfies ValibotApiEndpoints;
+  } satisfies ApiEndpointsSchema;
 
   const validReqInput = {
     path: "/",
@@ -42,35 +45,49 @@ describe("newValibotValidator", () => {
     headers: { headersNameRes: "headersNameRes" },
   } as const;
 
-  it("ok", () => {
-    const { req, res } = newValibotValidator(pathMap);
+  it("ok", async () => {
+    const { req, res } = newValidator(pathMap);
     const { data: reqV, error } = req(validReqInput);
     expect(error).toBeUndefined();
     if (error) {
       return;
     }
-    expect(reqV["query"]()).toEqual({ data: { queryName: "queryName" } });
-    expect(reqV["params"]()).toEqual({ data: { paramsName: "paramsName" } });
-    expect(reqV["body"]()).toEqual({ data: { bodyName: "bodyName" } });
-    expect(reqV["headers"]()).toEqual({ data: { headersName: "headersName" } });
+    expect(await reqV["query"]()).toEqual({
+      typed: true,
+      value: { queryName: "queryName" },
+    });
+    expect(await reqV["params"]()).toEqual({
+      typed: true,
+      value: { paramsName: "paramsName" },
+    });
+    expect(await reqV["body"]()).toEqual({
+      typed: true,
+      value: { bodyName: "bodyName" },
+    });
+    expect(await reqV["headers"]()).toEqual({
+      typed: true,
+      value: { headersName: "headersName" },
+    });
 
     const { data: resV, error: resE } = res(validResInput);
     expect(resE).toBeUndefined();
     if (resE) {
       return;
     }
-    expect(resV["body"]()).toEqual({ data: { bodyNameRes: "bodyNameRes" } });
-    expect(resV["headers"]()).toEqual({
-      data: { headersNameRes: "headersNameRes" },
+    expect(await resV["body"]()).toEqual({
+      typed: true,
+      value: { bodyNameRes: "bodyNameRes" },
+    });
+    expect(await resV["headers"]()).toEqual({
+      typed: true,
+      value: { headersNameRes: "headersNameRes" },
     });
   });
 
-  const checkValibotError = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    issues: [InferIssue<any>, ...InferIssue<any>[]],
+  const checkSSError = (
+    issues: Readonly<StandardSchemaV1.Issue[]>,
     path: string,
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(issues).toHaveLength(1);
     expect(issues[0]).toEqual({
       abortEarly: undefined,
@@ -99,14 +116,14 @@ describe("newValibotValidator", () => {
   };
 
   describe("invalid request input", () => {
-    const { req } = newValibotValidator(pathMap);
+    const { req } = newValidator(pathMap);
     const keys: (keyof AnySpecValidator)[] = [
       "query",
       "params",
       "body",
       "headers",
     ];
-    it.each(keys)("%s", (key) => {
+    it.each(keys)("%s", async (key) => {
       const { data: reqV, error } = req({
         ...validReqInput,
         [key]: { invalid: "invalidValue" },
@@ -115,19 +132,19 @@ describe("newValibotValidator", () => {
       if (error) {
         return;
       }
-      const { data, error: error2 } = reqV[key]();
-      expect(data).toBeUndefined();
-      if (data) {
-        return;
+      const r = await reqV[key]();
+      if (r.issues) {
+        checkSSError(r.issues, `${key}Name`);
+      } else {
+        assert.fail("issues must be exist");
       }
-      checkValibotError(error2, `${key}Name`);
     });
   });
   describe("invalid response input", () => {
-    const { res } = newValibotValidator(pathMap);
+    const { res } = newValidator(pathMap);
     const keys: (keyof AnyResponseSpecValidator)[] = ["body", "headers"];
-    it.each(keys)("%s", (key) => {
-      const { data: reqV, error } = res({
+    it.each(keys)("%s", async (key) => {
+      const { data: resV, error } = await res({
         ...validResInput,
         [key]: { invalid: "invalidValue" },
       });
@@ -135,12 +152,12 @@ describe("newValibotValidator", () => {
       if (error) {
         return;
       }
-      const { data, error: error2 } = reqV[key]();
-      expect(data).toBeUndefined();
-      if (data) {
-        return;
+      const r = await resV[key]();
+      if (r.issues) {
+        checkSSError(r.issues, `${key}NameRes`);
+      } else {
+        assert.fail("issues must be exist");
       }
-      checkValibotError(error2, `${key}NameRes`);
     });
   });
 
@@ -148,14 +165,14 @@ describe("newValibotValidator", () => {
     describe("method", () => {
       const method = "noexist-method";
       it("request", () => {
-        const { req } = newValibotValidator(pathMap);
+        const { req } = newValidator(pathMap);
         const { data: validator, error } = req({ ...validReqInput, method });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newMethodInvalidError(method));
       });
 
       it("response", () => {
-        const { res } = newValibotValidator(pathMap);
+        const { res } = newValidator(pathMap);
         const { data: validator, error } = res({ ...validResInput, method });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newMethodInvalidError(method));
@@ -164,14 +181,14 @@ describe("newValibotValidator", () => {
     describe("path", () => {
       const path = "noexist-path";
       it("request", () => {
-        const { req } = newValibotValidator(pathMap);
+        const { req } = newValidator(pathMap);
         const { data: validator, error } = req({ ...validReqInput, path });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newValidatorPathNotFoundError(path));
       });
 
       it("response", () => {
-        const { res } = newValibotValidator(pathMap);
+        const { res } = newValidator(pathMap);
         const { data: validator, error } = res({ ...validResInput, path });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newValidatorPathNotFoundError(path));
