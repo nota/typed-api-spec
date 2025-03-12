@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Equal, Expect } from "./type-test";
 import { z } from "zod";
-import { ApiP } from ".";
 import {
-  SSApiEndpoints,
-  SSResponseValidators,
-  SSValidators,
+  ApiP,
+  ResponseValidators,
   ToSSResponseValidators,
-  ToSSValidators,
-} from "./ss";
+  ToValidators,
+  Validators,
+} from ".";
+import { SSApiEndpoints } from "./ss";
 
 const SSResponse = z.object({ a: z.string() });
 const SSEndpoints = {
@@ -26,8 +26,8 @@ const SSEndpoints = {
 type ToSSValidatorsTestCases = [
   Expect<
     Equal<
-      ToSSValidators<typeof SSEndpoints, "/", "get">,
-      SSValidators<(typeof SSEndpoints)["/"]["get"], string>
+      ToValidators<typeof SSEndpoints, "/", "get">,
+      Validators<(typeof SSEndpoints)["/"]["get"], string>
     >
   >,
 ];
@@ -36,7 +36,7 @@ type ToSSValidatorsTestCases = [
 type SSResponseValidatorsTestCases = [
   Expect<
     Equal<
-      SSResponseValidators<undefined, undefined>,
+      ResponseValidators<undefined, undefined>,
       { body: undefined; headers: undefined }
     >
   >,
@@ -50,7 +50,7 @@ type ToSSResponseValidatorsTestCases = [
         ApiP<typeof SSEndpoints, "/", "get", "responses">,
         200
       >,
-      SSResponseValidators<typeof SSResponse, undefined>
+      ResponseValidators<typeof SSResponse, undefined>
     >
   >,
 ];

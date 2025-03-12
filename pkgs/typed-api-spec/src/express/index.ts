@@ -12,16 +12,11 @@ import {
   Request,
   Response,
 } from "express-serve-static-core";
-import { StatusCode } from "../core";
+import { newValidator, StatusCode, ToValidators } from "../core";
 import { ParsedQs } from "qs";
 import { AnySpecValidator } from "../core/validator/request";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import {
-  newSSValidator,
-  SSApiEndpoints,
-  ToApiEndpoints,
-  ToSSValidators,
-} from "../core/ss";
+import { SSApiEndpoints, ToApiEndpoints } from "../core/ss";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -47,58 +42,17 @@ export type ToHandler<
 > = Handler<
   ToApiEndpoints<E>[Path][M],
   ValidateLocals<
-    ToSSValidators<E, Path, M> extends AnySpecValidator
-      ? ToSSValidators<E, Path, M>
+    ToValidators<E, Path, M> extends AnySpecValidator
+      ? ToValidators<E, Path, M>
       : Record<string, never>
   >
 >;
-// export type ToHandler<
-//   Spec extends AnyApiSpec | undefined,
-//   Validators extends AnySpecValidator | undefined,
-// > = Handler<
-//   Spec,
-//   ValidateLocals<
-//     Validators extends AnySpecValidator ? Validators : Record<string, never>
-//   >
-// >;
-
-/**
- * Convert ZodApiSpec to Express Request Handler type.
- */
-// export type ToHandler<
-//   ZodE extends SSApiEndpoints,
-//   Path extends keyof ZodE & string,
-//   M extends Method,
-// > = ToPureHandler<ToApiEndpoints<ZodE>[Path][M], ToSSValidators<ZodE, Path, M>>;
 
 export type ToHandlers<E extends SSApiEndpoints> = {
   [Path in keyof E & string]: {
     [M in Method]: ToHandler<E, Path, M>;
   };
 };
-// export type ToHandlers<
-//   E extends AnyApiEndpoints,
-//   V extends SpecValidatorMap,
-// > = {
-//   [Path in keyof E & string]: {
-//     [M in Method]: ToHandler<E[Path][M], V[Path][M]>;
-//   };
-// };
-
-/**
- * Convert SSApiEndpoints to Express Request Handler type map.
- */
-// export type ToHandlers<
-//   ZodE extends SSApiEndpoints,
-//   E extends ToApiEndpoints<ZodE> = ToApiEndpoints<ZodE>,
-//   V extends ToValidatorsMap<ZodE> = ToValidatorsMap<ZodE>,
-// > = ToPureHandlers<E, V>;
-
-// export type ToValidatorsMap<ESchema extends SSApiEndpoints> = {
-//   [Path in keyof ESchema & string]: {
-//     [M in Method]: ToSSValidators<ESchema, Path, M>;
-//   };
-// };
 
 /**
  * Express Response, but with more strict type information.
@@ -144,7 +98,7 @@ export const validatorMiddleware = <const E extends SSApiEndpoints>(
 ) => {
   return (_req: Request, res: Response, next: NextFunction) => {
     res.locals.validate = (req: Request) => {
-      const { data: v2, error } = newSSValidator(pathMap).req({
+      const { data: v2, error } = newValidator(pathMap).req({
         path: req.route?.path?.toString(),
         method: req.method.toLowerCase(),
         headers: req.headers,

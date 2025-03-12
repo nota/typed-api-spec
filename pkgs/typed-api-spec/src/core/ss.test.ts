@@ -1,7 +1,10 @@
 import { describe, it, expect, assert } from "vitest";
-import { newSSValidator, SSApiEndpoints } from "./ss";
+import { SSApiEndpoints } from "./ss";
 import * as v from "valibot";
-import { newValidatorPathNotFoundError } from "./validator/validate";
+import {
+  newValidator,
+  newValidatorPathNotFoundError,
+} from "./validator/validate";
 import { AnyResponseSpecValidator } from "./validator/response";
 import { AnySpecValidator } from "./validator/request";
 import { newMethodInvalidError } from ".";
@@ -43,7 +46,7 @@ describe("newSSValidator", () => {
   } as const;
 
   it("ok", async () => {
-    const { req, res } = newSSValidator(pathMap);
+    const { req, res } = newValidator(pathMap);
     const { data: reqV, error } = req(validReqInput);
     expect(error).toBeUndefined();
     if (error) {
@@ -113,7 +116,7 @@ describe("newSSValidator", () => {
   };
 
   describe("invalid request input", () => {
-    const { req } = newSSValidator(pathMap);
+    const { req } = newValidator(pathMap);
     const keys: (keyof AnySpecValidator)[] = [
       "query",
       "params",
@@ -138,7 +141,7 @@ describe("newSSValidator", () => {
     });
   });
   describe("invalid response input", () => {
-    const { res } = newSSValidator(pathMap);
+    const { res } = newValidator(pathMap);
     const keys: (keyof AnyResponseSpecValidator)[] = ["body", "headers"];
     it.each(keys)("%s", async (key) => {
       const { data: resV, error } = await res({
@@ -162,14 +165,14 @@ describe("newSSValidator", () => {
     describe("method", () => {
       const method = "noexist-method";
       it("request", () => {
-        const { req } = newSSValidator(pathMap);
+        const { req } = newValidator(pathMap);
         const { data: validator, error } = req({ ...validReqInput, method });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newMethodInvalidError(method));
       });
 
       it("response", () => {
-        const { res } = newSSValidator(pathMap);
+        const { res } = newValidator(pathMap);
         const { data: validator, error } = res({ ...validResInput, method });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newMethodInvalidError(method));
@@ -178,14 +181,14 @@ describe("newSSValidator", () => {
     describe("path", () => {
       const path = "noexist-path";
       it("request", () => {
-        const { req } = newSSValidator(pathMap);
+        const { req } = newValidator(pathMap);
         const { data: validator, error } = req({ ...validReqInput, path });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newValidatorPathNotFoundError(path));
       });
 
       it("response", () => {
-        const { res } = newSSValidator(pathMap);
+        const { res } = newValidator(pathMap);
         const { data: validator, error } = res({ ...validResInput, path });
         expect(validator).toBeUndefined();
         expect(error).toEqual(newValidatorPathNotFoundError(path));

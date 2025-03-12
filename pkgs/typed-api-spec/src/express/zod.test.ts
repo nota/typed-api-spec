@@ -14,13 +14,14 @@ import { ParseUrlParams } from "../core";
 import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
+  Validators,
 } from "../core/validator/validate";
-import { SSApiEndpoints, SSApiSpec, SSValidators } from "../core/ss";
+import { SSApiEndpoints, SSApiSpec } from "../core/ss";
 
 type SSValidateLocals<
   AS extends SSApiSpec,
   ParamKeys extends string,
-> = ValidateLocals<SSValidators<AS, ParamKeys>>;
+> = ValidateLocals<Validators<AS, ParamKeys>>;
 
 describe("validatorMiddleware", () => {
   const pathMap = {

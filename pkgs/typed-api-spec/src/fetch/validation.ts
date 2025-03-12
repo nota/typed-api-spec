@@ -1,10 +1,10 @@
 import { memoize, tupleIteratorToObject, unreachable } from "../utils";
 import { match } from "path-to-regexp";
-import { Method, SSResult, StatusCode } from "../core";
+import { Method, newValidator, SSResult, StatusCode } from "../core";
 import { AnySpecValidator, runSpecValidator } from "../core";
 import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { newSSValidator, SSApiEndpoints } from "../core/ss";
+import { SSApiEndpoints } from "../core/ss";
 
 const dummyHost = "https://example.com";
 
@@ -132,7 +132,7 @@ export const withValidation = <
   const toInputWithMatcher = toInput(newPathMather(endpoints));
   const handleError = newErrorHandler(options.policy);
   const handleResponseError = newResponseErrorHandler(options.policy);
-  const validator0 = newSSValidator(endpoints);
+  const validator0 = newValidator(endpoints);
   const ftc = async (...args: Parameters<Fetch>) => {
     const [input, init] = args;
     const vInput = toInputWithMatcher(input, init);
