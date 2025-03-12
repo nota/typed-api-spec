@@ -3,7 +3,10 @@ import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
 import "zod-openapi/extend";
 import z from "zod";
-import { SSOpenApiEndpoints, toOpenApiDoc } from "@notainc/typed-api-spec/core";
+import {
+  OpenApiEndpointsSchema,
+  toOpenApiDoc,
+} from "@notainc/typed-api-spec/core";
 
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
@@ -47,7 +50,7 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies SSOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 
 const newApp = () => {
   const app = express();
