@@ -20,22 +20,22 @@ import { StandardSchemaV1 } from "@standard-schema/spec";
 import { AnyStandardSchemaV1, ApiResponseSchema } from "../schema";
 import { toJsonSchemaApiEndpoints } from "../jsonschema";
 
-export type SSOpenApiEndpoints = {
-  [Path in string]: SSOpenApiEndpoint;
+export type OpenApiEndpointsSchema = {
+  [Path in string]: OpenApiEndpointSchema;
 };
-export type SSOpenApiEndpoint = DefineOpenApiEndpoint<SSOpenApiSpec>;
-export type SSAnyOpenApiResponse = ToOpenApiResponse<ApiResponseSchema>;
-export type SSAnyOpenApiResponses =
-  DefineOpenApiResponses<SSAnyOpenApiResponse>;
+export type OpenApiEndpointSchema = DefineOpenApiEndpoint<OpenApiSpecSchema>;
+export type OpenApiResponseSchema = ToOpenApiResponse<ApiResponseSchema>;
+export type OpenApiResponsesSchema =
+  DefineOpenApiResponses<OpenApiResponseSchema>;
 
-export type SSOpenApiSpec<
+export type OpenApiSpecSchema<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ParamKeys extends string = string,
   Params extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   Query extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   Body extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   RequestHeaders extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
-  Responses extends SSAnyOpenApiResponses = SSAnyOpenApiResponses,
+  Responses extends OpenApiResponsesSchema = OpenApiResponsesSchema,
 > = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,7 +157,7 @@ export const jsonSchemaToOpenApiDoc = (
   return { ...doc, paths };
 };
 
-export const toOpenApiDoc = async <E extends SSOpenApiEndpoints>(
+export const toOpenApiDoc = async <E extends OpenApiEndpointsSchema>(
   doc: Omit<OpenAPIV3_1.Document, "paths">,
   endpoints: E,
 ): Promise<OpenAPIV3_1.Document> => {

@@ -9,7 +9,7 @@ You can use valibot to define the API specification of typed-api-spec.
 
 ```typescript
 import * as v from "valibot";
-
+import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 const Spec = {
   "/users/:id": {
     get: {
@@ -24,7 +24,7 @@ const Spec = {
       },
     },
   },
-} satisfies ValibotApiEndpoints;
+} satisfies ApiEndpointsSchema;
 ```
 
 ### Using server integration
@@ -37,12 +37,14 @@ See the [express](/docs/server/express) page for more information.
 You can generate OpenAPI documentation from the API schema written by TypeScript and valibot.
 If you do so, you should:
 
-- Use `ValibotOpenApiEndpoints` instead of `ValibotApiEndpoints`
+- Use `OpenApiEndpointsSchema` instead of `ApiEndpointsSchema`
 - Define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
 - Use `toOpenApiDoc()` function to generate OpenAPI documentation.
 
 ```typescript
 import * as v from "valibot";
+import { OpenApiEndpointsSchema } from "@notainc/typed-api-spec/core";
+
 const apiEndpoints = {
   "/pets/:petId": {
     get: {
@@ -59,10 +61,10 @@ const apiEndpoints = {
       },
     },
   },
-} satisfies ValibotOpenApiEndpoints;
+} satisfies OpenApiEndpointsSchema;
 ```
 
-ValibotOpenApiEndpoints allows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
+OpenApiEndpoints Schemaallows to define extra properties that are required for OpenAPI documentation like `summary`, `description`, `tags`, etc.
 
 ### Generating OpenAPI Documentation
 
@@ -71,7 +73,7 @@ You can serve OpenAPI endpoint by serving the generated OpenAPI object as JSON.
 Here is an example of how to serve OpenAPI documentation using Express.
 
 ```typescript
-import { toOpenApiDoc } from "@notainc/typed-api-spec/valibot/openapi";
+import { toOpenApiDoc } from "@notainc/typed-api-spec/core";
 const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   openapi: "3.1.0",
   servers: [{ url: "http://locahost:3000" }],

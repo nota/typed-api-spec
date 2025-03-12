@@ -10,7 +10,6 @@ However, you may want to perform runtime validation to check that request parame
 The simplest way is to use only the type information provided by a validation library. For exmple, you can use [zod](https://zod.dev) to define the API specification of typed-api-spec.
 
 ```typescript
-
 import { z } from "zod";
 
 const User = z.object({
@@ -39,8 +38,8 @@ To validate, just use the validation library. Following code is an example of ho
 ```typescript
 const app = Express();
 app.get("users", (req, res) => {
-  const usersQuery = UsersQuery.parse(req.query)
-})
+  const usersQuery = UsersQuery.parse(req.query);
+});
 ```
 
 This is not bad, but the problem is that there is no guarantee that the UsersQuery is actually the expected schema. For example, you may accidentally write something like `User.parse(req.query)`.
@@ -50,15 +49,18 @@ typed-api-spec provides a way to define the API specification using the validati
 
 ```typescript
 import { z } from "zod";
+import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const Spec = {
   "/users": {
     get: {
       query: z.object({ page: z.string() }),
-      responses: { 200: { body: z.object({ id: z.string(), name: z.string() }) } }
-    }
-  }
-} satisfies ZodApiEndpoints
+      responses: {
+        200: { body: z.object({ id: z.string(), name: z.string() }) },
+      },
+    },
+  },
+} satisfies ApiEndpointsSchema;
 ```
 
 In this way, you can use validate function directly.
@@ -66,8 +68,8 @@ In this way, you can use validate function directly.
 ```typescript
 const app = Express();
 app.get("users", (req, res) => {
-  const usersQuery = Spec["/users"]["get"].query.parse(req.query)
-})
+  const usersQuery = Spec["/users"]["get"].query.parse(req.query);
+});
 ```
 
 :::note[Server integration]
@@ -79,10 +81,16 @@ const app = express();
 const wApp = typed(Spec, app);
 wApp.get("users", (req, res) => {
   const { data, error } = res.locals.validate(req).query();
-})
+});
 ```
 
-For more information, see the [Server](/docs/category/server) page.
+For more information, see [Server](/docs/category/server) page.
+
+:::
+
+:::note[Which validation library can I use?]
+
+typed-api-spec supports [standard-schema](https://github.com/standard-schema/standard-schema) compatible validation libraries, like [zod](https://zod.dev), [valibot](https://valibot.dev) and [ArcType](https://arktype.io).
 
 :::
 

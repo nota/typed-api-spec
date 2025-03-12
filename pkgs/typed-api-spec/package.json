@@ -88,15 +88,10 @@
       "require": "./dist/express/index.js",
       "import": "./dist/express/index.mjs"
     },
-    "./express/ss": {
-      "types": "./dist/express/ss.d.ts",
-      "require": "./dist/express/ss.js",
-      "import": "./dist/express/ss.mjs"
-    },
-    "./fastify/zod": {
-      "types": "./dist/fastify/zod.d.ts",
-      "require": "./dist/fastify/zod.js",
-      "import": "./dist/fastify/zod.mjs"
+    "./fastify": {
+      "types": "./dist/fastify/index.d.ts",
+      "require": "./dist/fastify/index.js",
+      "import": "./dist/fastify/index.mjs"
     },
     "./fetch": {
       "types": "./dist/fetch/index.d.ts",

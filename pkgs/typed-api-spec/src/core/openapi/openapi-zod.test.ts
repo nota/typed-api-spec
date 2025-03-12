@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { OpenAPIV3_1 } from "openapi-types";
 import "zod-openapi/extend";
 import z from "zod";
-import { SSOpenApiEndpoints, toOpenApiDoc } from "..";
+import { OpenApiEndpointsSchema, toOpenApiDoc } from "..";
 describe("openapi", () => {
   const endpoints = {
     "/pets": {
@@ -27,7 +27,7 @@ describe("openapi", () => {
         },
       },
     },
-  } satisfies SSOpenApiEndpoints;
+  } satisfies OpenApiEndpointsSchema;
 
   const expectGetPathObject = {
     description: "Get pet",
