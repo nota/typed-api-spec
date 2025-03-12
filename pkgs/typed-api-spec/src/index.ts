@@ -1,15 +1,22 @@
 export * from "./core";
 export {
-  asAsync as expressAsAsync,
-  wrap as expressWrap,
-  AsyncRequestHandler as ExpressAsyncRequestHandler,
-  ExpressResponse,
-  RouterT as ExpressRouterT,
   Handler as ExpressHandler,
+  ToHandler as ToExpressHandler,
+  ToHandlers as ToExpressHandlers,
+  ExpressResponse,
+  ValidateLocals as ExpressValidateLocals,
+  RouterT as ExpressRouterT,
+  validatorMiddleware as expressValidatorMiddleware,
+  AsyncRequestHandler as ExpressAsyncRequestHandler,
+  wrap as expressWrap,
+  asAsync as expressAsAsync,
+  typed as expressTyped,
 } from "./express";
 
-import FetchT, { RequestInitT } from "./fetch";
-export { FetchT, RequestInitT };
+export {
+  toSchema as toFastifySchema,
+  toRoutes as toFastifyRoutes,
+} from "./fastify";
 
-import JSONT, { JSON$stringifyT } from "./json";
-export { JSONT, JSON$stringifyT };
+export * from "./fetch";
+export * from "./json";
