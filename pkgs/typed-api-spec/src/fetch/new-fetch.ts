@@ -1,8 +1,8 @@
 import type FetchT from "./index.js";
-import { SSApiEndpoints, ToApiEndpoints } from "../core/ss.js";
+import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema.js";
 import { withValidation } from "./index.js";
 
-export const newFetch = <E extends SSApiEndpoints = SSApiEndpoints>(
+export const newFetch = <E extends ApiEndpointsSchema = ApiEndpointsSchema>(
   specLoader: () => Promise<E>,
   validation: boolean,
   ft = fetch,

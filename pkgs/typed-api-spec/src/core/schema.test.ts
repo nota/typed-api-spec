@@ -1,5 +1,5 @@
 import { describe, it, expect, assert } from "vitest";
-import { SSApiEndpoints } from "./ss";
+import { ApiEndpointsSchema } from "./schema";
 import * as v from "valibot";
 import {
   newValidator,
@@ -26,7 +26,7 @@ describe("newSSValidator", () => {
         },
       },
     },
-  } satisfies SSApiEndpoints;
+  } satisfies ApiEndpointsSchema;
 
   const validReqInput = {
     path: "/",

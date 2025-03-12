@@ -4,7 +4,7 @@ import { Method, newValidator, SSResult, StatusCode } from "../core";
 import { AnySpecValidator, runSpecValidator } from "../core";
 import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { SSApiEndpoints } from "../core/ss";
+import { ApiEndpointsSchema } from "../core/schema";
 
 const dummyHost = "https://example.com";
 
@@ -121,7 +121,7 @@ export const withValidation = <
   Fetch extends typeof fetch,
   // Validators extends RequestSpecValidatorGenerator,
   // ResponseValidators extends ResponseSpecValidatorGenerator,
-  Endpoints extends SSApiEndpoints,
+  Endpoints extends ApiEndpointsSchema,
 >(
   f: Fetch,
   endpoints: Endpoints,

@@ -16,7 +16,7 @@ import { newValidator, StatusCode, ToValidators } from "../core";
 import { ParsedQs } from "qs";
 import { AnySpecValidator } from "../core/validator/request";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { SSApiEndpoints, ToApiEndpoints } from "../core/ss";
+import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema";
 
 /**
  * Express Request Handler, but with more strict type information.
@@ -36,7 +36,7 @@ export type Handler<
 ) => void;
 
 export type ToHandler<
-  E extends SSApiEndpoints,
+  E extends ApiEndpointsSchema,
   Path extends keyof E & string,
   M extends Method,
 > = Handler<
@@ -48,7 +48,7 @@ export type ToHandler<
   >
 >;
 
-export type ToHandlers<E extends SSApiEndpoints> = {
+export type ToHandlers<E extends ApiEndpointsSchema> = {
   [Path in keyof E & string]: {
     [M in Method]: ToHandler<E, Path, M>;
   };
@@ -93,7 +93,7 @@ export type RouterT<
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validatorMiddleware = <const E extends SSApiEndpoints>(
+export const validatorMiddleware = <const E extends ApiEndpointsSchema>(
   pathMap: E,
 ) => {
   return (_req: Request, res: Response, next: NextFunction) => {
@@ -229,7 +229,7 @@ export const asAsync = <Router extends IRouter | RouterT<any, any>>(
  * })
  * ```
  */
-export const typed = <const Endpoints extends SSApiEndpoints>(
+export const typed = <const Endpoints extends ApiEndpointsSchema>(
   pathMap: Endpoints,
   router: Router,
 ): RouterT<Endpoints> => {

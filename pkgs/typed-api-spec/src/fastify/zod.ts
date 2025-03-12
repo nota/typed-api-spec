@@ -1,5 +1,9 @@
 import { AnyApiResponses, Method, StatusCode } from "../core";
-import { SSApiEndpoint, SSApiEndpoints, SSApiSpec } from "../core/ss";
+import {
+  ApiEndpointSchema,
+  ApiEndpointsSchema,
+  ApiSpecSchema,
+} from "../core/schema";
 
 const toFastifyResponse = <Responses extends AnyApiResponses>(
   responses: Responses,
@@ -16,14 +20,14 @@ type ToFastifyResponse<Responses extends AnyApiResponses> = {
   [SC in keyof Responses & StatusCode]: NonNullable<Responses[SC]>["body"];
 };
 
-type FastifySchema<Spec extends SSApiSpec> = {
+type FastifySchema<Spec extends ApiSpecSchema> = {
   querystring: Spec["query"];
   params: Spec["params"];
   body: Spec["body"];
   headers: Spec["headers"];
   response: ToFastifyResponse<Spec["responses"]>;
 };
-export const toSchema = <Spec extends SSApiSpec>(
+export const toSchema = <Spec extends ApiSpecSchema>(
   spec: Spec,
 ): FastifySchema<Spec> => {
   return {
@@ -36,7 +40,7 @@ export const toSchema = <Spec extends SSApiSpec>(
 };
 
 type FastifyRoute<
-  Spec extends SSApiSpec,
+  Spec extends ApiSpecSchema,
   Url extends string,
   M extends Method,
 > = {
@@ -45,7 +49,7 @@ type FastifyRoute<
   schema: FastifySchema<Spec>;
 };
 const specToRoute = <
-  Spec extends SSApiSpec,
+  Spec extends ApiSpecSchema,
   Path extends string,
   M extends Method,
 >(
@@ -60,7 +64,7 @@ const specToRoute = <
   };
 };
 type EndpointFastifyRoute<
-  Endpoint extends SSApiEndpoint,
+  Endpoint extends ApiEndpointSchema,
   Path extends string,
 > = {
   [M in keyof Endpoint & Method]: FastifyRoute<
@@ -69,7 +73,10 @@ type EndpointFastifyRoute<
     M
   >;
 };
-const endpointToRoute = <Endpoint extends SSApiEndpoint, Path extends string>(
+const endpointToRoute = <
+  Endpoint extends ApiEndpointSchema,
+  Path extends string,
+>(
   path: Path,
   endpoint: Endpoint,
 ): EndpointFastifyRoute<Endpoint, Path> => {
@@ -82,13 +89,13 @@ const endpointToRoute = <Endpoint extends SSApiEndpoint, Path extends string>(
     {} as EndpointFastifyRoute<Endpoint, Path>,
   );
 };
-type EndpointsFastifyRoute<Endpoints extends SSApiEndpoints> = {
+type EndpointsFastifyRoute<Endpoints extends ApiEndpointsSchema> = {
   [Path in keyof Endpoints & string]: EndpointFastifyRoute<
     Endpoints[Path],
     Path
   >;
 };
-export const toRoutes = <ZodE extends SSApiEndpoints>(
+export const toRoutes = <ZodE extends ApiEndpointsSchema>(
   e: ZodE,
 ): EndpointsFastifyRoute<ZodE> => {
   return Object.entries(e).reduce((acc, [path, endpoint]) => {

@@ -16,10 +16,10 @@ import {
   newValidatorPathNotFoundError,
   Validators,
 } from "../core/validator/validate";
-import { SSApiEndpoints, SSApiSpec } from "../core/ss";
+import { ApiEndpointsSchema, ApiSpecSchema } from "../core/schema";
 
 type SSValidateLocals<
-  AS extends SSApiSpec,
+  AS extends ApiSpecSchema,
   ParamKeys extends string,
 > = ValidateLocals<Validators<AS, ParamKeys>>;
 
@@ -62,7 +62,7 @@ describe("valibot", () => {
           },
         },
       },
-    } satisfies SSApiEndpoints;
+    } satisfies ApiEndpointsSchema;
     // const { req: reqValidator } = newSSValidator(pathMap);
     // const middleware = validatorMiddleware(reqValidator);
     const middleware = validatorMiddleware(pathMap);
@@ -339,7 +339,7 @@ describe("valibot", () => {
           },
         },
       },
-    } satisfies SSApiEndpoints;
+    } satisfies ApiEndpointsSchema;
 
     it("ok", async () => {
       const app = newApp();
@@ -467,7 +467,7 @@ describe("valibot", () => {
             },
           },
         },
-      } satisfies SSApiEndpoints;
+      } satisfies ApiEndpointsSchema;
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const getHandler: ToHandlers<typeof pathMap>["/users"]["get"] = async (

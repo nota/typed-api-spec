@@ -11,8 +11,8 @@ import {
   MethodInvalidError,
   newMethodInvalidError,
 } from "../spec";
-import { SSAnyApiResponses, SSApiSpec } from "../ss";
-import { SSApiEndpoints } from "../ss";
+import { ApiResponsesSchema, ApiSpecSchema } from "../schema";
+import { ApiEndpointsSchema } from "../schema";
 import {
   AnySpecValidator,
   listDefinedRequestApiSpecKeys,
@@ -39,7 +39,7 @@ export type Validator<V extends AnyStandardSchemaV1 | undefined> =
     : undefined;
 
 export type Validators<
-  AS extends SSApiSpec,
+  AS extends ApiSpecSchema,
   // FIXME
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ParamKeys extends string,
@@ -58,15 +58,15 @@ export type ResponseValidators<
   Headers extends SS | undefined,
 > = ResponseSpecValidator<Validator<Body>, Validator<Headers>>;
 export type ToSSResponseValidators<
-  Responses extends SSAnyApiResponses | undefined,
+  Responses extends ApiResponsesSchema | undefined,
   SC extends number,
 > = ResponseValidators<
-  Responses extends SSAnyApiResponses
+  Responses extends ApiResponsesSchema
     ? SC extends keyof Responses
       ? ApiResBody<Responses, SC>
       : undefined
     : undefined,
-  Responses extends SSAnyApiResponses
+  Responses extends ApiResponsesSchema
     ? SC extends keyof Responses
       ? ApiResHeaders<Responses, SC> extends SS
         ? ApiResHeaders<Responses, SC>
@@ -76,12 +76,12 @@ export type ToSSResponseValidators<
 >;
 
 export type ToValidators<
-  E extends SSApiEndpoints,
+  E extends ApiEndpointsSchema,
   Path extends string,
   M extends string,
 > = Path extends keyof E
   ? M extends keyof E[Path] & Method
-    ? E[Path][M] extends SSApiSpec
+    ? E[Path][M] extends ApiSpecSchema
       ? Validators<E[Path][M], string>
       : Record<string, never>
     : Record<string, never>
@@ -159,7 +159,7 @@ type ValidatorInputPathNotFoundError = ReturnType<
  *
  * @param endpoints API endpoints
  */
-export const newValidator = <E extends SSApiEndpoints>(endpoints: E) => {
+export const newValidator = <E extends ApiEndpointsSchema>(endpoints: E) => {
   const req = <Path extends string, M extends string>(
     input: SpecValidatorGeneratorRawInput<Path, M>,
   ): Result<ToValidators<E, Path, M>, ValidatorInputError> => {

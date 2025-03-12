@@ -8,7 +8,7 @@ import {
   ToValidators,
   Validators,
 } from ".";
-import { SSApiEndpoints } from "./ss";
+import { ApiEndpointsSchema } from "./schema";
 
 const SSResponse = z.object({ a: z.string() });
 const SSEndpoints = {
@@ -20,7 +20,7 @@ const SSEndpoints = {
       },
     },
   },
-} satisfies SSApiEndpoints;
+} satisfies ApiEndpointsSchema;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToSSValidatorsTestCases = [

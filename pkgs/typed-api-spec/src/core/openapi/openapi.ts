@@ -17,7 +17,7 @@ import {
   ToOpenApiResponse,
 } from "./spec";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { SSAnyApiResponse } from "../ss";
+import { ApiResponseSchema } from "../schema";
 import { toJsonSchemaApiEndpoints } from "../jsonschema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +26,7 @@ export type SSOpenApiEndpoints = {
   [Path in string]: SSOpenApiEndpoint;
 };
 export type SSOpenApiEndpoint = DefineOpenApiEndpoint<SSOpenApiSpec>;
-export type SSAnyOpenApiResponse = ToOpenApiResponse<SSAnyApiResponse>;
+export type SSAnyOpenApiResponse = ToOpenApiResponse<ApiResponseSchema>;
 export type SSAnyOpenApiResponses =
   DefineOpenApiResponses<SSAnyOpenApiResponse>;
 
