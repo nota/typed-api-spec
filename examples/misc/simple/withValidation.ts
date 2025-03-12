@@ -1,7 +1,7 @@
 import { withValidation } from "@notainc/typed-api-spec/fetch";
 import { z } from "zod";
 import { SpecValidatorError } from "@notainc/typed-api-spec/fetch";
-import { SSApiEndpoints } from "@notainc/typed-api-spec/core";
+import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const GITHUB_API_ORIGIN = "https://api.github.com";
 
@@ -12,7 +12,7 @@ const spec = {
       responses: { 200: { body: z.object({ names: z.string().array() }) } },
     },
   },
-} satisfies SSApiEndpoints;
+} satisfies ApiEndpointsSchema;
 const spec2 = {
   "/repos/:owner/:repo/topics": {
     get: {
@@ -20,7 +20,7 @@ const spec2 = {
       responses: { 200: { body: z.object({ noexist: z.string() }) } },
     },
   },
-} satisfies SSApiEndpoints;
+} satisfies ApiEndpointsSchema;
 
 const main = async () => {
   {

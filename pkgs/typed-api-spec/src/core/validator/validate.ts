@@ -11,7 +11,11 @@ import {
   MethodInvalidError,
   newMethodInvalidError,
 } from "../spec";
-import { ApiResponsesSchema, ApiSpecSchema } from "../schema";
+import {
+  AnyStandardSchemaV1,
+  ApiResponsesSchema,
+  ApiSpecSchema,
+} from "../schema";
 import { ApiEndpointsSchema } from "../schema";
 import {
   AnySpecValidator,
@@ -29,10 +33,6 @@ import {
 import { StatusCode } from "../hono-types";
 export type SSResult<Data> = SS.Result<Data> | Promise<SS.Result<Data>>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyStandardSchemaV1 = SS<any>;
-
-// export type Validator<Data> = () => SSResult<Data>;
 export type Validator<V extends AnyStandardSchemaV1 | undefined> =
   V extends AnyStandardSchemaV1
     ? () => SSResult<NonNullable<SS.InferOutput<V>>>
