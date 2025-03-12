@@ -18,5 +18,8 @@ export {
   toRoutes as toFastifyRoutes,
 } from "./fastify";
 
-export * from "./fetch";
-export * from "./json";
+import FetchT, { RequestInitT } from "./fetch";
+export { FetchT, RequestInitT };
+
+import JSONT, { JSON$stringifyT } from "./json";
+export { JSONT, JSON$stringifyT };
