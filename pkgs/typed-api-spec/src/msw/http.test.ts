@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { Http } from "../index";
-import { DefineApiEndpoints } from "../../../dist";
+import { Http, HttpResponse as HttpResponseT } from "./index";
+import { ApiP, DefineApiEndpoints } from "../core";
 
 // Define a type-safe API schema
 type UserApiEndpoints = DefineApiEndpoints<{
@@ -31,7 +31,10 @@ describe("Http type with MSW", () => {
   it("GET handler with Http type should be type-safe", () => {
     const handlers = [
       httpT.get("/users", () => {
-        return HttpResponse.json<{ id: string }>({
+        const Response = HttpResponse as unknown as HttpResponseT<
+          ApiP<UserApiEndpoints, "/users", "get", "responses">
+        >;
+        return Response.json({
           id: "1",
         });
       }),
