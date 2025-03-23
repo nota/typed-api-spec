@@ -27,11 +27,12 @@ const endpoints = {
 
 type UserApiEndpoints = ToApiEndpoints<typeof endpoints>;
 
-const httpT = newHttp("https://example.com", endpoints);
+const baseUrl = "https://example.com";
+const httpT = newHttp(baseUrl, endpoints);
 describe("Http type with MSW", () => {
   it("GET handler with Http type should be type-safe", () => {
     const handlers = [
-      httpT.get("/users", () => {
+      httpT.get(`${baseUrl}/users`, () => {
         const Response = HttpResponse as unknown as HttpResponseT<
           ApiP<UserApiEndpoints, "/users", "get", "responses">
         >;
@@ -40,7 +41,7 @@ describe("Http type with MSW", () => {
         });
       }),
 
-      httpT.get("/users/:id", async (info) => {
+      httpT.get(`${baseUrl}/users/:id`, async (info) => {
         const result = await info.validate.params();
         if (result.issues) {
           // FIXME
@@ -56,7 +57,6 @@ describe("Http type with MSW", () => {
 });
 
 describe("newHttp", () => {
-  const baseUrl = "https://example.com";
   it("/users", async () => {
     // Create a spy resolver function to check the arguments
     const resolverSpy = vi.fn().mockImplementation(() => {
@@ -64,10 +64,10 @@ describe("newHttp", () => {
     });
 
     // Create an instance of newHttp with our endpoints
-    const customHttp = newHttp(baseUrl, endpoints);
+    const http = newHttp(baseUrl, endpoints);
 
     // Setup a simple GET handler
-    const handler = customHttp.get(`${baseUrl}/users`, resolverSpy);
+    const handler = http.get(`${baseUrl}/users`, resolverSpy);
 
     // Create and setup server with the handler
     const server = setupServer(handler);

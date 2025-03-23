@@ -15,6 +15,7 @@ import {
   ApiResBody,
   Method,
   newValidator,
+  Replace,
   StatusCode,
   ToApiEndpoints,
   ToValidators,
@@ -31,27 +32,28 @@ export type Http<
   UrlPrefix extends UrlPrefixPattern,
   ES extends ApiEndpointsSchema,
 > = {
-  all: HttpRequestHandler<ES, Method>;
-  head: HttpRequestHandler<ES, "head">;
-  get: HttpRequestHandler<ES, "get">;
-  post: HttpRequestHandler<ES, "post">;
-  put: HttpRequestHandler<ES, "put">;
-  delete: HttpRequestHandler<ES, "delete">;
-  patch: HttpRequestHandler<ES, "patch">;
-  options: HttpRequestHandler<ES, "options">;
+  all: HttpRequestHandler<UrlPrefix, ES, Method>;
+  head: HttpRequestHandler<UrlPrefix, ES, "head">;
+  get: HttpRequestHandler<UrlPrefix, ES, "get">;
+  post: HttpRequestHandler<UrlPrefix, ES, "post">;
+  put: HttpRequestHandler<UrlPrefix, ES, "put">;
+  delete: HttpRequestHandler<UrlPrefix, ES, "delete">;
+  patch: HttpRequestHandler<UrlPrefix, ES, "patch">;
+  options: HttpRequestHandler<UrlPrefix, ES, "options">;
 };
 
 export type HttpRequestHandler<
+  UrlPrefix extends UrlPrefixPattern,
   ES extends ApiEndpointsSchema,
   M extends Method,
   E extends ToApiEndpoints<ES> = ToApiEndpoints<ES>,
 > = <
-  Validators extends ToValidators<ES, RequestPath, M>,
-  RequestPath extends keyof E & string,
-  Params extends E[RequestPath][M]["params"],
-  Body extends E[RequestPath][M]["body"],
-  Responses extends ApiP<E, RequestPath, M, "responses"> extends AnyApiResponses
-    ? ApiP<E, RequestPath, M, "responses">
+  Input extends `${UrlPrefix}${keyof E & string}`,
+  InputPath extends Replace<Input, UrlPrefix, "">,
+  Params extends E[InputPath][M]["params"],
+  Body extends E[InputPath][M]["body"],
+  Responses extends ApiP<E, InputPath, M, "responses"> extends AnyApiResponses
+    ? ApiP<E, InputPath, M, "responses">
     : Record<string, never>,
   ResBody extends 200 extends keyof Responses
     ? ApiResBody<Responses, 200> extends DefaultBodyType
@@ -59,12 +61,12 @@ export type HttpRequestHandler<
       : never
     : never,
 >(
-  path: RequestPath,
+  path: Input,
   resolver: ResponseResolver<
     (Params extends PathParams<keyof Params>
       ? HttpRequestResolverExtras<Params>
       : Record<string, never>) &
-      ExtraResolverArgs<ES, RequestPath, M>,
+      ExtraResolverArgs<ES, InputPath, M>,
     Body,
     ResBody
   >,
