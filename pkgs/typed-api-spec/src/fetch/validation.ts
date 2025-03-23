@@ -1,8 +1,8 @@
-import { memoize, tupleIteratorToObject, unreachable } from "../utils";
+import { memoize, tupleIteratorToObject } from "../utils";
 import { match } from "path-to-regexp";
-import { Method, newValidator, SSResult, StatusCode } from "../core";
+import { Method, newValidator, StatusCode } from "../core";
 import { AnySpecValidator, runSpecValidator } from "../core";
-import { AnyResponseSpecValidator, runResponseSpecValidator } from "../core";
+import { runResponseSpecValidator } from "../core";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { ApiEndpointsSchema } from "../core/schema";
 
@@ -70,49 +70,20 @@ const toInput =
     };
   };
 
-const newErrorHandler = (policy: "throw" | "log") => {
+const newErrorHandler2 = (policy: "throw" | "log") => {
   return (
-    results: ReturnType<typeof runSpecValidator>,
-    error: Readonly<StandardSchemaV1.Issue[]>,
+    reason: keyof AnySpecValidator | "preCheck",
+    errors: Readonly<StandardSchemaV1.Issue[]>,
   ) => {
     switch (policy) {
       case "throw":
-        if (error) {
-          console.log(error);
-          throw new SpecValidatorError("preCheck", error);
-        }
-        handleValidatorsError(results, (reason, error) => {
-          throw new SpecValidatorError(reason, error);
-        });
+        throw new SpecValidatorError(reason, errors);
         break;
       case "log":
-        if (error) {
-          console.error(new SpecValidatorError("preCheck", error));
-        }
-        handleValidatorsError(results, (reason, error) => {
-          console.error(new SpecValidatorError(reason, error));
-        });
+        console.error(new SpecValidatorError(reason, errors));
         break;
       default:
-        unreachable(policy);
-    }
-  };
-};
-const newResponseErrorHandler = (policy: "throw" | "log") => {
-  return (results: ReturnType<typeof runResponseSpecValidator>) => {
-    switch (policy) {
-      case "throw":
-        handleResponseValidatorsError(results, (reason, error) => {
-          throw new SpecValidatorError(reason, error);
-        });
-        break;
-      case "log":
-        handleResponseValidatorsError(results, (reason, error) => {
-          console.error(new SpecValidatorError(reason, error));
-        });
-        break;
-      default:
-        unreachable(policy);
+        policy satisfies never;
     }
   };
 };
@@ -130,15 +101,20 @@ export const withValidation = <
   options: { policy: "throw" | "log" } = { policy: "throw" },
 ): Fetch => {
   const toInputWithMatcher = toInput(newPathMather(endpoints));
-  const handleError = newErrorHandler(options.policy);
-  const handleResponseError = newResponseErrorHandler(options.policy);
+  const handleError = newErrorHandler2(options.policy);
+  // const handleResponseError = newResponseErrorHandler(options.policy);
   const validator0 = newValidator(endpoints);
   const ftc = async (...args: Parameters<Fetch>) => {
     const [input, init] = args;
     const vInput = toInputWithMatcher(input, init);
     const { data: validator, error } = validator0.req(vInput);
+    if (error) {
+      handleError("preCheck", [error]);
+      return;
+    }
+    console.log("req validator error", error);
     // FIXME
-    handleError(runSpecValidator(validator), [{ message: "", ...error }]);
+    runSpecValidator(validator, handleError);
     const res = await f(input, init);
     const res1 = res.clone();
     // TODO: jsonじゃない時どうするか
@@ -147,7 +123,7 @@ export const withValidation = <
     res1.headers.forEach((value, key) => {
       headers[key] = value;
     });
-    const responseValidator = validator0.res({
+    const { data: resValidator, error: resError } = validator0.res({
       path: vInput.path,
       // FIXME: 雑にキャストしていいんだっけ?
       method: vInput.method as Method,
@@ -155,7 +131,11 @@ export const withValidation = <
       body: await res1.json(),
       headers: headersToRecord(res1.headers ?? {}),
     });
-    handleResponseError(runResponseSpecValidator(responseValidator));
+    if (resError) {
+      handleError("preCheck", [resError]);
+      return;
+    }
+    runResponseSpecValidator(resValidator, handleError);
     return res;
   };
   return ftc as Fetch;
@@ -170,68 +150,3 @@ export class SpecValidatorError extends Error {
     super("Validation error");
   }
 }
-
-const handleValidatorsError = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  results: Record<Exclude<keyof AnySpecValidator, "responses">, SSResult<any>>,
-  cb: (
-    reason: keyof AnySpecValidator,
-    error: Readonly<StandardSchemaV1.Issue[]>,
-  ) => void,
-) => {
-  let params = results.params;
-  if (params instanceof Promise) {
-    params = await params;
-  }
-  if (params.issues) {
-    cb("params", params.issues);
-  }
-  let query = results.query;
-  if (query instanceof Promise) {
-    query = await query;
-  }
-  if (query.issues) {
-    cb("query", query.issues);
-  }
-  let body = results.body;
-  if (body instanceof Promise) {
-    body = await body;
-  }
-  if (body.issues) {
-    cb("body", body.issues);
-  }
-  let headers = results.headers;
-  if (headers instanceof Promise) {
-    headers = await headers;
-  }
-  if (headers.issues) {
-    cb("headers", headers.issues);
-  }
-};
-
-const handleResponseValidatorsError = async (
-  results: Record<
-    Exclude<keyof AnyResponseSpecValidator, "responses">,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SSResult<any>
-  >,
-  cb: (
-    reason: keyof AnySpecValidator,
-    error: Readonly<StandardSchemaV1.Issue[]>,
-  ) => void,
-) => {
-  let body = results.body;
-  if (body instanceof Promise) {
-    body = await body;
-  }
-  if (body.issues) {
-    cb("body", body.issues);
-  }
-  let headers = results.headers;
-  if (headers instanceof Promise) {
-    headers = await headers;
-  }
-  if (headers.issues) {
-    cb("headers", headers.issues);
-  }
-};

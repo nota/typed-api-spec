@@ -110,19 +110,19 @@ export const validatorMiddleware = <const E extends ApiEndpointsSchema>(
         return {
           query: () =>
             ({
-              issues: [{ message: "", ...error }],
+              issues: [error],
             }) satisfies StandardSchemaV1.FailureResult,
           params: () =>
             ({
-              issues: [{ message: "", ...error }],
+              issues: [error],
             }) satisfies StandardSchemaV1.FailureResult,
           body: () =>
             ({
-              issues: [{ message: "", ...error }],
+              issues: [error],
             }) satisfies StandardSchemaV1.FailureResult,
           headers: () =>
             ({
-              issues: [{ message: "", ...error }],
+              issues: [error],
             }) satisfies StandardSchemaV1.FailureResult,
         };
       }

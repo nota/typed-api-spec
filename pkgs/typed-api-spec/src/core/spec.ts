@@ -2,6 +2,7 @@ import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
 import { JSONSchema7 } from "json-schema";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
  * { // ApiEndpoints
@@ -29,13 +30,15 @@ export type CaseInsensitive<S extends string> = S | Uppercase<S> | Lowercase<S>;
 export type CaseInsensitiveMethod = Method | Uppercase<Method>;
 export const isMethod = (x: unknown): x is Method =>
   Method.includes(x as Method);
-export interface MethodInvalidError {
+export interface MethodInvalidError extends StandardSchemaV1.Issue {
   error: "MethodInvalid";
   actual: string;
+  message: string;
 }
 export const newMethodInvalidError = (method: string): MethodInvalidError => ({
   error: "MethodInvalid",
   actual: method,
+  message: `MethodInvalid: ${method}`,
 });
 
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;

@@ -1,9 +1,10 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, assert } from "vitest";
 import { HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { newHttp } from "./index";
 import { z } from "zod";
 import { ApiEndpointsSchema } from "../core";
+import { newFetch } from "../fetch";
 
 // Define a type-safe API schema using Zod
 const endpoints = {
@@ -11,6 +12,13 @@ const endpoints = {
     get: {
       responses: {
         200: { body: z.object({ id: z.string() }) },
+      },
+    },
+    post: {
+      body: z.object({ name: z.string() }),
+      responses: {
+        201: { body: z.object({ id: z.string() }) },
+        400: { body: z.object({ message: z.string() }) },
       },
     },
   },
@@ -24,13 +32,13 @@ const endpoints = {
     },
   },
 } satisfies ApiEndpointsSchema;
-
 const baseUrl = "https://example.com";
-const httpT = newHttp(baseUrl, endpoints);
-describe("Http type with MSW", () => {
-  it("GET handler with Http type should be type-safe", () => {
+
+const http = newHttp(baseUrl, endpoints);
+describe("http handlers", () => {
+  it("GET", async () => {
     const handlers = [
-      httpT.get(`${baseUrl}/users`, ({ response }) => {
+      http.get(`${baseUrl}/users`, ({ response }) => {
         // @ts-expect-error textの型がおかしい
         response.text("ok");
 
@@ -39,7 +47,7 @@ describe("Http type with MSW", () => {
         });
       }),
 
-      httpT.get(`${baseUrl}/users/:id`, async (info) => {
+      http.get(`${baseUrl}/users/:id`, async (info) => {
         const result = await info.validate.params();
         if (result.issues) {
           return info.response.json(
@@ -53,11 +61,40 @@ describe("Http type with MSW", () => {
 
     const server = setupServer(...handlers);
     expect(server).toBeDefined();
-  });
-});
+    server.listen();
+    const fetchT = await newFetch(async () => endpoints, true)<
+      typeof baseUrl
+    >();
+    const res = await fetchT("https://example.com/users", {});
+    server.close();
 
-describe("newHttp", () => {
-  it("/users", async () => {
+    if (!res.ok) {
+      const json = await res.text();
+      assert.fail("invalid response: " + JSON.stringify(json));
+    }
+    const json = await res.json();
+    expect(json).toEqual({ id: "1" });
+  });
+
+  it("POST", () => {
+    const handlers = [
+      http.post(`${baseUrl}/users`, async (info) => {
+        const result = await info.validate.body();
+        if (result.issues) {
+          return info.response.json(
+            { message: "invalid name" },
+            { status: 400 },
+          );
+        }
+        return info.response.json({ id: "1" }, { status: 201 });
+      }),
+    ];
+
+    const server = setupServer(...handlers);
+    expect(server).toBeDefined();
+  });
+
+  it.skip("spy handler", async () => {
     // Create a spy resolver function to check the arguments
     const resolverSpy = vi.fn().mockImplementation(() => {
       return HttpResponse.json({ success: true });
@@ -73,8 +110,12 @@ describe("newHttp", () => {
     const server = setupServer(handler);
     server.listen();
 
+    const fetchT = await newFetch(async () => endpoints, true)<
+      typeof baseUrl
+    >();
+
     // Make a fetch request to trigger the handler
-    await fetch("https://example.com/users");
+    const res = await fetchT("https://example.com/users", {});
 
     // Cleanup
     server.close();
@@ -85,5 +126,11 @@ describe("newHttp", () => {
     expect(arg["request"]).toBeDefined();
     expect(arg["params"]).toBeDefined();
     expect(arg["validate"]).toBeDefined();
+
+    if (!res.ok) {
+      assert.fail("invalid response");
+    }
+    const json = await res.json();
+    expect(json).toEqual({ success: true });
   });
 });

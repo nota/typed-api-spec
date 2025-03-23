@@ -56,13 +56,27 @@ export type SpecValidatorGeneratorInput<
   headers: Record<string, string | string[] | undefined>;
 };
 
-export const runSpecValidator = (validators: AnySpecValidator | undefined) => {
-  const newD = () =>
-    ({ value: undefined }) as StandardSchemaV1.SuccessResult<undefined>;
-  return {
-    params: validators?.params?.() ?? newD(),
-    query: validators?.query?.() ?? newD(),
-    body: validators?.body?.() ?? newD(),
-    headers: validators?.headers?.() ?? newD(),
-  };
+export const runSpecValidator = async (
+  validators: AnySpecValidator,
+  errorHandler: (
+    reason: keyof AnySpecValidator | "preCheck",
+    errors: Readonly<StandardSchemaV1.Issue[]>,
+  ) => void,
+) => {
+  const params = await validators?.params?.();
+  if (params?.issues) {
+    errorHandler("params", params.issues);
+  }
+  const query = await validators?.query?.();
+  if (query?.issues) {
+    errorHandler("query", query.issues);
+  }
+  const body = await validators?.body?.();
+  if (body?.issues) {
+    errorHandler("body", body.issues);
+  }
+  const headers = await validators?.headers?.();
+  if (headers?.issues) {
+    errorHandler("headers", headers.issues);
+  }
 };

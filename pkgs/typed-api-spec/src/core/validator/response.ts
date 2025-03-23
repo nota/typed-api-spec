@@ -1,12 +1,5 @@
-import {
-  AnyResponse,
-  ApiSpecResponseKey,
-  apiSpecResponseKeys,
-  Method,
-} from "../spec";
-import { StatusCode } from "../hono-types";
-import { Result } from "../../utils";
-import { AnyValidator, ValidatorInputError } from "./validate";
+import { AnyResponse, ApiSpecResponseKey, apiSpecResponseKeys } from "../spec";
+import { AnyValidator } from "./validate";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
 export const listDefinedResponseApiSpecKeys = <Response extends AnyResponse>(
@@ -27,34 +20,27 @@ export type ResponseSpecValidator<
 export type AnyResponseSpecValidator = Partial<
   ResponseSpecValidator<AnyValidator, AnyValidator>
 >;
-export const runResponseSpecValidator = (
-  r: Result<AnyResponseSpecValidator, ValidatorInputError>,
+export const runResponseSpecValidator = async (
+  validators: AnyResponseSpecValidator,
+  errorHandler: (
+    reason: keyof AnyResponseSpecValidator | "preCheck",
+    errors: Readonly<StandardSchemaV1.Issue[]>,
+  ) => void,
 ) => {
-  const newD = () =>
-    ({ value: undefined }) as StandardSchemaV1.SuccessResult<undefined>;
-  return {
-    // TODO: スキーマが間違っていても、bodyのvalidatorがなぜか定義されていない
-    preCheck: r.error,
-    body: r.data?.body?.() ?? newD(),
-    headers: r.data?.headers?.() ?? newD(),
-  };
+  const body = await validators?.body?.();
+  if (body?.issues) {
+    errorHandler("body", body.issues);
+  }
+  const headers = await validators?.headers?.();
+  if (headers?.issues) {
+    errorHandler("headers", headers.issues);
+  }
 };
 
-export type ResponseSpecValidatorGeneratorRawInput<
+export type ResponseSpecValidatorGeneratorInput<
   Path extends string,
   M extends string,
   SC extends number,
-> = {
-  path: Path;
-  method: M;
-  statusCode: SC;
-  body?: unknown;
-  headers: Record<string, string | string[] | undefined>;
-};
-export type ResponseSpecValidatorGeneratorInput<
-  Path extends string,
-  M extends Method,
-  SC extends StatusCode,
 > = {
   path: Path;
   method: M;

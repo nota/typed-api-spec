@@ -170,3 +170,4 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
 export default FetchT;
 
 export * from "./validation";
+export * from "./new-fetch";
