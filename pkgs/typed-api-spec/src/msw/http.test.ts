@@ -44,10 +44,10 @@ describe("Http type with MSW", () => {
       httpT.get(`${baseUrl}/users/:id`, async (info) => {
         const result = await info.validate.params();
         if (result.issues) {
-          // FIXME
-          return HttpResponse.json<{ id: string }>({ id: "1" });
+          // FIXME: This should be a 400 response
+          return info.response.json({ id: "1" });
         }
-        return HttpResponse.json<{ id: string }>({ id: result.value.id });
+        return info.response.json({ id: result.value.id });
       }),
     ];
 

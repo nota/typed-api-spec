@@ -111,6 +111,7 @@ type ExtraResolverArgs<
   M extends Method,
 > = {
   validate: ToValidators<ES, Path, M>;
+  response: HttpResponse<ToApiEndpoints<ES>[Path][M]["responses"]>;
 };
 
 export const newHttp = <
@@ -170,14 +171,13 @@ export const newHttp = <
               console.error(error);
               throw error;
             }
+
             return resolver({
               ...info,
-              // FIXME
-              validate: validator as unknown as ToValidators<
-                ES,
-                RequestPath,
-                Method
-              >,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              validate: validator as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              response: MswHttpResponse as any,
             });
           },
         });
