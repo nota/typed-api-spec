@@ -120,14 +120,13 @@ export const newHttp = <
   baseUrl: BaseUrl,
   endpoints: ES,
 ): Http<BaseUrl, ES> => {
-  const { req, res } = newValidator(endpoints);
+  const { req } = newValidator(endpoints);
   return new Proxy(http, {
     get(target, prop, receiver) {
-      // o is the original method of the provided router
       const requestHandler = Reflect.get(target, prop, receiver);
-      // if (prop === "all") {
-      //   return requestHandler;
-      // }
+      if (prop === "all") {
+        return requestHandler;
+      }
       return <
         // FIXME: Record<string, string> should be PathParams<keyof Params>
         Params extends Record<string, string> = Record<string, string>,

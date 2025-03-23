@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { http, HttpResponse } from "msw";
+import { HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { Http, HttpResponse as HttpResponseT, newHttp } from "./index";
-import { ApiP, DefineApiEndpoints } from "../core";
+import { HttpResponse as HttpResponseT, newHttp } from "./index";
+import { ApiP } from "../core";
 import { z } from "zod";
 import { ApiEndpointsSchema, ToApiEndpoints } from "../core";
 
