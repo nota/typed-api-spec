@@ -1,10 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { HttpResponse as HttpResponseT, newHttp } from "./index";
-import { ApiP } from "../core";
+import { newHttp } from "./index";
 import { z } from "zod";
-import { ApiEndpointsSchema, ToApiEndpoints } from "../core";
+import { ApiEndpointsSchema } from "../core";
 
 // Define a type-safe API schema using Zod
 const endpoints = {
@@ -20,23 +19,22 @@ const endpoints = {
       params: z.object({ id: z.string() }),
       responses: {
         200: { body: z.object({ id: z.string() }) },
+        400: { body: z.object({ message: z.string() }) },
       },
     },
   },
 } satisfies ApiEndpointsSchema;
-
-type UserApiEndpoints = ToApiEndpoints<typeof endpoints>;
 
 const baseUrl = "https://example.com";
 const httpT = newHttp(baseUrl, endpoints);
 describe("Http type with MSW", () => {
   it("GET handler with Http type should be type-safe", () => {
     const handlers = [
-      httpT.get(`${baseUrl}/users`, () => {
-        const Response = HttpResponse as unknown as HttpResponseT<
-          ApiP<UserApiEndpoints, "/users", "get", "responses">
-        >;
-        return Response.json({
+      httpT.get(`${baseUrl}/users`, ({ response }) => {
+        // @ts-expect-error textの型がおかしい
+        response.text("ok");
+
+        return response.json({
           id: "1",
         });
       }),
@@ -44,8 +42,10 @@ describe("Http type with MSW", () => {
       httpT.get(`${baseUrl}/users/:id`, async (info) => {
         const result = await info.validate.params();
         if (result.issues) {
-          // FIXME: This should be a 400 response
-          return info.response.json({ id: "1" });
+          return info.response.json(
+            { message: "invalid user id" },
+            { status: 400 },
+          );
         }
         return info.response.json({ id: result.value.id });
       }),

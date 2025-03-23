@@ -82,28 +82,18 @@ interface ResponseInit<SC extends StatusCode> {
 interface HttpResponseInit<SC extends StatusCode> extends ResponseInit<SC> {
   type?: ResponseType;
 }
-type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
-export type HttpResponse<
+
+interface HttpResponse<
   Responses extends AnyApiResponses,
-  SC extends keyof Responses & StatusCode = 200 & StatusCode,
-  ResponseBody extends ApiResBody<Responses, SC> & DefaultBodyType = ApiResBody<
-    Responses,
-    SC
-  > &
-    DefaultBodyType,
-> = Overwrite<
-  MswHttpResponse,
-  {
-    constructor: <NewSC extends keyof Responses & StatusCode>(
-      body?: BodyInit | null,
-      init?: HttpResponseInit<NewSC>,
-    ) => HttpResponse<Responses, NewSC>;
-    json: <NewSC extends keyof Responses & StatusCode = 200 & StatusCode>(
-      body: ApiResBody<Responses, NewSC>,
-      init?: HttpResponseInit<NewSC>,
-    ) => StrictResponse<ResponseBody>;
-  }
->;
+  DefaultSC extends keyof Responses & StatusCode = 200 & StatusCode,
+  ResponseBody extends ApiResBody<Responses, DefaultSC> &
+    DefaultBodyType = ApiResBody<Responses, DefaultSC> & DefaultBodyType,
+> extends Omit<MswHttpResponse, "json"> {
+  json: <NewSC extends keyof Responses & StatusCode>(
+    body: ApiResBody<Responses, NewSC>,
+    init?: HttpResponseInit<NewSC>,
+  ) => StrictResponse<ResponseBody>;
+}
 
 type ExtraResolverArgs<
   ES extends ApiEndpointsSchema,
@@ -137,7 +127,6 @@ export const newHttp = <
         RequestPath extends string = string,
       >(
         path: RequestPath,
-        // modify後のresolverを想定した型
         resolver: ResponseResolver<
           // FIXME
           HttpRequestResolverExtras<Params> &
