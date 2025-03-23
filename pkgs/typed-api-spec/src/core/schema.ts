@@ -23,13 +23,16 @@ export type ApiSpecSchema<
   Query extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   Body extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
   RequestHeaders extends AnyStandardSchemaV1 = AnyStandardSchemaV1,
-  Responses extends ApiResponsesSchema = ApiResponsesSchema,
+  Responses extends AnyApiResponsesSchema = AnyApiResponsesSchema,
 > = BaseApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 export type ApiResponseSchema = DefineResponse<
   StandardSchemaV1,
   StandardSchemaV1
 >;
 export type ApiResponsesSchema = DefineApiResponses<ApiResponseSchema>;
+export type AnyApiResponsesSchema = DefineApiResponses<
+  DefineResponse<AnyStandardSchemaV1, AnyStandardSchemaV1>
+>;
 
 // -- converter --
 export type ToApiEndpoints<E extends ApiEndpointsSchema> = {

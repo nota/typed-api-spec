@@ -141,6 +141,20 @@ type AsJsonApiSpec<AS extends ApiSpec> = Omit<AS, "headers" | "resHeaders"> & {
   // };
 };
 
+export type GetApiSpec<
+  E extends AnyApiEndpoints,
+  Path extends string | C.AnyE,
+  M extends string,
+> = Path extends keyof E & string
+  ? E[Path] extends AnyApiEndpoint
+    ? M extends keyof E[Path] & Method
+      ? E[Path][M] extends ApiSpec<ParseUrlParams<Path>>
+        ? E[Path][M]
+        : C.E<"ApiSpec not found">
+      : C.E<"Method not found">
+    : C.E<"ApiEndpoint not found">
+  : C.E<"Path not found">;
+
 export type ApiP<
   E extends AnyApiEndpoints,
   Path extends string | C.AnyE,
