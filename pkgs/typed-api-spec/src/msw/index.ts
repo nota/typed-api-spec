@@ -28,6 +28,15 @@ export type HttpRequestResolverExtras<Params extends PathParams> = {
   cookies: Record<string, string>;
 };
 
+/**
+ * Http is a type for MSW http handler with strict type checking
+ *
+ * @template UrlPrefix - url prefix of `Input`
+ * For example, if `UrlPrefix` is "https://example.com", then `Input` must be `https://example.com/${string}`
+ *
+ * @template ES - ApiEndpointsSchema
+ * ES is used to infer the type of the acceptable path, response body, and more
+ */
 export type Http<
   UrlPrefix extends UrlPrefixPattern,
   ES extends ApiEndpointsSchema,
@@ -42,12 +51,42 @@ export type Http<
   options: HttpRequestHandler<UrlPrefix, ES, "options">;
 };
 
+/**
+ * HttpRequestHandler is a type for MSW's request handler with strict type checking
+ *
+ * @template UrlPrefix - url prefix of `Input`
+ * For example, if `UrlPrefix` is "https://api.example.com", then `Input` must be "https://api.example.com/users"
+ *
+ * @template ES - ApiEndpointsSchema
+ * For example, `{ "/users": { get: { responses: { 200: UserSchema } } } }`
+ *
+ * @template M - HTTP Method type
+ * For example, "get", "post", "put", etc.
+ *
+ * @template E - (internal) Converted ApiEndpoints from ApiEndpointsSchema
+ * Internal type - typically not directly specified by users
+ */
 export type HttpRequestHandler<
   UrlPrefix extends UrlPrefixPattern,
   ES extends ApiEndpointsSchema,
   M extends Method,
   E extends ToApiEndpoints<ES> = ToApiEndpoints<ES>,
 > = <
+  /**
+   * internal type for HttpRequestHandler
+   * They are not supposed to be specified by the user
+   *
+   * @template Input - Full URL path including prefix
+   * e.g. "https://api.example.com/users" or "https://api.example.com/users/123"
+   *
+   * @template InputPath - Path without prefix
+   * e.g. if Input is "https://api.example.com/users/123", then InputPath will be "/users/123"
+   *
+   * @template Params - URL parameters from the path
+   * @template Body - Request body type
+   * @template Responses - Response definitions with status codes
+   * @template ResBody - Response body type for default 200 response
+   */
   Input extends `${UrlPrefix}${keyof E & string}`,
   InputPath extends Replace<Input, UrlPrefix, "">,
   Params extends E[InputPath][M]["params"],
@@ -83,27 +122,60 @@ interface HttpResponseInit<SC extends StatusCode> extends ResponseInit<SC> {
   type?: ResponseType;
 }
 
+/**
+ * Typed HTTP response interface extending MSW's HttpResponse
+ *
+ * @template Responses - API response definitions with status codes
+ * @template DefaultSC - Default status code
+ * @template ResponseBody - Response body type for the default status code
+ */
 interface HttpResponse<
   Responses extends AnyApiResponses,
   DefaultSC extends keyof Responses & StatusCode = 200 & StatusCode,
   ResponseBody extends ApiResBody<Responses, DefaultSC> &
     DefaultBodyType = ApiResBody<Responses, DefaultSC> & DefaultBodyType,
 > extends Omit<MswHttpResponse, "json"> {
+  /**
+   * Returns a typed JSON response
+   *
+   * @template NewSC - Status code for the response
+   * @param body - Response body matching the schema for the given status code
+   * @param init - Response initialization options
+   * @returns Strict response with properly typed body
+   */
   json: <NewSC extends keyof Responses & StatusCode>(
     body: ApiResBody<Responses, NewSC>,
     init?: HttpResponseInit<NewSC>,
   ) => StrictResponse<ResponseBody>;
 }
 
+/**
+ * Additional arguments for the response resolver
+ *
+ * @template ES - API endpoints schema
+ * @template Path - Path string from the schema
+ * @template M - HTTP method
+ */
 type ExtraResolverArgs<
   ES extends ApiEndpointsSchema,
   Path extends keyof ToApiEndpoints<ES> & string,
   M extends Method,
 > = {
+  // validate returns validation result
   validate: ToValidators<ES, Path, M>;
+  // response is same as HttpResponse but with more strict typing
   response: HttpResponse<ToApiEndpoints<ES>[Path][M]["responses"]>;
 };
 
+/**
+ * Creates a new msw's http with strict type checking
+ *
+ * @template BaseUrl - Base URL prefix for all endpoints
+ * @template ES - API endpoints schema definition
+ * @param baseUrl - Base URL prefix that will be prepended to all paths
+ * @param endpoints - API endpoints schema object
+ * @returns msw's http with strict type checking
+ */
 export const newHttp = <
   BaseUrl extends UrlPrefixPattern,
   ES extends ApiEndpointsSchema,
