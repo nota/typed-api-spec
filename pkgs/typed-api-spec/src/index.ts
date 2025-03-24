@@ -23,3 +23,10 @@ export { FetchT, RequestInitT };
 
 import JSONT, { JSON$stringifyT } from "./json";
 export { JSONT, JSON$stringifyT };
+
+export {
+  newHttp as newMswHttp,
+  Http as MswHttp,
+  HttpRequestHandler as MswHttpRequestHandler,
+  HttpRequestResolverExtras as MswHttpRequestResolverExtras,
+} from "./msw";
