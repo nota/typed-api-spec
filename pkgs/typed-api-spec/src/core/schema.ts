@@ -10,7 +10,7 @@ import { StandardSchemaV1 } from "@standard-schema/spec";
 export type AnyStandardSchemaV1 = StandardSchemaV1<any>;
 
 export type InferOrUndefined<T> = T extends StandardSchemaV1
-  ? StandardSchemaV1.InferInput<T>
+  ? StandardSchemaV1.InferOutput<T>
   : undefined;
 
 // -- spec --
