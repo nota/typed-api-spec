@@ -3,11 +3,14 @@ import {
   DefineApiEndpoints,
   ExcessiveQueryError,
   MissingQueryError,
+  ToApiEndpoints,
 } from "../core";
 import FetchT, { ValidateUrl } from "./index";
 import JSONT from "../json";
 import { Equal, Expect } from "../core/type-test";
 import { C } from "../compile-error-utils";
+import { ApiEndpointsSchema } from "../../dist";
+import z from "zod";
 const JSONT = JSON as JSONT;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -359,6 +362,27 @@ type ValidateUrlTestCase = [
       // For example, "/" should not match to "/:org"
       const res = await f("/", {});
       (await res.json()).userId;
+    }
+  })();
+}
+
+{
+  const ResBody = z.object({ userId: z.string().brand("UserId") });
+  type ResBody = z.infer<typeof ResBody>;
+  const spec = {
+    "/": {
+      get: {
+        responses: { 200: { body: ResBody } },
+      },
+    },
+  } satisfies ApiEndpointsSchema;
+  (async () => {
+    const f = fetch as FetchT<"", ToApiEndpoints<typeof spec>>;
+    {
+      const res = await f("/", {});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _body: ResBody = await res.json();
     }
   })();
 }
