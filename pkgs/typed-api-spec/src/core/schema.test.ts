@@ -92,26 +92,24 @@ describe("newSSValidator", () => {
     expect(issues[0]).toEqual({
       abortEarly: undefined,
       abortPipeEarly: undefined,
-      expected: "string",
+      expected: `"${path}"`,
       input: undefined,
       issues: undefined,
       kind: "schema",
       lang: undefined,
-      message: "Invalid type: Expected string but received undefined",
+      message: `Invalid key: Expected "${path}" but received undefined`,
       path: [
         {
-          input: {
-            invalid: "invalidValue",
-          },
+          input: { invalid: "invalidValue" },
           key: path,
-          origin: "value",
+          origin: "key",
           type: "object",
           value: undefined,
         },
       ],
       received: "undefined",
       requirement: undefined,
-      type: "string",
+      type: "object",
     });
   };
 

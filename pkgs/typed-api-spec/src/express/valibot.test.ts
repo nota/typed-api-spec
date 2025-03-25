@@ -147,26 +147,26 @@ describe("valibot", () => {
               {
                 abortEarly: undefined,
                 abortPipeEarly: undefined,
-                expected: "string",
+                expected: `"name"`,
                 input: undefined,
                 issues: undefined,
                 kind: "schema",
                 lang: undefined,
-                message: "Invalid type: Expected string but received undefined",
+                message: `Invalid key: Expected "name" but received undefined`,
                 path: [
                   {
                     input: {
                       desc: "test",
                     },
                     key: "name",
-                    origin: "value",
+                    origin: "key",
                     type: "object",
                     value: undefined,
                   },
                 ],
                 received: "undefined",
                 requirement: undefined,
-                type: "string",
+                type: "object",
               },
             ]);
           } else {
@@ -181,26 +181,26 @@ describe("valibot", () => {
               {
                 abortEarly: undefined,
                 abortPipeEarly: undefined,
-                expected: "string",
+                expected: `"name"`,
                 input: undefined,
                 issues: undefined,
                 kind: "schema",
                 lang: undefined,
-                message: "Invalid type: Expected string but received undefined",
+                message: `Invalid key: Expected "name" but received undefined`,
                 path: [
                   {
                     input: {
                       desc: "test",
                     },
                     key: "name",
-                    origin: "value",
+                    origin: "key",
                     type: "object",
                     value: undefined,
                   },
                 ],
                 received: "undefined",
                 requirement: undefined,
-                type: "string",
+                type: "object",
               },
             ]);
           } else {
@@ -214,25 +214,24 @@ describe("valibot", () => {
             {
               abortEarly: undefined,
               abortPipeEarly: undefined,
-              expected: '"application/json"',
+              expected: `"content-type"`,
               input: undefined,
               issues: undefined,
               kind: "schema",
               lang: undefined,
-              message:
-                'Invalid type: Expected "application/json" but received undefined',
+              message: `Invalid key: Expected "content-type" but received undefined`,
               path: [
                 {
                   input: {},
                   key: "content-type",
-                  origin: "value",
+                  origin: "key",
                   type: "object",
                   value: undefined,
                 },
               ],
               received: "undefined",
               requirement: undefined,
-              type: "literal",
+              type: "object",
             },
           ]);
         } else {
