@@ -96,14 +96,17 @@ describe("http handlers", () => {
     const server = setupServer(...handlers);
     expect(server).toBeDefined();
     server.listen();
-    const fetchT = await newFetch(async () => endpoints, true)<
-      typeof baseUrl
-    >();
-    const res = await fetchT("https://example.com/users", {
-      method: "POST",
-      body: JSONT.stringify({ name: "test" }),
-    });
-    server.close();
+    try {
+      const fetchT = await newFetch(async () => endpoints, true)<
+        typeof baseUrl
+      >();
+      await fetchT("https://example.com/users", {
+        method: "POST",
+        body: JSONT.stringify({ name: "test" }),
+      });
+    } finally {
+      server.close();
+    }
   });
 
   it("spy handler", async () => {
