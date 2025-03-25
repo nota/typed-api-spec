@@ -24,11 +24,14 @@ import {
   SpecValidatorGeneratorInput,
   SpecValidatorGeneratorRawInput,
 } from "./request";
-import type { StandardSchemaV1 as SS } from "@standard-schema/spec";
+import type {
+  StandardSchemaV1 as SS,
+  StandardSchemaV1,
+} from "@standard-schema/spec";
 import {
   listDefinedResponseApiSpecKeys,
   ResponseSpecValidator,
-  ResponseSpecValidatorGeneratorRawInput,
+  ResponseSpecValidatorGeneratorInput,
 } from "./response";
 import { StatusCode } from "../hono-types";
 export type SSResult<Data> = SS.Result<Data> | Promise<SS.Result<Data>>;
@@ -137,19 +140,21 @@ export type ValidatorInputError =
   | ValidatorInputMethodNotFoundError
   | ValidatorInputPathNotFoundError;
 
-export const newValidatorMethodNotFoundError = (method: string) => ({
-  target: "method" as const,
-  actual: method,
-  message: `method does not exist in endpoint` as const,
-});
+export const newValidatorMethodNotFoundError = (method: string) =>
+  ({
+    target: "method" as const,
+    actual: method,
+    message: `method does not exist in endpoint` as const,
+  }) satisfies StandardSchemaV1.Issue & Record<string, unknown>;
 type ValidatorInputMethodNotFoundError = ReturnType<
   typeof newValidatorMethodNotFoundError
 >;
-export const newValidatorPathNotFoundError = (path: string) => ({
-  target: "path" as const,
-  actual: path,
-  message: `path does not exist in endpoints` as const,
-});
+export const newValidatorPathNotFoundError = (path: string) =>
+  ({
+    target: "path" as const,
+    actual: path,
+    message: `path does not exist in endpoints` as const,
+  }) satisfies StandardSchemaV1.Issue & Record<string, unknown>;
 type ValidatorInputPathNotFoundError = ReturnType<
   typeof newValidatorPathNotFoundError
 >;
@@ -179,7 +184,7 @@ export const newValidator = <E extends ApiEndpointsSchema>(endpoints: E) => {
     return Result.data(validators as ToValidators<E, Path, M>);
   };
   const res = <Path extends string, M extends string, SC extends number>(
-    input: ResponseSpecValidatorGeneratorRawInput<Path, M, SC>,
+    input: ResponseSpecValidatorGeneratorInput<Path, M, SC>,
   ): Result<
     ToSSResponseValidators<ApiResponses<E, Path, M>, SC>,
     ValidatorInputError

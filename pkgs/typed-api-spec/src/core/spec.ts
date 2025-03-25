@@ -2,6 +2,7 @@ import { ParseUrlParams } from "./url";
 import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
 import { JSONSchema7 } from "json-schema";
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
  * { // ApiEndpoints
@@ -29,13 +30,15 @@ export type CaseInsensitive<S extends string> = S | Uppercase<S> | Lowercase<S>;
 export type CaseInsensitiveMethod = Method | Uppercase<Method>;
 export const isMethod = (x: unknown): x is Method =>
   Method.includes(x as Method);
-export interface MethodInvalidError {
+export interface MethodInvalidError extends StandardSchemaV1.Issue {
   error: "MethodInvalid";
   actual: string;
+  message: string;
 }
 export const newMethodInvalidError = (method: string): MethodInvalidError => ({
   error: "MethodInvalid",
   actual: method,
+  message: `MethodInvalid: ${method}`,
 });
 
 export type ApiEndpoint = Partial<Record<Method, ApiSpec>>;
@@ -140,6 +143,20 @@ type AsJsonApiSpec<AS extends ApiSpec> = Omit<AS, "headers" | "resHeaders"> & {
   //   headers: WithJsonHeader<AS["response"]["headers"]>;
   // };
 };
+
+export type GetApiSpec<
+  E extends AnyApiEndpoints,
+  Path extends string | C.AnyE,
+  M extends string,
+> = Path extends keyof E & string
+  ? E[Path] extends AnyApiEndpoint
+    ? M extends keyof E[Path] & Method
+      ? E[Path][M] extends ApiSpec<ParseUrlParams<Path>>
+        ? E[Path][M]
+        : C.E<"ApiSpec not found">
+      : C.E<"Method not found">
+    : C.E<"ApiEndpoint not found">
+  : C.E<"Path not found">;
 
 export type ApiP<
   E extends AnyApiEndpoints,
