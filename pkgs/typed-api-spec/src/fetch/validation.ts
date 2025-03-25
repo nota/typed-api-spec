@@ -112,7 +112,6 @@ export const withValidation = <
       handleError("preCheck", [error]);
       return;
     }
-    console.log("req validator error", error);
     // FIXME
     runSpecValidator(validator, handleError);
     const res = await f(input, init);

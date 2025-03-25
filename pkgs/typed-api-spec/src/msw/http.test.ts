@@ -5,6 +5,9 @@ import { newHttp } from "./index";
 import { z } from "zod";
 import { ApiEndpointsSchema } from "../core";
 import { newFetch } from "../fetch";
+import JSONT from "../json";
+
+const JSONT = JSON as JSONT;
 
 // Define a type-safe API schema using Zod
 const endpoints = {
@@ -76,7 +79,7 @@ describe("http handlers", () => {
     expect(json).toEqual({ id: "1" });
   });
 
-  it("POST", () => {
+  it("POST", async () => {
     const handlers = [
       http.post(`${baseUrl}/users`, async (info) => {
         const result = await info.validate.body();
@@ -92,12 +95,22 @@ describe("http handlers", () => {
 
     const server = setupServer(...handlers);
     expect(server).toBeDefined();
+    server.listen();
+    const fetchT = await newFetch(async () => endpoints, true)<
+      typeof baseUrl
+    >();
+    const res = await fetchT("https://example.com/users", {
+      method: "POST",
+      body: JSONT.stringify({ name: "test" }),
+    });
+    server.close();
   });
 
-  it.skip("spy handler", async () => {
+  it("spy handler", async () => {
     // Create a spy resolver function to check the arguments
     const resolverSpy = vi.fn().mockImplementation(() => {
-      return HttpResponse.json({ success: true });
+      // Return response that matches the schema defined for the endpoint
+      return HttpResponse.json({ id: "test-id" });
     });
 
     // Create an instance of newHttp with our endpoints
@@ -108,29 +121,37 @@ describe("http handlers", () => {
 
     // Create and setup server with the handler
     const server = setupServer(handler);
-    server.listen();
 
-    const fetchT = await newFetch(async () => endpoints, true)<
-      typeof baseUrl
-    >();
+    // Start server before making request
+    server.listen({ onUnhandledRequest: "error" });
 
-    // Make a fetch request to trigger the handler
-    const res = await fetchT("https://example.com/users", {});
+    try {
+      const fetchT = await newFetch(async () => endpoints, true)<
+        typeof baseUrl
+      >();
 
-    // Cleanup
-    server.close();
+      // Make a fetch request to trigger the handler
+      const res = await fetchT("https://example.com/users", {});
 
-    // Check if the resolver was called with the expected extraArg
-    expect(resolverSpy).toHaveBeenCalledTimes(1);
-    const arg = resolverSpy.mock.calls[0][0];
-    expect(arg["request"]).toBeDefined();
-    expect(arg["params"]).toBeDefined();
-    expect(arg["validate"]).toBeDefined();
+      // Check if the resolver was called with the expected extraArg
+      expect(resolverSpy).toHaveBeenCalledTimes(1);
+      const arg = resolverSpy.mock.calls[0][0];
+      expect(arg["request"]).toBeDefined();
+      expect(arg["params"]).toBeDefined();
+      expect(arg["validate"]).toBeDefined();
+      expect(arg["response"]).toBeDefined();
 
-    if (!res.ok) {
-      assert.fail("invalid response");
+      if (!res.ok) {
+        const errorText = await res.text();
+        assert.fail(`Invalid response: ${errorText}`);
+      }
+
+      const json = await res.json();
+      expect(json).toEqual({ id: "test-id" });
+    } finally {
+      // Always close the server, even if the test fails
+      server.close();
+      server.resetHandlers();
     }
-    const json = await res.json();
-    expect(json).toEqual({ success: true });
   });
 });
