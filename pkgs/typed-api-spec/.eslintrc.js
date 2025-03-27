@@ -1,4 +1,4 @@
-const dRef = ["src/index.ts", "misc/**/*", "**/*.test.ts"];
+const dRef = ["src/index.ts", "misc/**/*", "**/*.test.ts", "**/*.t-test.ts"];
 const depRules = [
   {
     module: "src/express",
@@ -17,7 +17,7 @@ const depRules = [
   },
   {
     module: "src/json",
-    allowReferenceFrom: [...dRef, "src/fetch"],
+    allowReferenceFrom: [...dRef, "src/fetch", "src/core"],
     allowSameModule: false,
   },
   {

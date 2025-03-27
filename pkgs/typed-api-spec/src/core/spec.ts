@@ -3,6 +3,7 @@ import { ClientResponse, StatusCode } from "./hono-types";
 import { C } from "../compile-error-utils";
 import { JSONSchema7 } from "json-schema";
 import { StandardSchemaV1 } from "@standard-schema/spec";
+import { JsonStringifyResult } from "../json";
 
 /**
  * { // ApiEndpoints
@@ -230,7 +231,7 @@ export type AnyResponse = DefineResponse<any, any>;
 export type JsonSchemaResponse = DefineResponse<JSONSchema7, JSONSchema7>;
 export type ApiClientResponses<AResponses extends AnyApiResponses> = {
   [SC in keyof AResponses & StatusCode]: ClientResponse<
-    ApiResBody<AResponses, SC>,
+    JsonStringifyResult<ApiResBody<AResponses, SC>>,
     SC,
     "json",
     ApiResHeaders<AResponses, SC>

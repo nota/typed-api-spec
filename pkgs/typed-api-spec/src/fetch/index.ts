@@ -141,7 +141,7 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     : never,
   LM extends Lowercase<InputMethod>,
   Query extends ApiP<E, CandidatePaths, LM, "query">,
-  ResBody extends ApiP<
+  Response extends ApiP<
     E,
     CandidatePaths,
     LM,
@@ -165,7 +165,7 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     ApiP<E, CandidatePaths, LM, "headers">,
     InputMethod
   >,
-) => Promise<ResBody>;
+) => Promise<Response>;
 
 export default FetchT;
 
