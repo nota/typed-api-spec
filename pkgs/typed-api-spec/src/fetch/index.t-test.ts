@@ -6,7 +6,7 @@ import {
   ToApiEndpoints,
 } from "../core";
 import FetchT, { ValidateUrl } from "./index";
-import JSONT from "../json";
+import JSONT, { JsonStringifyResult } from "../json";
 import { Equal, Expect } from "../core/type-test";
 import { C } from "../compile-error-utils";
 import { ApiEndpointsSchema } from "../../dist";
@@ -383,6 +383,27 @@ type ValidateUrlTestCase = [
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _body: ResBody = await res.json();
+    }
+  })();
+}
+
+{
+  const ResBody = z.object({ userId: z.date() });
+  type ResBody = z.infer<typeof ResBody>;
+  const spec = {
+    "/": {
+      get: {
+        responses: { 200: { body: ResBody } },
+      },
+    },
+  } satisfies ApiEndpointsSchema;
+  (async () => {
+    const f = fetch as FetchT<"", ToApiEndpoints<typeof spec>>;
+    {
+      const res = await f("/", {});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _body: JsonStringifyResult<ResBody> = await res.json();
     }
   })();
 }
