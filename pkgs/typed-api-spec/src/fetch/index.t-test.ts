@@ -1,4 +1,5 @@
 import {
+  ApiEndpointsSchema,
   AsJsonApi,
   DefineApiEndpoints,
   ExcessiveQueryError,
@@ -9,7 +10,6 @@ import FetchT, { ValidateUrl } from "./index";
 import JSONT, { JsonStringifyResult } from "../json";
 import { Equal, Expect } from "../core/type-test";
 import { C } from "../compile-error-utils";
-import { ApiEndpointsSchema } from "../../dist";
 import z from "zod";
 const JSONT = JSON as JSONT;
 
