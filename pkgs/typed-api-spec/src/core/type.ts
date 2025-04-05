@@ -159,3 +159,24 @@ export type AllValues<T, Key extends AllKeys<T>> = T extends {
 }
   ? T[Key]
   : never;
+
+/**
+ * Computes the logical AND of a tuple of boolean types at the type level.
+ * @template T - A readonly tuple of boolean types (true | false | boolean)
+ */
+export type And<T extends readonly boolean[]> = T extends readonly []
+  ? // The AND of an empty tuple is true (identity element of logical AND)
+    true
+  : // Can T be decomposed into [Head, ...Tail]? (Recursive step)
+    T extends readonly [
+        infer Head extends boolean,
+        ...infer Tail extends readonly boolean[],
+      ]
+    ? Head extends false
+      ? // If Head is false, the AND of the entire tuple is false
+        false
+      : // If Head is true, the result depends on the AND of the remaining elements (Tail)
+        And<Tail>
+    : // If T is neither [] nor [Head, ...Tail] (e.g., boolean[] type itself)
+      // In this case, the result cannot be determined and is therefore boolean.
+      boolean;

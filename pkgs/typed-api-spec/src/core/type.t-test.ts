@@ -2,6 +2,7 @@ import { Equal, Expect } from "./type-test";
 import {
   AllKeys,
   AllValues,
+  And,
   CountChar,
   ExtractByPrefix,
   FilterNever,
@@ -140,4 +141,18 @@ type AllKeysTestCases = [
 type AllValuesTestCases = [
   Expect<Equal<AllValues<{ a: 1 } | { a: 2 }, "a">, 1 | 2>>,
   Expect<Equal<AllValues<{ a: 1; b: 3 } | { a: 2 }, "b">, 3>>,
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type AndTestCases = [
+  Expect<Equal<And<[]>, true>>, // An empty tuple evaluates to true
+  Expect<Equal<And<[true]>, true>>, // Single element true
+  Expect<Equal<And<[false]>, false>>, // Single element false
+  Expect<Equal<And<[true, true]>, true>>, // All elements are true
+  Expect<Equal<And<[true, false]>, false>>, // Contains false
+  Expect<Equal<And<[false, true]>, false>>, // Contains false
+  Expect<Equal<And<[false, false]>, false>>, // All elements are false
+  Expect<Equal<And<[true, true, true]>, true>>, // Multiple true elements
+  Expect<Equal<And<[true, true, false]>, false>>, // Multiple elements containing false
+  Expect<Equal<And<boolean[]>, boolean>>, // boolean[] type
 ];

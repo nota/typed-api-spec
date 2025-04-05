@@ -35,7 +35,7 @@ type Spec = DefineApiEndpoints<{
 }>;
 
 const fetchT = fetch as FetchT<"", Spec>;
-const res = await fetchT("/users", {});
+const res = await fetchT("/users");
 const data = await res.json(); // data is { userNames: string[] }
 ```
 
@@ -57,7 +57,7 @@ type Spec = DefineApiEndpoints<{
 }>;
 
 const fetchT = fetch as FetchT<"", Spec>;
-const res = await fetchT("/users", {});
+const res = await fetchT("/users");
 if (!res.ok) {
   // If res.ok is false, status code is 400 or 500
   // So res.json() returns { message: string } | { internalError: string }
@@ -105,10 +105,10 @@ type Spec = DefineApiEndpoints<{
 }>;
 const fetchT = fetch as FetchT<"", Spec>;
 
-await fetchT("/users", {}); // OK
-await fetchT("/users/1", {}); // OK
-await fetchT("/posts", {}); // Error: Argument of type '"/posts"' is not assignable to parameter of type '"/users" | "/users/:id"'.
-await fetchT("/users/1/2", {}); // Error: Argument of type '"/users/1/2"' is not assignable to parameter of type '"/users" | "/users/:id"'.
+await fetchT("/users"); // OK
+await fetchT("/users/1"); // OK
+await fetchT("/posts"); // Error: Argument of type '"/posts"' is not assignable to parameter of type '"/users" | "/users/:id"'.
+await fetchT("/users/1/2"); // Error: Argument of type '"/users/1/2"' is not assignable to parameter of type '"/users" | "/users/:id"'.
 ```
 
 ### Query
@@ -126,9 +126,9 @@ type Spec = DefineApiEndpoints<{
 }>;
 
 const fetchT = fetch as FetchT<"", Spec>;
-await fetchT("/users?page=1", {}); // OK
-await fetchT("/users", {}); // Error: Argument of type string is not assignable to parameter of type MissingQueryError<"page">
-await fetchT("/users?page=1&noexist=1", {}); // Error: Argument of type string is not assignable to parameter of type ExcessiveQueryError<"noexist">
+await fetchT("/users?page=1"); // OK
+await fetchT("/users"); // Error: Argument of type string is not assignable to parameter of type MissingQueryError<"page">
+await fetchT("/users?page=1&noexist=1"); // Error: Argument of type string is not assignable to parameter of type ExcessiveQueryError<"noexist">
 ```
 
 ### headers
@@ -173,6 +173,63 @@ await fetchT("/users", {
   body: JSONT.stringify({ name: "name" }),
 }); // OK
 await fetchT("/users", { method: "POST", body: JSONT.stringify({ name: 1 }) }); // Error: Type TypedString<{ userName: number; }> is not assignable to type TypedString<{ userName: string; }>
+```
+
+### Init
+
+zero-fetch enforces type safety for the `init` parameter of the fetch function. The `init` parameter can be omitted only if all of the following conditions are met:
+
+- The endpoint defines an HTTP GET method.
+- All request headers defined for the endpoint are optional.
+
+If any of these conditions are not satisfied, omitting the `init` parameter will result in a type error.
+
+This behavior ensures that the fetch call adheres strictly to the API specification, preventing runtime errors due to missing or incorrect parameters.
+
+```typescript
+type Spec = DefineApiEndpoints<{
+  "/users": {
+    get: {
+      headers: { "x-api-key"?: string };
+      responses: { 200: { body: { names: string[] } } };
+    };
+  };
+  "/posts": {
+    get: {
+      headers: { "x-api-key": string };
+      responses: { 200: { body: { posts: string[] } } };
+    };
+  };
+}>;
+
+const fetchT = fetch as FetchT<"", Spec>;
+
+await fetchT("/users"); // OK, because GET method is defined and headers are optional
+await fetchT("/users", { headers: { "x-api-key": "key" } }); // OK
+await fetchT("/users", { headers: {} }); // OK, because headers are optional
+await fetchT("/users", { method: "POST" }); // Error: POST method is not defined for this endpoint
+
+await fetchT("/posts"); // Error: "x-api-key" header is required for this endpoint
+await fetchT("/posts", { headers: { "x-api-key": "key" } }); // OK
+```
+
+```typescript
+type Spec = DefineApiEndpoints<{
+  "/posts": {
+    post: {
+      body: { title: string };
+      responses: { 201: { body: { id: string } } };
+    };
+  };
+}>;
+
+const fetchT = fetch as FetchT<"", Spec>;
+
+await fetchT("/posts"); // Error: GET method is not defined for this endpoint
+await fetchT("/posts", {
+  method: "POST",
+  body: JSON.stringify({ title: "New Post" }),
+}); // OK
 ```
 
 ## API
