@@ -268,7 +268,7 @@ type ValidateUrlTestCase = [
   type Spec = DefineApiEndpoints<{
     "/users": {
       get: {
-        // 本来、GETメソッドはbodyを持たないが、型エラーになることを確認するために定：w
+        // 本来、GETメソッドはbodyを持たないが、型エラーになることを確認するために定義
         body: { userName: string };
         responses: { 200: { body: { prop: string } } };
       };
