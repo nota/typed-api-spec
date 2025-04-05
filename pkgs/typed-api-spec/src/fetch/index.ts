@@ -141,6 +141,8 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     : never,
   LM extends Lowercase<InputMethod>,
   Query extends ApiP<E, CandidatePaths, LM, "query">,
+  Headers extends ApiP<E, CandidatePaths, LM, "headers">,
+  Body extends ApiP<E, CandidatePaths, LM, "body">,
   Response extends ApiP<
     E,
     CandidatePaths,
@@ -154,17 +156,25 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     AcceptableMethods,
     "get"
   >,
+  CanOmitMethod extends boolean = "get" extends AcceptableMethods
+    ? true
+    : false,
+  CanOmitInit extends boolean = CanOmitMethod extends true
+    ? Headers extends undefined
+      ? true
+      : Headers extends Record<string, string>
+        ? IsAllOptional<Headers> extends true
+          ? true
+          : false
+        : false
+    : false,
 >(
   input: [ValidatedUrl] extends [C.OK | QueryParameterRequiredError]
     ? Input
     : ValidatedUrl,
-  init: RequestInitT<
-    // If `get` method is defined in the spec, method can be omitted
-    "get" extends AcceptableMethods ? true : false,
-    ApiP<E, CandidatePaths, LM, "body">,
-    ApiP<E, CandidatePaths, LM, "headers">,
-    InputMethod
-  >,
+  ...args: CanOmitInit extends true
+    ? [init?: RequestInitT<CanOmitMethod, Body, Headers, InputMethod>]
+    : [init: RequestInitT<CanOmitMethod, Body, Headers, InputMethod>]
 ) => Promise<Response>;
 
 export default FetchT;

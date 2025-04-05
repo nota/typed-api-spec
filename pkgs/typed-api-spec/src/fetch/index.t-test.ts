@@ -45,12 +45,21 @@ type ValidateUrlTestCase = [
         };
       };
     };
+    "/users2": {
+      get: {
+        headers: { "x-foo"?: string; "x-bar"?: string };
+        responses: { 200: { body: { prop: string } } };
+      };
+    };
   }>;
   (async () => {
     const f = fetch as FetchT<"", Spec>;
     {
-      // @ts-expect-error 今はinitの省略ができないが、できるようにしたい
+      // get methodが定義されており、headersが必要ない場合、Initは省略可能
       await f("/users");
+
+      // headersが定義されていても、すべて省略可能な場合はInitも省略可能
+      await f("/users2");
 
       // methodを省略した場合はgetとして扱う
       const res = await f("/users", {});
@@ -60,6 +69,31 @@ type ValidateUrlTestCase = [
       const contentType: "application/json" = res.headers.get("Content-Type");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const hasContentType: true = res.headers.has("Content-Type");
+    }
+  })();
+}
+{
+  type Spec = DefineApiEndpoints<{
+    "/users": {
+      get: {
+        headers: { "x-foo"?: string; "Content-Type": "application/json" };
+        responses: { 200: { body: { prop: string } } };
+      };
+    };
+    "/users2": {
+      post: {
+        responses: { 200: { body: { prop: string } } };
+      };
+    };
+  }>;
+  (async () => {
+    const f = fetch as FetchT<"", Spec>;
+    {
+      // @ts-expect-error getメソッドが定義されていても、headersが要求されている場合はInitは省略できない
+      await f("/users");
+
+      // @ts-expect-error getメソッドが定義されていない場合、Initは省略できない
+      await f("/users2");
     }
   })();
 }
