@@ -16,6 +16,7 @@ import {
   ToQueryUnion,
   Method,
   CaseInsensitive,
+  And,
 } from "../core";
 import { UrlPrefixPattern, ToUrlParamPattern } from "../core";
 import { TypedString } from "../json";
@@ -119,7 +120,11 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
    *
    * @template Headers - Request headers object of the endpoint
    *
+   * @template CanOmitHeaders - Whether the headers property in the "init" parameter can be omitted
+   *
    * @template Body - Request body object of the endpoint
+   *
+   * @template CanOmitBody - Whether the body property in the "init" parameter can be omitted
    *
    * @template Response - Response object of the endpoint that matches `CandidatePaths`
    *
@@ -134,7 +139,7 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
    * If the endpoint defines a "get" method, then the method can be omitted
    *
    * @template CanOmitInit - Whether the "init" parameter can be omitted for the request
-   * If the method can be omitted (`CanOmitMethod` is true) and the endpoint does not require headers, then the "init" parameter can be omitted
+   * If the method can be omitted (`CanOmitMethod` is true), headers can be omitted (`CanOmitHeaders` is true), and body can be omitted (`CanOmitBody` is true), then the "init" parameter can be omitted
    */
   UrlPattern extends ToUrlParamPattern<`${UrlPrefix}${keyof E & string}`>,
   Input extends Query extends undefined
@@ -154,7 +159,11 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
   LM extends Lowercase<InputMethod>,
   Query extends ApiP<E, CandidatePaths, LM, "query">,
   Headers extends ApiP<E, CandidatePaths, LM, "headers">,
+  CanOmitHeaders extends Headers extends undefined
+    ? true
+    : IsAllOptional<Headers>,
   Body extends ApiP<E, CandidatePaths, LM, "body">,
+  CanOmitBody extends Body extends undefined ? true : IsAllOptional<Body>,
   Response extends ApiP<
     E,
     CandidatePaths,
@@ -164,22 +173,14 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     ? MergeApiResponseBodies<ApiP<E, CandidatePaths, LM, "responses">>
     : Record<StatusCode, never>,
   ValidatedUrl extends ValidateUrl<Query, Input>,
+  CanOmitMethod extends "get" extends AcceptableMethods ? true : false,
   InputMethod extends CaseInsensitive<AcceptableMethods> = Extract<
     AcceptableMethods,
     "get"
   >,
-  CanOmitMethod extends boolean = "get" extends AcceptableMethods
-    ? true
-    : false,
-  CanOmitInit extends boolean = CanOmitMethod extends true
-    ? Headers extends undefined
-      ? true
-      : Headers extends Record<string, string>
-        ? IsAllOptional<Headers> extends true
-          ? true
-          : false
-        : false
-    : false,
+  CanOmitInit extends boolean = And<
+    [CanOmitMethod, CanOmitHeaders, CanOmitBody]
+  >,
 >(
   input: [ValidatedUrl] extends [C.OK | QueryParameterRequiredError]
     ? Input

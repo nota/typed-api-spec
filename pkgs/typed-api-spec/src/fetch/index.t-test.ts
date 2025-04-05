@@ -266,6 +266,30 @@ type ValidateUrlTestCase = [
 
 {
   type Spec = DefineApiEndpoints<{
+    "/users": {
+      get: {
+        // 本来、GETメソッドはbodyを持たないが、型エラーになることを確認するために定：w
+        body: { userName: string };
+        responses: { 200: { body: { prop: string } } };
+      };
+    };
+  }>;
+  (async () => {
+    const f = fetch as FetchT<"", Spec>;
+
+    // @ts-expect-error init cannot be omitted when request body is required
+    await f("/users");
+
+    // Valid case: init is provided with required body
+    await f("/users", {
+      method: "get",
+      body: JSONT.stringify({ userName: "test" }),
+    });
+  })();
+}
+
+{
+  type Spec = DefineApiEndpoints<{
     "/packages/list": {
       get: {
         headers: { Cookie: `a=${string}` };
