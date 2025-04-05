@@ -175,13 +175,6 @@ await fetchT("/users", {
 await fetchT("/users", { method: "POST", body: JSONT.stringify({ name: 1 }) }); // Error: Type TypedString<{ userName: number; }> is not assignable to type TypedString<{ userName: string; }>
 ```
 
-:::info[Known issue of RequestInit]
-
-Currently, zero-fetch can not omit the `RequestInit` arg.
-We hope to address this issue in the future, but for now, you must provide an empty object as the second argument.
-
-:::
-
 ## API
 
 ### FetchT
