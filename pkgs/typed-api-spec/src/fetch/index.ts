@@ -75,7 +75,7 @@ export type RequestInitT<
 /**
  * FetchT is a type for window.fetch like function but more strict type information
  *
- * @template UrlPrefix - url prefix of `Input`
+ * @template UrlPrefix - URL prefix of `Input`
  * For example, if `UrlPrefix` is "https://example.com", then `Input` must be `https://example.com/${string}`
  *
  * @template E - ApiEndpoints
@@ -83,17 +83,17 @@ export type RequestInitT<
  */
 type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
   /**
-   * internal type for FetchT
+   * Internal type for FetchT
    * They are not supposed to be specified by the user
    *
-   * @template UrlPattern - Acceptable url pattern
-   * For example, if endpoints is defined as below:
+   * @template UrlPattern - Acceptable URL pattern
+   * For example, if endpoints are defined as below:
    * { "/users": ..., "/users/:userId": ... }
    * and UrlPrefix is "https://example.com",
    * then UrlPattern will be "https://example.com/users" | "https://example.com/users/${string}"
    *
    * @template Input - Input of the request by the user
-   * For example, if endpoints is defined as below:
+   * For example, if endpoints are defined as below:
    * { "/users": ..., "/users/:userId": ... }
    * then Input accepts "https://example.com/users" | "https://example.com/users/${string}"
    * If query is defined in the spec, Input also accepts "https://example.com/users?${string}" | "https://example.com/users/${string}?${string}"
@@ -102,27 +102,39 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
    * For example, if Input is "https://example.com/users/1", then InputPath will be "/users/${string}"
    *
    * @template CandidatePaths - Matched paths from `InputPath` and `keyof E`
-   * For example, if InputPath is "/users/1" and endpoints is defined as below:
+   * For example, if InputPath is "/users/1" and endpoints are defined as below:
    * { "/users": ..., "/users/:userId": ... }
    * then CandidatePaths will be "/users/:userId"
    * If no matched path is found, CandidatePaths will be never
-   * If multiple matched paths are found, CandidatePaths will be union of matched paths
+   * If multiple matched paths are found, CandidatePaths will be a union of matched paths
    *
    * @template AcceptableMethods - Acceptable methods for the matched path
-   * For example, if CandidatePaths is "/users/:userId" and endpoints is defined as below:
+   * For example, if CandidatePaths is "/users/:userId" and endpoints are defined as below:
    * { "/users": { get: ... }, "/users/:userId": { get: ..., post: ... } }
    * then AcceptableMethods will be "get" | "post"
    *
-   * @template LM - Lowercase of `InputMethod`
+   * @template LM - Lowercase version of `InputMethod`
    *
-   * @template Query - Query object of endpoint which is matched with `CandidatePaths`
+   * @template Query - Query object of the endpoint that matches `CandidatePaths`
    *
-   * @template ResBody - Response body of the endpoint which is matched with `CandidatePaths`
+   * @template Headers - Request headers object of the endpoint
    *
-   * @template InputMethod - Method of the request specified by the user
+   * @template Body - Request body object of the endpoint
+   *
+   * @template Response - Response object of the endpoint that matches `CandidatePaths`
+   *
+   * @template ValidatedUrl - Result of URL validation
+   *
+   * @template InputMethod - Method of the request as specified by the user
    * For example, if `fetch` is called with `fetch("https://example.com/users", { method: "post" })`,
    * then InputMethod will be "post".
    * If `get` method is defined in the spec, method can be omitted, and it will be `get` by default
+   *
+   * @template CanOmitMethod - Whether the method property in the "init" parameter can be omitted
+   * If the endpoint defines a "get" method, then the method can be omitted
+   *
+   * @template CanOmitInit - Whether the "init" parameter can be omitted for the request
+   * If the method can be omitted (`CanOmitMethod` is true) and the endpoint does not require headers, then the "init" parameter can be omitted
    */
   UrlPattern extends ToUrlParamPattern<`${UrlPrefix}${keyof E & string}`>,
   Input extends Query extends undefined
@@ -141,6 +153,8 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     : never,
   LM extends Lowercase<InputMethod>,
   Query extends ApiP<E, CandidatePaths, LM, "query">,
+  Headers extends ApiP<E, CandidatePaths, LM, "headers">,
+  Body extends ApiP<E, CandidatePaths, LM, "body">,
   Response extends ApiP<
     E,
     CandidatePaths,
@@ -154,17 +168,25 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
     AcceptableMethods,
     "get"
   >,
+  CanOmitMethod extends boolean = "get" extends AcceptableMethods
+    ? true
+    : false,
+  CanOmitInit extends boolean = CanOmitMethod extends true
+    ? Headers extends undefined
+      ? true
+      : Headers extends Record<string, string>
+        ? IsAllOptional<Headers> extends true
+          ? true
+          : false
+        : false
+    : false,
 >(
   input: [ValidatedUrl] extends [C.OK | QueryParameterRequiredError]
     ? Input
     : ValidatedUrl,
-  init: RequestInitT<
-    // If `get` method is defined in the spec, method can be omitted
-    "get" extends AcceptableMethods ? true : false,
-    ApiP<E, CandidatePaths, LM, "body">,
-    ApiP<E, CandidatePaths, LM, "headers">,
-    InputMethod
-  >,
+  ...args: CanOmitInit extends true
+    ? [init?: RequestInitT<CanOmitMethod, Body, Headers, InputMethod>]
+    : [init: RequestInitT<CanOmitMethod, Body, Headers, InputMethod>]
 ) => Promise<Response>;
 
 export default FetchT;
