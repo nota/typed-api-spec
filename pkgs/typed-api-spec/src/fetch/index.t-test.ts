@@ -118,7 +118,6 @@ type ValidateUrlTestCase = [
   (async () => {
     const f = fetch as FetchT<"", JsonSpec>;
     const f2 = fetch as FetchT<"", Spec>;
-    const JSONT = JSON as JSONT;
     {
       // @ts-expect-error fetch requires input
       f();

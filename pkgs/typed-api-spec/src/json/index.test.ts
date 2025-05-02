@@ -20,6 +20,7 @@ describe("JsonStringifyResult", () => {
       k: (string | undefined | Date)[];
       [l]: string;
       m: { toJSON: () => { x: number; y: string | undefined } };
+      n: [number, number];
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type T = Expect<
@@ -35,6 +36,7 @@ describe("JsonStringifyResult", () => {
           k: (string | null)[];
           // FIXME: y should be optional
           m: { x: number; y: string | undefined };
+          n: [number, number];
         }
       >
     >;
@@ -55,6 +57,7 @@ describe("JsonStringifyResult", () => {
       k: ["a", undefined, new Date("2021-01-01")],
       [l]: "symbol keyed value",
       m: { toJSON: () => ({ x: 1, y: undefined }) },
+      n: [1, 2],
     };
 
     expect(JSON.parse(JSON.stringify({ ...example, h: undefined }))).toEqual({
@@ -66,6 +69,7 @@ describe("JsonStringifyResult", () => {
       j: { nested: "world" },
       k: ["a", null, "2021-01-01T00:00:00.000Z"],
       m: { x: 1 },
+      n: [1, 2],
     });
   });
 });
