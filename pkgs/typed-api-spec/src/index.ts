@@ -21,8 +21,21 @@ export {
 import FetchT, { RequestInitT } from "./fetch";
 export { FetchT, RequestInitT };
 
-import JSONT, { JSON$stringifyT } from "./json";
-export { JSONT, JSON$stringifyT };
+import JSONT, {
+  JSON$stringifyT,
+  TypedString,
+  JsonStringifyResult,
+  Jsonify,
+  JsonifyObject,
+} from "./json";
+export {
+  JSONT,
+  JSON$stringifyT,
+  TypedString,
+  JsonStringifyResult,
+  Jsonify,
+  JsonifyObject,
+};
 
 export {
   newHttp as newMswHttp,
