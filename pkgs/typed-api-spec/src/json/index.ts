@@ -20,7 +20,7 @@ type JsonPrimitive = string | number | boolean | null | Date;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type InvalidJsonValue = undefined | Function | symbol | bigint;
 
-type JsonifyObject<T> = {
+export type JsonifyObject<T> = {
   [K in keyof T as K extends string
     ? T[K] extends InvalidJsonValue
       ? never
@@ -39,7 +39,7 @@ type JsonifyTuple<T extends readonly unknown[]> = T extends [
     ]
   : [];
 
-type Jsonify<T> = T extends { toJSON(): infer R }
+export type Jsonify<T> = T extends { toJSON(): infer R }
   ? Jsonify<R>
   : T extends Date
     ? string
