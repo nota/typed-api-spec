@@ -2,7 +2,7 @@
   "name": "@notainc/typed-api-spec",
   "version": "0.6.0",
   "scripts": {
-    "install:optional-peer-dependencies": "npm install --no-save zod valibot@1 express@5 @types/express@5 fastify fastify-type-provider-zod@2",
+    "install:optional-peer-dependencies": "npm install --no-save zod valibot@1 express@5 @types/express@5 fastify fastify-type-provider-zod@5",
     "build": "tsup",
     "watch:build": "tsup --watch",
     "format": "prettier --write .",
@@ -41,11 +41,11 @@
     "@valibot/to-json-schema": "^1.0.0",
     "express": "^5",
     "fastify": "^4 || ^5.0.0",
-    "fastify-type-provider-zod": "^2",
+    "fastify-type-provider-zod": "^5",
     "msw": "^2",
     "typescript": "^5.3",
     "valibot": "^1.0.0",
-    "zod": "^3.24.0"
+    "zod": "^3.25.74"
   },
   "peerDependenciesMeta": {
     "zod": {
@@ -125,6 +125,6 @@
     "path-to-regexp": "^8.2.0"
   },
   "optionalDependencies": {
-    "zod-openapi": "^4.2.2"
+    "zod-openapi": "^5"
   }
 }

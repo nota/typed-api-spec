@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { OpenAPIV3_1 } from "openapi-types";
-import "zod-openapi/extend";
-import z from "zod";
+import z from "zod/v4";
 import { OpenApiEndpointsSchema, toOpenApiDoc } from "..";
 describe("openapi", () => {
   const endpoints = {
@@ -38,12 +37,14 @@ describe("openapi", () => {
         name: "page",
       },
     ],
+
     responses: {
       "200": {
         content: {
           "application/json": {
             schema: {
               items: {
+                additionalProperties: false,
                 properties: {
                   message: {
                     type: "string",
@@ -67,6 +68,7 @@ describe("openapi", () => {
       content: {
         "application/json": {
           schema: {
+            additionalProperties: false,
             properties: {
               name: {
                 type: "string",
@@ -85,6 +87,7 @@ describe("openapi", () => {
           "application/json": {
             schema: {
               items: {
+                additionalProperties: false,
                 properties: {
                   message: {
                     type: "string",

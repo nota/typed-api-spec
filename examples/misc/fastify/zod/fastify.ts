@@ -7,7 +7,7 @@ import {
 } from "fastify-type-provider-zod";
 import { pathMap } from "../../spec/zod";
 import { toRoutes } from "@notainc/typed-api-spec/fastify";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 const fastify = Fastify({ logger: true });
 
 fastify.setValidatorCompiler(validatorCompiler);

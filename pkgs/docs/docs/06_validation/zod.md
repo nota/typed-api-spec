@@ -8,7 +8,7 @@ sidebar_position: 1
 You can use zod to define the API specification of typed-api-spec.
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const Spec = {

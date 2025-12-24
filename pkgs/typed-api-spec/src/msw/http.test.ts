@@ -2,7 +2,7 @@ import { describe, it, expect, vi, assert } from "vitest";
 import { HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { newHttp } from "./index";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ApiEndpointsSchema } from "../core";
 import { newFetch } from "../fetch";
 import JSONT from "../json";
