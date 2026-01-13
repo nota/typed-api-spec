@@ -2,7 +2,7 @@ import {
   ApiEndpointsSchema,
   ToApiEndpoints,
 } from "@notainc/typed-api-spec/core";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const JsonHeader = z.union([
   z.object({ "content-type": z.literal("application/json") }),

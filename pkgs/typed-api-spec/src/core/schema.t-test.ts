@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Equal, Expect } from "./type-test";
-import { z } from "zod";
+import { z } from "zod/v4";
 import {
   ApiP,
   ResponseValidators,

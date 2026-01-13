@@ -10,7 +10,7 @@ However, you may want to perform runtime validation to check that request parame
 The simplest way is to use only the type information provided by a validation library. For exmple, you can use [zod](https://zod.dev) to define the API specification of typed-api-spec.
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const User = z.object({
   id: z.string(),
@@ -48,7 +48,7 @@ This is not bad, but the problem is that there is no guarantee that the UsersQue
 typed-api-spec provides a way to define the API specification using the validation library directly.
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const Spec = {

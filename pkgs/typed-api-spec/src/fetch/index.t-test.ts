@@ -10,7 +10,7 @@ import FetchT, { ValidateUrl } from "./index";
 import JSONT, { JsonStringifyResult } from "../json";
 import { Equal, Expect } from "../core/type-test";
 import { C } from "../compile-error-utils";
-import z from "zod";
+import z from "zod/v4";
 const JSONT = JSON as JSONT;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

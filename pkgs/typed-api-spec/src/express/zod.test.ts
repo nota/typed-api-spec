@@ -8,7 +8,7 @@ import {
   ValidateLocals,
   validatorMiddleware,
 } from "./index";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
 import {
@@ -138,9 +138,8 @@ describe("validatorMiddleware", () => {
             {
               code: "invalid_type",
               expected: "string",
-              received: "undefined",
               path: ["name"],
-              message: "Required",
+              message: "Invalid input: expected string, received undefined",
             },
           ]);
         } else {
@@ -155,9 +154,8 @@ describe("validatorMiddleware", () => {
             {
               code: "invalid_type",
               expected: "string",
-              received: "undefined",
               path: ["name"],
-              message: "Required",
+              message: "Invalid input: expected string, received undefined",
             },
           ]);
         } else {
@@ -169,11 +167,10 @@ describe("validatorMiddleware", () => {
       if (r.issues) {
         expect(r.issues).toEqual([
           {
-            code: "invalid_literal",
-            expected: "application/json",
-            received: undefined,
+            code: "invalid_value",
+            message: 'Invalid input: expected "application/json"',
             path: ["content-type"],
-            message: `Invalid literal value, expected "application/json"`,
+            values: ["application/json"],
           },
         ]);
       } else {

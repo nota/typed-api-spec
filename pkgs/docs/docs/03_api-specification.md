@@ -113,7 +113,7 @@ typed-api-spec can be integrated with various validation libraries.
 For example, you can use zod to define the schema of the request and response.
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
 const Spec = {
