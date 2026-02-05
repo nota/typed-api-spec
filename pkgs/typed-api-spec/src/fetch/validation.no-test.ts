@@ -1,7 +1,7 @@
 // FIXME: standard-schema対応が終わったらテストを書く
 // import { withValidation } from "./validation";
 // import { describe, it, expect, vi } from "vitest";
-// import { z } from "zod/v4";
+// import { z } from "zod";
 // import { toLCObj } from "../utils";
 // import { newSSValidator, SSApiEndpoints } from "../ss";
 

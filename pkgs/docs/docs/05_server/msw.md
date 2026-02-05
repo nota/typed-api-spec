@@ -9,7 +9,7 @@ Here is an example of how to use `msw` with `typed-api-spec` and `zod`.
 ```typescript
 import { setupServer } from "msw/node";
 import { newHttp, ApiEndpointsSchema } from "@notainc/typed-api-spec/msw";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 // Define a type-safe API schema using Zod
 const endpoints = {

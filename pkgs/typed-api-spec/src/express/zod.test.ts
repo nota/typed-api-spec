@@ -8,7 +8,7 @@ import {
   ValidateLocals,
   validatorMiddleware,
 } from "./index";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { Request } from "express";
 import { ParseUrlParams } from "../core";
 import {
