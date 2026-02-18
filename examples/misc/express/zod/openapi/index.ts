@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { OpenAPIV3_1 } from "openapi-types";
 import "zod-openapi/extend";
-import z from "zod/v4";
+import z from "zod";
 import {
   OpenApiEndpointsSchema,
   toOpenApiDoc,

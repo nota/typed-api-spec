@@ -41,7 +41,7 @@ Following example uses zod.
 ```typescript
 import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 import { typed } from "@notainc/typed-api-spec/express";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 const Spec = {
   "/users": {

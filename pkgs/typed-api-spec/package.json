@@ -1,6 +1,6 @@
 {
   "name": "@notainc/typed-api-spec",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "scripts": {
     "install:optional-peer-dependencies": "npm install --no-save zod valibot@1 express@5 @types/express@5 fastify fastify-type-provider-zod@5",
     "build": "tsup",
@@ -45,7 +45,7 @@
     "msw": "^2",
     "typescript": "^5.3",
     "valibot": "^1.0.0",
-    "zod": "^3.25.74"
+    "zod": "^4.3.6"
   },
   "peerDependenciesMeta": {
     "zod": {

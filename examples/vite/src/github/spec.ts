@@ -1,4 +1,4 @@
-import z from "zod/v4";
+import z from "zod";
 import { SSApiEndpoints, ToApiEndpoints } from "@notainc/typed-api-spec/ss";
 
 // See https://docs.github.com/ja/rest/repos/repos?apiVersion=2022-11-28#get-all-repository-topics

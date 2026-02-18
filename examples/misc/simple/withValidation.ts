@@ -1,5 +1,5 @@
 import { withValidation } from "@notainc/typed-api-spec/fetch";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { SpecValidatorError } from "@notainc/typed-api-spec/fetch";
 import { ApiEndpointsSchema } from "@notainc/typed-api-spec/core";
 
