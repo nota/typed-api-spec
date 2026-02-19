@@ -6,24 +6,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
       - run: npm ci -w pkgs/typed-api-spec
       - run: npm run build  -w pkgs/typed-api-spec
       - run: npm test -w pkgs/typed-api-spec
   doc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
       - uses: actions/configure-pages@v5
       - run: npm ci -w pkgs/docs
       - run: npm run build -w pkgs/docs
   examples:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
       - run: npm ci
       - run: npm run build -w pkgs/typed-api-spec
       - run: npm test -w examples/misc
