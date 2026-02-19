@@ -23,6 +23,8 @@ jobs:
       - name: Set version
         if: ${{ inputs.version != '' }}
         run: npm version "${{ inputs.version }}" --no-git-tag-version -w pkgs/typed-api-spec
+      # GPRで実験用パッケージするための処理 nota/typed-api-specにリネーム
+      # npmjsのパッケージは@notainc/typed-api-specなのでこれは維持する
       - name: Override package name for GPR
         run: jq '.name = "@nota/typed-api-spec"' pkgs/typed-api-spec/package.json > tmp.json && mv tmp.json pkgs/typed-api-spec/package.json
       - run: npm publish -w pkgs/typed-api-spec --registry https://npm.pkg.github.com
