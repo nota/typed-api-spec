@@ -8,3 +8,17 @@
   * hosted on nota.github.io/typed-api-spec/
 * examples
   * examples of using the typed-api-spec package
+
+## Publishing
+
+### npm
+
+`v*.*.*` タグを push すると、GitHub Actions により自動的に npmjs に publish されます。
+
+### GitHub Packages
+
+GitHub Actions の `workflow_dispatch` により手動で GitHub Packages に publish できます。実行にはCollaborator以上の権限が必要です。
+
+1. リポジトリの **Actions** タブを開く
+2. **"Publish Package to GitHub Packages"** ワークフローを選択
+3. **"Run workflow"** をクリックし、必要に応じてバージョンを入力して実行
