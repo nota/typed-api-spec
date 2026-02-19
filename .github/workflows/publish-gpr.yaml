@@ -23,6 +23,8 @@ jobs:
       - name: Set version
         if: ${{ inputs.version != '' }}
         run: npm version "${{ inputs.version }}" --no-git-tag-version -w pkgs/typed-api-spec
-      - run: npm publish -w pkgs/typed-api-spec --access public --registry https://npm.pkg.github.com
+      - name: Override package name for GPR
+        run: jq '.name = "@nota/typed-api-spec"' pkgs/typed-api-spec/package.json > tmp.json && mv tmp.json pkgs/typed-api-spec/package.json
+      - run: npm publish -w pkgs/typed-api-spec --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
