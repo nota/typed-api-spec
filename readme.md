@@ -22,8 +22,13 @@
 # 1. バージョンを更新
 npm version <patch|minor|major> -w pkgs/typed-api-spec
 
-# 2. タグを push
-git push origin main --follow-tags
+# 2. 変更をコミット
+git add pkgs/typed-api-spec/package.json package-lock.json
+git commit -m "chore: bump version to <version>"
+
+# 3. タグを作成して push
+git tag v<version>
+git push origin v<version>
 ```
 
 タグが push されると、[publish.yaml](.github/workflows/publish.yaml) ワークフローが起動し、npm への公開まで自動で行われます。
