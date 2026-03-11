@@ -15,6 +15,10 @@
   },
   "author": "mpppk",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nota/typed-api-spec"
+  },
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.9.15",
