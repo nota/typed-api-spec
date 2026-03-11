@@ -19,14 +19,22 @@
 ### 手順
 
 ```bash
-# 1. バージョンを更新
+# 1. リリース用ブランチを作成
+git switch -c chore/bump-version
+
+# 2. バージョンを更新
 npm version <patch|minor|major> -w pkgs/typed-api-spec
 
-# 2. 変更をコミット
+# 3. 変更をコミット & push
 git add pkgs/typed-api-spec/package.json package-lock.json
 git commit -m "chore: bump version to <version>"
+git push origin chore/bump-version
 
-# 3. タグを作成して push
+# 4. GitHub 上で PR を作成し、main にマージする
+
+# 5. ローカルで main を最新化し、タグを作成して push
+git switch main
+git pull origin main
 git tag v<version>
 git push origin v<version>
 ```
