@@ -11,10 +11,19 @@
 
 ## Publishing
 
-### GitHub Packages
+`v*.*.*` 形式のタグを push すると、GitHub Actions によって自動的に以下が実行されます。
 
-GitHub Actions の `workflow_dispatch` により手動で GitHub Packages に publish できます。実行にはCollaborator以上の権限が必要です。
+1. `ncipollo/release-action` により GitHub Release が作成される
+2. `pkgs/typed-api-spec` が npm (`@notainc/typed-api-spec`) に publish される
 
-1. リポジトリの **Actions** タブを開く
-2. **"Publish Package to GitHub Packages"** ワークフローを選択
-3. **"Run workflow"** をクリックし、必要に応じてバージョンを入力して実行
+### 手順
+
+```bash
+# 1. バージョンを更新
+npm version <patch|minor|major> -w pkgs/typed-api-spec
+
+# 2. タグを push
+git push origin main --follow-tags
+```
+
+タグが push されると、[publish.yaml](.github/workflows/publish.yaml) ワークフローが起動し、npm への公開まで自動で行われます。
