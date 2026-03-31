@@ -1,19 +1,10 @@
-module.exports = {
-  env: {
-    browser: false,
-    es2021: true,
-    node: true,
-  },
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-  ],
-  overrides: [],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-  },
-  plugins: ["@typescript-eslint"],
-};
+const js = require("@eslint/js");
+const tseslint = require("typescript-eslint");
+const eslintConfigPrettier = require("eslint-config-prettier");
+
+module.exports = tseslint.config(
+  { ignores: ["eslint.config.js"] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  eslintConfigPrettier,
+);

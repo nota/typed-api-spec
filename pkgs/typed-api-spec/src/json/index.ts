@@ -17,7 +17,7 @@ export default JSONT;
 type JsonPrimitive = string | number | boolean | null | Date;
 
 // undefined | function | symbol | bigint は JSON化できない (除外 or null or エラー)
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type InvalidJsonValue = undefined | Function | symbol | bigint;
 
 export type JsonifyObject<T> = {

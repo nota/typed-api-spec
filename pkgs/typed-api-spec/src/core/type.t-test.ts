@@ -18,7 +18,7 @@ import { NormalizePath } from "./url";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type FilterNeverCases = [
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   Expect<Equal<FilterNever<{ a: never }>, {}>>,
   Expect<Equal<FilterNever<{ a: never; b: string }>, { b: string }>>,
 ];
@@ -116,14 +116,13 @@ type SameSlashNumTestCases = [
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IsOptionalTestCases = [
-  // eslint-disable-next-line @typescript-eslint/ban-types
   Expect<Equal<IsOptional<{ a: string; b?: string }, "a">, false>>,
   Expect<Equal<IsOptional<{ a: string; b?: string }, "b">, true>>,
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IsAllOptionalTestCases = [
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   Expect<Equal<IsAllOptional<{}>, true>>,
   Expect<Equal<IsAllOptional<{ a?: string }>, true>>,
   Expect<Equal<IsAllOptional<{ a: string }>, false>>,

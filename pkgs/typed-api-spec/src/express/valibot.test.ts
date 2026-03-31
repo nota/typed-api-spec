@@ -310,6 +310,7 @@ describe("valibot", () => {
     const User = v.intersect([UserName, UserId]);
     const Err = v.object({ message: v.string() });
     const BadRequest = { 400: Err };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pathMap = {
       "/users": {
         get: {
@@ -438,6 +439,7 @@ describe("valibot", () => {
 
   describe("Handler", () => {
     it("ok", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const pathMap = {
         "/users": {
           get: {

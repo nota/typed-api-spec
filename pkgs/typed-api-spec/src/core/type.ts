@@ -144,10 +144,10 @@ export type SameSlashNum<P1 extends string, P2 extends string> = IsEqualNumber<
 >;
 
 export type IsOptional<T, K extends keyof T> =
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   {} extends Pick<T, K> ? true : false;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type IsAllOptional<T> = {} extends T ? true : false;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

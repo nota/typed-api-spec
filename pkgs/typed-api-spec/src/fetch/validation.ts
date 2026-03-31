@@ -12,7 +12,7 @@ const dummyHost = "https://example.com";
 function parseURL(str: string) {
   try {
     return new URL(str, dummyHost);
-  } catch (err) {
+  } catch {
     return null;
   }
 }

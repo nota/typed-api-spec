@@ -11,6 +11,7 @@ import {
 import { ApiEndpointsSchema } from "./schema";
 
 const SSResponse = z.object({ a: z.string() });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SSEndpoints = {
   "/": {
     get: {
