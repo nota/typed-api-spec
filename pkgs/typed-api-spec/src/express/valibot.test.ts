@@ -439,8 +439,7 @@ describe("valibot", () => {
 
   describe("Handler", () => {
     it("ok", async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const pathMap = {
+      const _pathMap = {
         "/users": {
           get: {
             params: v.object({ active: v.string() }),
@@ -471,7 +470,7 @@ describe("valibot", () => {
       } satisfies ApiEndpointsSchema;
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const getHandler: ToHandlers<typeof pathMap>["/users"]["get"] = async (
+      const getHandler: ToHandlers<typeof _pathMap>["/users"]["get"] = async (
         req,
         res,
       ) => {
@@ -489,7 +488,7 @@ describe("valibot", () => {
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const postHandler: ToHandlers<typeof pathMap>["/users"]["post"] = async (
+      const postHandler: ToHandlers<typeof _pathMap>["/users"]["post"] = async (
         req,
         res,
       ) => {
