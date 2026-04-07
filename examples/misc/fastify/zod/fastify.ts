@@ -51,6 +51,7 @@ const _noExecution = () => {
     async (request) => {
       {
         // @ts-expect-error noexist is not defined in pathMap["/users"]["get"]
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         request.query.noexist;
       }
       type Query = { page: string };

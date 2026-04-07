@@ -396,6 +396,7 @@ describe("asAsync", () => {
 
 describe("Handler", () => {
   it("ok", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pathMap = {
       "/users": {
         get: {

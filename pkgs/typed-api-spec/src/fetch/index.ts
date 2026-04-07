@@ -44,7 +44,7 @@ export type ValidateUrl<
     string extends QueryKeys
     ? C.OK
     : ValidateQuery<
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type
         QueryDef extends Record<string, any> ? QueryDef : {},
         QueryKeys
       >;
@@ -64,13 +64,13 @@ export type RequestInitT<
       : { body: TypedString<Body> }
     : Body extends string
       ? { body: string }
-      : // eslint-disable-next-line @typescript-eslint/ban-types
+      : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         {}) &
   (HeadersObj extends Record<string, string>
     ? IsAllOptional<HeadersObj> extends true
       ? { headers?: HeadersObj | Headers }
       : { headers: HeadersObj | Headers }
-    : // eslint-disable-next-line @typescript-eslint/ban-types
+    : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       {});
 
 /**
