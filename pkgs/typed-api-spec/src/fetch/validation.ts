@@ -141,11 +141,17 @@ export const withValidation = <
 };
 
 export class SpecValidatorError extends Error {
+  reason: keyof AnySpecValidator | "preCheck";
+  error: Readonly<StandardSchemaV1.Issue[]>;
+  override message: string;
   constructor(
-    public reason: keyof AnySpecValidator | "preCheck",
-    public error: Readonly<StandardSchemaV1.Issue[]>,
-    public message: string = JSON.stringify({ reason, ...error }),
+    reason: keyof AnySpecValidator | "preCheck",
+    error: Readonly<StandardSchemaV1.Issue[]>,
+    message: string = JSON.stringify({ reason, ...error }),
   ) {
     super("Validation error");
+    this.reason = reason;
+    this.error = error;
+    this.message = message;
   }
 }
