@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - "main"
+permissions:
+  contents: read
 
 jobs:
   check-pinned-actions:
