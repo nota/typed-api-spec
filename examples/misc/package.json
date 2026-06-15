@@ -32,6 +32,6 @@
     "npm-run-all2": "^7.0.0",
     "prettier": "^3.0.0",
     "tsx": "^4.22.4",
-    "typescript-eslint": "^8.58.0"
+    "typescript-eslint": "^8.60.1"
   }
 }
