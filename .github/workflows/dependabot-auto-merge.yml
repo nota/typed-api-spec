@@ -32,8 +32,8 @@ jobs:
         run: |
           STATUS=$(gh pr view "$PR_NUMBER" --json mergeStateStatus --jq '.mergeStateStatus')
           if [ "$STATUS" = "BEHIND" ]; then
-             echo "Branch is behind main, requesting rebase..."
-             gh pr comment "$PR_NUMBER" --body "@dependabot rebase"
+            echo "Branch is behind main, updating..."
+            gh pr update-branch "$PR_NUMBER"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
