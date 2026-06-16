@@ -17,9 +17,9 @@
     "ex:withValidation": "tsx simple/withValidation.ts"
   },
   "dependencies": {
-    "@types/express": "^5",
+    "@types/express": "^5.0.6",
     "cors": "^2.8.5",
-    "express": "^5",
+    "express": "^5.2.1",
     "fastify-type-provider-zod": "^5",
     "valibot": "1.0.0-beta.11",
     "zod": "^4.3.6"
