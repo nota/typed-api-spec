@@ -1,6 +1,5 @@
 const js = require("@eslint/js");
 const tseslint = require("typescript-eslint");
-const eslintConfigPrettier = require("eslint-config-prettier");
 const strictDependencies = require("eslint-plugin-strict-dependencies");
 
 const dRef = ["src/index.ts", "misc/**/*", "**/*.test.ts", "**/*.t-test.ts"];
@@ -41,7 +40,6 @@ module.exports = tseslint.config(
   { ignores: ["**/dist/*", "docs/**/*", "eslint.config.js"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  eslintConfigPrettier,
   {
     plugins: {
       "strict-dependencies": strictDependencies,
