@@ -23,7 +23,7 @@
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.9.15",
     "@types/supertest": "^6.0.2",
-    "@vitest/coverage-v8": "^2.0.0",
+    "@vitest/coverage-v8": "^4.1.6",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
