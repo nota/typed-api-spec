@@ -21,3 +21,5 @@ jobs:
         with:
           fix: "false"
           verify: "true"
+          min_age: "3"
+          verify_min_age: "true"
