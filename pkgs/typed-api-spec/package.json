@@ -36,14 +36,14 @@
     "tsup": "^8.0.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.0",
+    "typescript-eslint": "^8.60.1",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {
-    "@types/express": "^5",
+    "@types/express": "^5.0.6",
     "@types/express-serve-static-core": "^5",
     "@valibot/to-json-schema": "^1.0.0",
-    "express": "^5",
+    "express": "^5.2.1",
     "fastify": "^4 || ^5.0.0",
     "fastify-type-provider-zod": "^5",
     "msw": "^2",
