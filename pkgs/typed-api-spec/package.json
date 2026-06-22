@@ -122,7 +122,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^11.7.3",
+    "@apidevtools/json-schema-ref-parser": "^15.3.5",
     "@standard-schema/spec": "^1.0.0",
     "json-schema": "^0.4.0",
     "json-schema-walker": "^2.0.0",
