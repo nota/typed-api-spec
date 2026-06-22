@@ -26,6 +26,14 @@ jobs:
         with:
           github-token: ${{ steps.app-token.outputs.token }}
 
+      - name: Approve PR
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr review --approve "$PR_NUMBER"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
       - name: Enable auto-merge for non-major updates
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         run: gh pr merge "$PR_NUMBER" --squash --auto
