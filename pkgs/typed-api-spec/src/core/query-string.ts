@@ -86,10 +86,8 @@ export type ValidateQuery<
     QueryDef,
     QueryKeys
   >,
-  Excessive extends PickExcessiveQuery<
-    QueryDef,
-    QueryKeys
-  > = PickExcessiveQuery<QueryDef, QueryKeys>,
+  Excessive extends PickExcessiveQuery<QueryDef, QueryKeys> =
+    PickExcessiveQuery<QueryDef, QueryKeys>,
 > = [Missing] extends [never]
   ? [Excessive] extends [never]
     ? C.OK
