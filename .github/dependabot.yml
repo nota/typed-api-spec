@@ -11,6 +11,10 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    groups:
+      docusaurus:
+        patterns:
+          - '@docusaurus/*'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
