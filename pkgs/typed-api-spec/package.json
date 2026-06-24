@@ -44,7 +44,7 @@
     "@valibot/to-json-schema": "^1.0.0",
     "express": "^5.2.1",
     "fastify": "^4 || ^5.0.0",
-    "fastify-type-provider-zod": "^5",
+    "fastify-type-provider-zod": "^6.1.0",
     "msw": "^2",
     "typescript": "^5.3 || ^6",
     "valibot": "^1.0.0",
