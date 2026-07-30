@@ -10,7 +10,6 @@ import {
 } from "./query-string";
 import { C } from "../compile-error-utils";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToQueryUnionCase = [
   Expect<Equal<ToQueryUnion<"a">, "a">>,
   Expect<Equal<ToQueryUnion<"a=1">, "a">>,
@@ -23,7 +22,6 @@ type ToQueryUnionCase = [
   Expect<Equal<ToQueryUnion<"a[]=1&b[]">, "a" | "b">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type PickMissingQueryCase = [
   Expect<Equal<PickMissingQuery<{ a: string }, "a">, never>>,
   Expect<Equal<PickMissingQuery<{ a?: string }, "a">, never>>,
@@ -43,7 +41,6 @@ type PickMissingQueryCase = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type PickExcessiveQueryErrorCase = [
   Expect<Equal<PickExcessiveQuery<{ a: 1 }, "a">, never>>,
   Expect<Equal<PickExcessiveQuery<{ a: 1; b: 1 }, "a">, never>>,
@@ -55,7 +52,6 @@ type PickExcessiveQueryErrorCase = [
   Expect<Equal<PickExcessiveQuery<{ a: 1; b?: 1 }, "c">, "c">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type NonOptionalKeysCase = [
   Expect<Equal<NonOptionalKeys<{ a: string }>, "a">>,
   Expect<Equal<NonOptionalKeys<{ a?: string }>, never>>,
@@ -63,7 +59,6 @@ type NonOptionalKeysCase = [
   Expect<Equal<NonOptionalKeys<{ a: string; b: string }>, "a" | "b">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ValidateQueryCase = [
   Expect<Equal<ValidateQuery<{ a: string }, "a">, C.OK>>,
   Expect<

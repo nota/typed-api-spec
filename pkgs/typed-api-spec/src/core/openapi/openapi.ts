@@ -38,7 +38,6 @@ export type OpenApiSpecSchema<
   Responses extends OpenApiResponsesSchema = OpenApiResponsesSchema,
 > = BaseOpenApiSpec<Params, Query, Body, RequestHeaders, Responses>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toPathItemObject = (
   endpoint: Partial<Record<Method, AnyOpenApiSpec>>,
 ): OpenAPIV3_1.PathItemObject => {

@@ -53,7 +53,6 @@ export const toJsonSchemaApiSpec = async <Spec extends AnyApiSpec>(
   };
   for (const key of apiSpecRequestKeys) {
     if (spec[key]) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ret[key] = await toSchema(spec[key]);
     }
   }

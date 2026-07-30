@@ -92,7 +92,6 @@ export type RouterT<
   ) => RouterT<E, SC>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validatorMiddleware = <const E extends ApiEndpointsSchema>(
   pathMap: E,
 ) => {

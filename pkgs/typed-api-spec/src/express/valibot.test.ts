@@ -286,7 +286,7 @@ describe("valibot", () => {
         middleware(req as unknown as Request, res, next);
         expect(next).toHaveBeenCalled();
         expect(res.locals.validate).toEqual(expect.any(Function));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const locals = res.locals as SSValidateLocals<
           (typeof pathMap)["/"]["get"],
           ParseUrlParams<"">
@@ -310,7 +310,7 @@ describe("valibot", () => {
     const User = v.intersect([UserName, UserId]);
     const Err = v.object({ message: v.string() });
     const BadRequest = { 400: Err };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const pathMap = {
       "/users": {
         get: {
@@ -402,7 +402,7 @@ describe("valibot", () => {
         app.get("/path", async () => {
           throw new Error("error");
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         app.use((err: any, req: any, res: any, _next: any) => {
           res.status(501).json({ message: "xxx" });
         });
@@ -426,7 +426,7 @@ describe("valibot", () => {
         app.get("/path", () => {
           throw new Error("error");
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         app.use((err: any, req: any, res: any, _next: any) => {
           res.status(501).json({ message: "xxx" });
         });

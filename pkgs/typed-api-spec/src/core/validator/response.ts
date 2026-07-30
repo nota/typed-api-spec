@@ -9,9 +9,7 @@ export const listDefinedResponseApiSpecKeys = <Response extends AnyResponse>(
 };
 
 export type ResponseSpecValidator<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   BodyValidator extends AnyValidator | undefined,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   HeadersValidator extends AnyValidator | undefined,
 > = {
   body: BodyValidator;

@@ -186,8 +186,7 @@ export type ApiResponses<
   ? E[Path] extends AnyApiEndpoint
     ? M extends keyof E[Path] & Method
       ? E[Path][M] extends AnyApiSpec
-        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          E[Path][M]["responses"] extends AnyApiResponses
+        ? E[Path][M]["responses"] extends AnyApiResponses
           ? E[Path][M]["responses"]
           : undefined
         : undefined

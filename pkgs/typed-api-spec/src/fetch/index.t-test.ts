@@ -13,7 +13,6 @@ import { C } from "../compile-error-utils";
 import z from "zod";
 const JSONT = JSON as JSONT;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ValidateUrlTestCase = [
   Expect<Equal<ValidateUrl<{ a: string }, `/topics?a=b`>, C.OK>>,
   Expect<
@@ -65,9 +64,8 @@ type ValidateUrlTestCase = [
       const res = await f("/users", {});
       (await res.json()).prop;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const contentType: "application/json" = res.headers.get("Content-Type");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       const hasContentType: true = res.headers.has("Content-Type");
     }
   })();
@@ -438,7 +436,6 @@ type ValidateUrlTestCase = [
     {
       const res = await f("/", {});
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _body: ResBody = await res.json();
     }
   })();
@@ -459,7 +456,6 @@ type ValidateUrlTestCase = [
     {
       const res = await f("/", {});
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _body: JsonStringifyResult<ResBody> = await res.json();
     }
   })();

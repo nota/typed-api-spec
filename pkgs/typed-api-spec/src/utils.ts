@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const unreachable = (_x: never): never => {
   throw new Error("Unreachable code!");
 };
@@ -62,7 +61,6 @@ export function tupleIteratorToObject<T extends string | number | symbol, U>(
   return result;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toLCObj = <Keys extends string, Values>(
   obj: Record<Keys, Values>,
 ): Record<Lowercase<Keys>, Values> => {
