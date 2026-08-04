@@ -9,6 +9,7 @@
 * examples
   * examples of using the typed-api-spec package
   * [examples/vite](examples/vite) — Vite + vanilla TS でのブラウザ利用例
+  * [examples/vite-react-openapi](examples/vite-react-openapi) — React + Vite + Swagger UI（OpenAPI 自動生成の可視化デモ）
   * [examples/misc](examples/misc) — Express / Fastify / fetch 系サンプル
 
 ## Publishing

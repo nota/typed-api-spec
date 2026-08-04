@@ -1,50 +1,41 @@
-# React + TypeScript + Vite
+# typed-api-spec + Swagger UI (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+typed-api-spec で書いた API 定義から自動生成した OpenAPI ドキュメントを、ブラウザで Swagger UI として表示するデモ。
 
-Currently, two official plugins are available:
+## デモの内容
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+このアプリ自体は 10 行程度の React で、`swagger-ui-react` に `http://localhost:3000/openapi` を渡してるだけ。
+「同エンドポイントに OpenAPI JSON を配信するサーバー」と **ペアで動かす** 前提の構成。
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+[examples/misc の Express server]              [このアプリ]
+localhost:3000/openapi ─── OpenAPI JSON ──▶ localhost:5173 (Swagger UI)
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 起動方法
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2 プロセス必要。repo のルートから:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+**1. サーバー側**（OpenAPI 配信の Express アプリを起動）
+```bash
+npm run ex:express:zod:openapi -w examples/misc
+# → localhost:3000 で立つ
 ```
+
+**2. Swagger UI 側**
+```bash
+# typed-api-spec 本体をビルド
+npm run build -w pkgs/typed-api-spec
+
+# dev server 起動
+npm run dev -w examples/vite-react-openapi
+# → localhost:5173 で立つ
+```
+
+ブラウザで `http://localhost:5173/` を開くと、typed-api-spec 生成の OpenAPI 仕様に基づく Swagger UI が表示される。
+
+## 見どころ
+
+- サーバー側（[examples/misc/express/zod/openapi/index.ts](../misc/express/zod/openapi/index.ts)）は typed-api-spec の spec を書いて `toOpenApiDoc` で OpenAPI JSON に変換 → `/openapi` で serve するだけ
+- 「型定義から OpenAPI ドキュメントを一次情報として自動生成できる」ことが売り
+- Valibot 版に切り替える場合は `npm run ex:express:valibot:openapi -w examples/misc` に差し替え
