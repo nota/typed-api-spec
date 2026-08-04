@@ -24,7 +24,6 @@ const GITHUB_API_ORIGIN = "https://api.github.com";
 const endpoint = `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics`;
 const result = document.querySelector<HTMLParagraphElement>("#result")!;
 
-// Validation cost is dev-only: production uses raw fetch to avoid shipping schemas.
 const fetchGitHub = import.meta.env.DEV
   ? withValidation(fetch, GitHubSpec)
   : fetch;
