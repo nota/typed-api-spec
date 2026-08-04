@@ -8,6 +8,8 @@
   * hosted on nota.github.io/typed-api-spec/
 * examples
   * examples of using the typed-api-spec package
+  * [examples/vite](examples/vite) — Vite + vanilla TS でのブラウザ利用例
+  * [examples/misc](examples/misc) — Express / Fastify / fetch 系サンプル
 
 ## Publishing
 

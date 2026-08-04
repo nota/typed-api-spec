@@ -1,4 +1,9 @@
 import "./style.css";
+import {
+  withValidation,
+  SpecValidatorError,
+} from "@notainc/typed-api-spec/fetch";
+import { GitHubSpec, InvalidResponseGitHubSpec } from "./github/spec.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -15,19 +20,20 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
-import { newFetch } from "@notainc/typed-api-spec/zod";
 const GITHUB_API_ORIGIN = "https://api.github.com";
-
 const endpoint = `${GITHUB_API_ORIGIN}/repos/nota/typed-api-spec/topics`;
 const result = document.querySelector<HTMLParagraphElement>("#result")!;
 
-const fetchButton = document.querySelector<HTMLButtonElement>("#fetch")!;
-const request = async () => {
-  const specLoader = async () => (await import("./github/spec.ts")).GitHubSpec;
-  const fetchGitHub = await newFetch(specLoader, import.meta.env.DEV)<
-    typeof GITHUB_API_ORIGIN
-  >();
+// Validation cost is dev-only: production uses raw fetch to avoid shipping schemas.
+const fetchGitHub = import.meta.env.DEV
+  ? withValidation(fetch, GitHubSpec)
+  : fetch;
+const fetchInvalidResponseGitHub = import.meta.env.DEV
+  ? withValidation(fetch, InvalidResponseGitHubSpec)
+  : fetch;
 
+const fetchButton = document.querySelector<HTMLButtonElement>("#fetch")!;
+fetchButton.addEventListener("click", async () => {
   result.innerHTML = "Loading...";
   const response = await fetchGitHub(endpoint, {});
   if (!response.ok) {
@@ -36,19 +42,11 @@ const request = async () => {
   }
   const { names } = await response.json();
   result.innerHTML = `Result: ${names.join(", ")}`;
-};
-fetchButton.addEventListener("click", () => request());
+});
 
 const invalidFetchButton =
   document.querySelector<HTMLButtonElement>("#invalid-fetch")!;
-const invalidRequest = async () => {
-  const specLoader = async () =>
-    (await import("./github/spec.ts")).InvalidResponseGitHubSpec;
-  const fetchInvalidResponseGitHub = await newFetch(
-    specLoader,
-    import.meta.env.DEV
-  )<typeof GITHUB_API_ORIGIN>();
-
+invalidFetchButton.addEventListener("click", async () => {
   result.innerHTML = "Loading...";
   try {
     const response = await fetchInvalidResponseGitHub(endpoint, {});
@@ -59,7 +57,10 @@ const invalidRequest = async () => {
     const { noexistProps } = await response.json();
     result.innerHTML = `Result: ${noexistProps.join(", ")}`;
   } catch (e) {
-    result.innerHTML = `${e}`;
+    if (e instanceof SpecValidatorError) {
+      result.innerHTML = `SpecValidatorError: ${e.message}`;
+    } else {
+      result.innerHTML = `${e}`;
+    }
   }
-};
-invalidFetchButton.addEventListener("click", () => invalidRequest());
+});
