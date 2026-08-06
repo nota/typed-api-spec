@@ -359,7 +359,7 @@ describe("asAsync", () => {
       app.get("/path", async () => {
         throw new Error("error");
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       app.use((err: any, req: any, res: any, _next: any) => {
         res.status(501).json({ message: "xxx" });
       });
@@ -383,7 +383,7 @@ describe("asAsync", () => {
       app.get("/path", () => {
         throw new Error("error");
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       app.use((err: any, req: any, res: any, _next: any) => {
         res.status(501).json({ message: "xxx" });
       });

@@ -39,7 +39,7 @@ export type AnyOpenApiSpec = BaseOpenApiSpec<
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  AnyOpenApiResponses // eslint-disable-line @typescript-eslint/no-explicit-any
+  AnyOpenApiResponses
 >;
 
 export type BaseOpenApiSpec<

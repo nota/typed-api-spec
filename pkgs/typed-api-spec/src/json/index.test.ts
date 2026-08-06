@@ -5,7 +5,6 @@ import { Equal, Expect } from "../core/type-test";
 const l: unique symbol = Symbol("l");
 describe("JsonStringifyResult", () => {
   it("should work", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type MyType = {
       a: string;
       b: number;

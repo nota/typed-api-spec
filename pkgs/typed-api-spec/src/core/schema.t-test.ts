@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Equal, Expect } from "./type-test";
 import { z } from "zod";
 import {
@@ -11,7 +10,7 @@ import {
 import { ApiEndpointsSchema } from "./schema";
 
 const SSResponse = z.object({ a: z.string() });
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const SSEndpoints = {
   "/": {
     get: {
@@ -23,7 +22,6 @@ const SSEndpoints = {
   },
 } satisfies ApiEndpointsSchema;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToSSValidatorsTestCases = [
   Expect<
     Equal<
@@ -33,7 +31,6 @@ type ToSSValidatorsTestCases = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SSResponseValidatorsTestCases = [
   Expect<
     Equal<
@@ -43,7 +40,6 @@ type SSResponseValidatorsTestCases = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToSSResponseValidatorsTestCases = [
   Expect<
     Equal<

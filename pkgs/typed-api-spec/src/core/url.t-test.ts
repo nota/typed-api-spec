@@ -11,7 +11,6 @@ import {
   HasEmptyPathVariableMatch,
 } from "./url";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ParseUrlParamsTestCases = [
   // @ts-expect-error undefined is not a string
   Expect<Equal<ParseUrlParams<undefined>, never>>,
@@ -23,7 +22,6 @@ type ParseUrlParamsTestCases = [
   Expect<Equal<ParseUrlParams<"/a/:b">, "b">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToUrlParamPatternTestCases = [
   Expect<Equal<ToUrlParamPattern<"">, "">>,
   Expect<Equal<ToUrlParamPattern<"/">, "/">>,
@@ -41,7 +39,6 @@ type ToUrlParamPatternTestCases = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ToUrlPatternTestCases = [
   Expect<Equal<ToUrlPattern<"">, "">>,
   Expect<Equal<ToUrlPattern<"/">, "/">>,
@@ -55,7 +52,6 @@ type ToUrlPatternTestCases = [
   Expect<Equal<ToUrlPattern<"https://example.com">, "https://example.com">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type MatchedPatternsTestCases = [
   Expect<Equal<MatchedPatterns<string, "">, NoPathError>>,
   Expect<Equal<MatchedPatterns<"", "">, "">>,
@@ -120,7 +116,6 @@ type MatchedPatternsTestCases = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ParseHostAndPortTestCases = [
   Expect<
     Equal<
@@ -138,7 +133,6 @@ type ParseHostAndPortTestCases = [
   Expect<Equal<ParseHostAndPort<"example.com:xxx">, never>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ParseOriginAndPathCases = [
   Expect<Equal<ParseOriginAndPath<undefined>, never>>,
   Expect<
@@ -188,13 +182,11 @@ type ParseOriginAndPathCases = [
   >,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ParseURLTestCases = [
   Expect<Equal<ParseURL<"/user?a=b">["path"], "/user">>,
   Expect<Equal<ParseURL<"https://example.com/user">["path"], "/user">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type HasEmptyPathVariableMatchTestCases = [
   // 空のパス変数があるケース (trueを返す)
   Expect<Equal<HasEmptyPathVariableMatch<"/", "/:userId">, true>>,

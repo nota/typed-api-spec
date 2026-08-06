@@ -16,14 +16,12 @@ import {
 } from "./type";
 import { NormalizePath } from "./url";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type FilterNeverCases = [
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   Expect<Equal<FilterNever<{ a: never }>, {}>>,
   Expect<Equal<FilterNever<{ a: never; b: string }>, { b: string }>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SplitTestCases = [
   Expect<Equal<Split<"", "">, []>>,
   Expect<Equal<Split<"a", "">, ["a"]>>,
@@ -34,7 +32,6 @@ type SplitTestCases = [
   Expect<Equal<Split<"a/b/", "/">, ["a", "b", ""]>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ReplaceTestCases = [
   Expect<Equal<Replace<"a", "a", "-">, "-">>,
   Expect<Equal<Replace<"a", "noexist", "-">, "a">>,
@@ -44,7 +41,6 @@ type ReplaceTestCases = [
   Expect<Equal<Replace<"abcd", "bc", "-">, "a-d">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ReplaceAllTestCases = [
   Expect<Equal<ReplaceAll<"a", "a", "-">, "-">>,
   Expect<Equal<ReplaceAll<"a", "noexist", "-">, "a">>,
@@ -58,7 +54,6 @@ type ReplaceAllTestCases = [
   Expect<Equal<ReplaceAll<"aaaba", "aa", "-">, "-aba">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractByPrefixTestCases = [
   Expect<Equal<ExtractByPrefix<"", "">, "">>,
   Expect<Equal<ExtractByPrefix<"a", "">, "a">>,
@@ -71,14 +66,12 @@ type ExtractByPrefixTestCases = [
   Expect<Equal<ExtractByPrefix<":a" | ":b" | ":c", ":">, "a" | "b" | "c">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type NormalizePathTestCases = [
   Expect<Equal<NormalizePath<"users//">, "users/">>,
   Expect<Equal<NormalizePath<"//users">, "/users">>,
   Expect<Equal<NormalizePath<"users//:userId">, "users/:userId">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IsEqualNumberTestCases = [
   Expect<Equal<IsEqualNumber<1, 1>, true>>,
   Expect<Equal<IsEqualNumber<1, 2>, false>>,
@@ -87,7 +80,6 @@ type IsEqualNumberTestCases = [
   Expect<Equal<IsEqualNumber<1 | 2, 1>, false>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CountCharTestCases = [
   Expect<Equal<CountChar<"a", "a">, 1>>,
   Expect<Equal<CountChar<"a", "b">, 0>>,
@@ -104,7 +96,6 @@ type CountCharTestCases = [
   Expect<Equal<CountChar<"banana", "x">, 0>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SameSlashNumTestCases = [
   Expect<Equal<SameSlashNum<"", "">, true>>,
   Expect<Equal<SameSlashNum<"/a", "/b">, true>>,
@@ -114,13 +105,11 @@ type SameSlashNumTestCases = [
   Expect<Equal<SameSlashNum<`/${string}`, "/a/b">, false>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IsOptionalTestCases = [
   Expect<Equal<IsOptional<{ a: string; b?: string }, "a">, false>>,
   Expect<Equal<IsOptional<{ a: string; b?: string }, "b">, true>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IsAllOptionalTestCases = [
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   Expect<Equal<IsAllOptional<{}>, true>>,
@@ -130,19 +119,16 @@ type IsAllOptionalTestCases = [
   Expect<Equal<IsAllOptional<{ a?: string; b?: string }>, true>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type AllKeysTestCases = [
   Expect<Equal<AllKeys<{ a: string } | { b: string }>, "a" | "b">>,
   Expect<Equal<AllKeys<{ a: string } | { a: string; b: string }>, "a" | "b">>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type AllValuesTestCases = [
   Expect<Equal<AllValues<{ a: 1 } | { a: 2 }, "a">, 1 | 2>>,
   Expect<Equal<AllValues<{ a: 1; b: 3 } | { a: 2 }, "b">, 3>>,
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type AndTestCases = [
   Expect<Equal<And<[]>, true>>, // An empty tuple evaluates to true
   Expect<Equal<And<[true]>, true>>, // Single element true
