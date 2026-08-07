@@ -27,3 +27,5 @@ jobs:
       - run: npm ci
       - run: npm run build -w pkgs/typed-api-spec
       - run: npm test -w examples/misc
+      - run: npm run build -w examples/vite
+      - run: npm run build -w examples/vite-react-openapi
