@@ -26,6 +26,6 @@ updates:
     schedule:
       interval: 'daily'
     cooldown:
-      default-days: 3
+      default-days: 5
     labels:
       - 'dependencies'
