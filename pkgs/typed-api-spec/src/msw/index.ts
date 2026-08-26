@@ -134,7 +134,7 @@ interface HttpResponse<
   DefaultSC extends keyof Responses & StatusCode = 200 & StatusCode,
   ResponseBody extends ApiResBody<Responses, DefaultSC> & DefaultBodyType =
     ApiResBody<Responses, DefaultSC> & DefaultBodyType,
-> extends Omit<MswHttpResponse, "json"> {
+> extends Omit<MswHttpResponse<ResponseBody>, "json"> {
   /**
    * Returns a typed JSON response
    *
