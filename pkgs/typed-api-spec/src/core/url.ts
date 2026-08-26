@@ -111,13 +111,15 @@ export type MatchedPatterns<
   Path extends string,
   Pattern extends string,
   Matched = {
-    [P in Pattern as Path extends PathToUrlParamPattern<P>
-      ? SameSlashNum<P, Path> extends true
-        ? HasEmptyPathVariableMatch<Path, P> extends true
-          ? never
-          : P
+    [
+      P in Pattern as Path extends PathToUrlParamPattern<P>
+        ? SameSlashNum<P, Path> extends true
+          ? HasEmptyPathVariableMatch<Path, P> extends true
+            ? never
+            : P
+          : never
         : never
-      : never]: true;
+    ]: true;
   },
 > = keyof Matched extends never ? NoPathError : keyof Matched;
 
