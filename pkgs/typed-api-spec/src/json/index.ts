@@ -21,11 +21,13 @@ type JsonPrimitive = string | number | boolean | null | Date;
 type InvalidJsonValue = undefined | Function | symbol | bigint;
 
 export type JsonifyObject<T> = {
-  [K in keyof T as K extends string
-    ? T[K] extends InvalidJsonValue
-      ? never
-      : K
-    : never]: Jsonify<T[K]>;
+  [
+    K in keyof T as K extends string
+      ? T[K] extends InvalidJsonValue
+        ? never
+        : K
+      : never
+  ]: Jsonify<T[K]>;
 };
 
 // タプル型を保持するためのヘルパー型 - 再帰の深さを制限

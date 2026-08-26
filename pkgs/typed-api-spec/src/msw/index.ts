@@ -91,14 +91,14 @@ export type HttpRequestHandler<
   InputPath extends Replace<Input, UrlPrefix, "">,
   Params extends E[InputPath][M]["params"],
   Body extends E[InputPath][M]["body"],
-  Responses extends ApiP<E, InputPath, M, "responses"> extends AnyApiResponses
+  Responses extends (ApiP<E, InputPath, M, "responses"> extends AnyApiResponses
     ? ApiP<E, InputPath, M, "responses">
-    : Record<string, never>,
-  ResBody extends 200 extends keyof Responses
+    : Record<string, never>),
+  ResBody extends (200 extends keyof Responses
     ? ApiResBody<Responses, 200> extends DefaultBodyType
       ? ApiResBody<Responses, 200>
       : never
-    : never,
+    : never),
 >(
   path: Input,
   resolver: ResponseResolver<
