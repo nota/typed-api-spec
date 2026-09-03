@@ -7,11 +7,13 @@
     "watch:build": "tsup --watch",
     "format": "oxfmt .",
     "watch:type-check": "npx tsc --noEmit --watch",
-    "test": "run-p test:*",
-    "test:unit": "vitest",
+    "test": "run-p -c test:*",
+    "test:unit": "vitest run",
     "test:lint": "eslint .",
     "test:format": "oxfmt --check .",
-    "test:type-check": "tsc --noEmit"
+    "test:type-check": "tsc --noEmit",
+    "test:pack-smoke": "node scripts/pack-smoke.mjs",
+    "test:attw": "attw --pack --profile node16"
   },
   "author": "mpppk",
   "license": "MIT",
@@ -20,11 +22,12 @@
     "url": "https://github.com/nota/typed-api-spec"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@eslint/js": "^9.39.5",
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.9.15",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.11",
-    "@eslint/js": "^9.39.5",
     "dotenv-cli": "^7.2.1",
     "eslint": "^9.39.5",
     "eslint-plugin-strict-dependencies": "^1.3.35",
