@@ -36,10 +36,3 @@ export {
   Jsonify,
   JsonifyObject,
 };
-
-export {
-  newHttp as newMswHttp,
-  Http as MswHttp,
-  HttpRequestHandler as MswHttpRequestHandler,
-  HttpRequestResolverExtras as MswHttpRequestResolverExtras,
-} from "./msw";
