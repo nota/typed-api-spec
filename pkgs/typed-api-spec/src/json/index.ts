@@ -7,11 +7,9 @@ export type JSON$stringifyT = <T>(
   space?: number | string | undefined,
 ) => TypedString<JsonStringifyResult<T>>;
 
-type JSONT = Omit<JSON, "stringify"> & {
+export type JSONT = Omit<JSON, "stringify"> & {
   stringify: JSON$stringifyT;
 };
-
-export default JSONT;
 
 // JSONとして有効なプリミティブ型 + Date
 type JsonPrimitive = string | number | boolean | null | Date;

@@ -5,7 +5,7 @@ import { newHttp } from "./index";
 import { z } from "zod";
 import { ApiEndpointsSchema } from "../core";
 import { newFetch } from "../fetch";
-import JSONT from "../json";
+import type { JSONT } from "../json";
 
 const JSONT = JSON as JSONT;
 
