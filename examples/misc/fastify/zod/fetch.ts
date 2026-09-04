@@ -1,5 +1,5 @@
-import JSONT from "@notainc/typed-api-spec/json";
-import type FetchT from "@notainc/typed-api-spec/fetch";
+import type { JSONT } from "@notainc/typed-api-spec/json";
+import type { FetchT } from "@notainc/typed-api-spec/fetch";
 import { PathMap } from "../../spec/zod";
 
 const fetchT = fetch as FetchT<typeof origin, PathMap>;
