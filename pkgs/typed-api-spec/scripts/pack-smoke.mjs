@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -23,8 +23,9 @@ const ALL_OPTIONAL_PEERS = [
   "@valibot/to-json-schema",
 ];
 
-const cacheDir = mkdtempSync(join(tmpdir(), "tas-npm-cache-"));
-const cleanupDirs = [cacheDir];
+const cacheDir = join(tmpdir(), "tas-pack-smoke-npm-cache");
+mkdirSync(cacheDir, { recursive: true });
+const cleanupDirs = [];
 
 function run(cmd, cwd) {
   return execSync(cmd, {
@@ -51,7 +52,10 @@ function makeFixture(tarball, extraPeers, { omitOptional }) {
   run("npm init -y", dir);
   const omitFlag = omitOptional ? "--omit=optional" : "";
   const peers = extraPeers.join(" ");
-  run(`npm install ${omitFlag} ${peers} "${tarball}"`.trim(), dir);
+  run(
+    `npm install --no-audit --no-fund ${omitFlag} ${peers} "${tarball}"`.trim(),
+    dir,
+  );
   return dir;
 }
 
