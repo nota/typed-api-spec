@@ -86,39 +86,74 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     },
     "./core": {
-      "types": "./dist/core/index.d.ts",
-      "require": "./dist/core/index.js",
-      "import": "./dist/core/index.mjs"
+      "require": {
+        "types": "./dist/core/index.d.ts",
+        "default": "./dist/core/index.js"
+      },
+      "import": {
+        "types": "./dist/core/index.d.mts",
+        "default": "./dist/core/index.mjs"
+      }
     },
     "./express": {
-      "types": "./dist/express/index.d.ts",
-      "require": "./dist/express/index.js",
-      "import": "./dist/express/index.mjs"
+      "require": {
+        "types": "./dist/express/index.d.ts",
+        "default": "./dist/express/index.js"
+      },
+      "import": {
+        "types": "./dist/express/index.d.mts",
+        "default": "./dist/express/index.mjs"
+      }
     },
     "./fastify": {
-      "types": "./dist/fastify/index.d.ts",
-      "require": "./dist/fastify/index.js",
-      "import": "./dist/fastify/index.mjs"
+      "require": {
+        "types": "./dist/fastify/index.d.ts",
+        "default": "./dist/fastify/index.js"
+      },
+      "import": {
+        "types": "./dist/fastify/index.d.mts",
+        "default": "./dist/fastify/index.mjs"
+      }
     },
     "./fetch": {
-      "types": "./dist/fetch/index.d.ts",
-      "require": "./dist/fetch/index.js",
-      "import": "./dist/fetch/index.mjs"
+      "require": {
+        "types": "./dist/fetch/index.d.ts",
+        "default": "./dist/fetch/index.js"
+      },
+      "import": {
+        "types": "./dist/fetch/index.d.mts",
+        "default": "./dist/fetch/index.mjs"
+      }
     },
     "./json": {
-      "types": "./dist/json/index.d.ts",
-      "require": "./dist/json/index.js",
-      "import": "./dist/json/index.mjs"
+      "require": {
+        "types": "./dist/json/index.d.ts",
+        "default": "./dist/json/index.js"
+      },
+      "import": {
+        "types": "./dist/json/index.d.mts",
+        "default": "./dist/json/index.mjs"
+      }
     },
     "./msw": {
-      "types": "./dist/msw/index.d.ts",
-      "require": "./dist/msw/index.js",
-      "import": "./dist/msw/index.mjs"
+      "require": {
+        "types": "./dist/msw/index.d.ts",
+        "default": "./dist/msw/index.js"
+      },
+      "import": {
+        "types": "./dist/msw/index.d.mts",
+        "default": "./dist/msw/index.mjs"
+      }
     }
   },
   "main": "./dist/index.js",
