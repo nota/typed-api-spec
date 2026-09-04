@@ -6,8 +6,8 @@ import {
   MissingQueryError,
   ToApiEndpoints,
 } from "../core";
-import FetchT, { ValidateUrl } from "./index";
-import JSONT, { JsonStringifyResult } from "../json";
+import type { FetchT, ValidateUrl } from "./index";
+import type { JSONT, JsonStringifyResult } from "../json";
 import { Equal, Expect } from "../core/type-test";
 import { C } from "../compile-error-utils";
 import z from "zod";

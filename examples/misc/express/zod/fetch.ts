@@ -1,6 +1,6 @@
 import type { PathMap } from "../../spec/zod";
-import JSONT from "@notainc/typed-api-spec/json";
-import type FetchT from "@notainc/typed-api-spec/fetch";
+import type { JSONT } from "@notainc/typed-api-spec/json";
+import type { FetchT } from "@notainc/typed-api-spec/fetch";
 
 const fetchT = fetch as FetchT<typeof origin, PathMap>;
 const origin = "http://localhost:3000";
