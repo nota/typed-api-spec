@@ -18,28 +18,13 @@ export {
   toRoutes as toFastifyRoutes,
 } from "./fastify";
 
-import FetchT, { RequestInitT } from "./fetch";
-export { FetchT, RequestInitT };
+export type { FetchT, RequestInitT } from "./fetch";
 
-import JSONT, {
-  JSON$stringifyT,
-  TypedString,
-  JsonStringifyResult,
-  Jsonify,
-  JsonifyObject,
-} from "./json";
-export {
+export type {
   JSONT,
   JSON$stringifyT,
   TypedString,
   JsonStringifyResult,
   Jsonify,
   JsonifyObject,
-};
-
-export {
-  newHttp as newMswHttp,
-  Http as MswHttp,
-  HttpRequestHandler as MswHttpRequestHandler,
-  HttpRequestResolverExtras as MswHttpRequestResolverExtras,
-} from "./msw";
+} from "./json";

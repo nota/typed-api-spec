@@ -67,4 +67,13 @@ module.exports = tseslint.config(
       "@typescript-eslint/no-unused-expressions": "off",
     },
   },
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+      },
+    },
+  },
 );
