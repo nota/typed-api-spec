@@ -93,14 +93,6 @@ npx @oxlint/migrate --details
 
 `plugins` を明示指定して既定より狭めていないかも確認する。oxlint は `plugins` を省略すると `unicorn` / `typescript` / `oxc` が既定で有効になるため、`@oxlint/migrate` が `plugins` を明示的に書き出すとこれらが外れて既定より緩くなりうる。
 
-既知の移行不可ルール: `@oxlint/migrate --details` の Unsupported 出力および検証 §A で確認済みの、oxlint に実装が無く移行できないルール。手直しでの復活は不可能なので、PR の説明に明記して残す。
-
-| ルール | 対象ワークスペース | 理由 |
-| --- | --- | --- |
-| `no-octal` | 全 3 ワークスペース | oxlint 未実装。`@oxlint/migrate --details` が Unsupported（strict mode下では8進数リテラルは構文エラーになるため実害は低い）として報告 |
-| `react-hooks/config` | examples/vite-react-openapi | oxlint の `react` プラグインに対応ルールが無い（React Compiler の固定オプションのため設定検証自体が不要という oxlint 側の判断） |
-| `react-hooks/gating` | examples/vite-react-openapi | 同上（React Compiler の gating オプションを oxlint は公開していない） |
-
 ### 4. eslint 関連ファイル・依存の削除
 
 - 削除するファイル: [pkgs/typed-api-spec/eslint.config.js](pkgs/typed-api-spec/eslint.config.js)、[examples/misc/eslint.config.js](examples/misc/eslint.config.js)、[examples/vite-react-openapi/eslint.config.js](examples/vite-react-openapi/eslint.config.js)
