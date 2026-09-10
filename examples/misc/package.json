@@ -22,7 +22,7 @@
     "express": "^5.2.1",
     "fastify-type-provider-zod": "^7",
     "valibot": "1.4.2",
-    "zod": "^4.3.6"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -30,8 +30,8 @@
     "eslint": "^9.39.5",
     "eslint-plugin-strict-dependencies": "^1.3.35",
     "npm-run-all2": "^9.0.3",
-    "oxfmt": "^0.63.0",
+    "oxfmt": "^0.66.0",
     "tsx": "^4.23.12",
-    "typescript-eslint": "^8.61.1"
+    "typescript-eslint": "^8.69.0"
   }
 }
