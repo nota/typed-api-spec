@@ -1,5 +1,0 @@
-/Users/hf/Documents/typed-api-spec/examples/vite-react-openapi/eslint.config.js
-/Users/hf/Documents/typed-api-spec/examples/vite-react-openapi/src/main.tsx
-/Users/hf/Documents/typed-api-spec/examples/vite-react-openapi/src/swagger-ui-react.d.ts
-/Users/hf/Documents/typed-api-spec/examples/vite-react-openapi/src/vite-env.d.ts
-/Users/hf/Documents/typed-api-spec/examples/vite-react-openapi/vite.config.ts
