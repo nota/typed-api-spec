@@ -54,8 +54,8 @@ const newApp = () => {
   app.use(express.json());
   app.use(cors());
   // const wApp = asAsync(typed(apiEndpoints, app));
-  app.get("/openapi", (req, res) => {
-    const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints);
+  app.get("/openapi", async (req, res) => {
+    const openapi = await toOpenApiDoc(openapiBaseDoc, apiEndpoints);
     res.status(200).json(openapi);
   });
   return app;
