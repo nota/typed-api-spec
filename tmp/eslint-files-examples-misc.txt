@@ -1,0 +1,13 @@
+/Users/hf/Documents/typed-api-spec/examples/misc/express/valibot/express.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/express/valibot/fetch.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/express/valibot/openapi/index.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/express/zod/express.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/express/zod/fetch.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/express/zod/openapi/index.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/fastify/zod/fastify.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/fastify/zod/fetch.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/github/github.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/simple/spec.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/simple/withValidation.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/spec/valibot.ts
+/Users/hf/Documents/typed-api-spec/examples/misc/spec/zod.ts
