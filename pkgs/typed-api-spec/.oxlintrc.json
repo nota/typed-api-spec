@@ -131,8 +131,7 @@
             "**/*.test.ts",
             "**/*.t-test.ts",
             "src/express/zod",
-            "src/fastify/zod",
-            "**/*.test.ts"
+            "src/fastify/zod"
           ],
           "allowSameModule": true
         }
