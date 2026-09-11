@@ -20,7 +20,7 @@
     "url": "https://github.com/nota/typed-api-spec"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.15.1",
     "@types/supertest": "^7.2.1",
