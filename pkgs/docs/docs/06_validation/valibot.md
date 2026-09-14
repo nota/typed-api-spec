@@ -86,5 +86,5 @@ const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   tags: [{ name: "pets", description: "Everything about your Pets" }],
 };
 
-const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints);
+const openapi = await toOpenApiDoc(openapiBaseDoc, apiEndpoints);
 ```

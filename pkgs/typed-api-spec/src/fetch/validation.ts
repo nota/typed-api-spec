@@ -112,8 +112,7 @@ export const withValidation = <
       handleError("preCheck", [error]);
       return;
     }
-    // FIXME
-    runSpecValidator(validator, handleError);
+    await runSpecValidator(validator, handleError);
     const res = await f(input, init);
     const res1 = res.clone();
     // TODO: jsonじゃない時どうするか
@@ -134,7 +133,7 @@ export const withValidation = <
       handleError("preCheck", [resError]);
       return;
     }
-    runResponseSpecValidator(resValidator, handleError);
+    await runResponseSpecValidator(resValidator, handleError);
     return res;
   };
   return ftc as Fetch;
