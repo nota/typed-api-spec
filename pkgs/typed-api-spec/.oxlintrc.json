@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript"],
   "jsPlugins": ["eslint-plugin-strict-dependencies"],
   "categories": {
@@ -65,7 +65,8 @@
       {
         "varsIgnorePattern": "^_",
         "argsIgnorePattern": "^_",
-        "caughtErrors": "none"
+        "caughtErrors": "none",
+        "reportVarsOnlyUsedAsTypes": true
       }
     ],
     "no-useless-backreference": "error",
