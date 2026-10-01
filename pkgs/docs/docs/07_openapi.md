@@ -57,8 +57,8 @@ const openapiBaseDoc: Omit<OpenAPIV3_1.Document, "paths"> = {
   tags: [{ name: "pets", description: "Everything about your Pets" }],
 };
 
-app.get("/openapi", (req, res) => {
-  const openapi = toOpenApiDoc(openapiBaseDoc, apiEndpoints);
+app.get("/openapi", async (req, res) => {
+  const openapi = await toOpenApiDoc(openapiBaseDoc, apiEndpoints);
   res.status(200).json(openapi);
 });
 ```

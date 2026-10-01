@@ -9,7 +9,7 @@
     "watch:type-check": "npx tsc --noEmit --watch",
     "test": "run-p test:*",
     "test:unit": "vitest",
-    "test:lint": "eslint .",
+    "test:lint": "oxlint .",
     "test:format": "oxfmt --check .",
     "test:type-check": "tsc --noEmit"
   },
@@ -21,22 +21,20 @@
   },
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/qs": "^6.9.15",
-    "@types/supertest": "^7.2.0",
+    "@types/qs": "^6.15.1",
+    "@types/supertest": "^7.2.1",
     "@vitest/coverage-v8": "^4.1.11",
-    "@eslint/js": "^9.39.5",
     "dotenv-cli": "^7.2.1",
-    "eslint": "^9.39.5",
     "eslint-plugin-strict-dependencies": "^1.3.35",
     "msw": "^2.7.3",
     "npm-run-all2": "^9.0.3",
     "openapi-types": "^12.1.3",
-    "oxfmt": "^0.63.0",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.85.0",
     "supertest": "^7.2.2",
-    "tsup": "^8.0.0",
-    "tsx": "^4.23.12",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.61.1",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {
@@ -49,7 +47,7 @@
     "msw": "^2",
     "typescript": "^5.3 || ^6",
     "valibot": "^1.4.2",
-    "zod": "^4.3.6"
+    "zod": "^4.6.5"
   },
   "peerDependenciesMeta": {
     "zod": {
