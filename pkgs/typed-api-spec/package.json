@@ -47,7 +47,7 @@
     "msw": "^2",
     "typescript": "^5.3 || ^6",
     "valibot": "^1.4.2",
-    "zod": "^4.5.4"
+    "zod": "^4.6.5"
   },
   "peerDependenciesMeta": {
     "zod": {
