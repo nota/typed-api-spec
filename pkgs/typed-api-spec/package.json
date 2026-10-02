@@ -7,11 +7,12 @@
     "watch:build": "tsup --watch",
     "format": "oxfmt .",
     "watch:type-check": "npx tsc --noEmit --watch",
-    "test": "run-p test:*",
-    "test:unit": "vitest",
+    "test": "run-p -c test:*",
+    "test:unit": "vitest run",
     "test:lint": "oxlint .",
     "test:format": "oxfmt --check .",
-    "test:type-check": "tsc --noEmit"
+    "test:type-check": "tsc --noEmit",
+    "test:pack-smoke": "node scripts/pack-smoke.mjs"
   },
   "author": "mpppk",
   "license": "MIT",

@@ -5,7 +5,7 @@ import {
   ApiResBody,
   ApiSpec,
   AnyApiEndpoints,
-} from "../index";
+} from "../core";
 import {
   NextFunction,
   ParamsDictionary,
