@@ -242,7 +242,10 @@ type FetchInputType<
  * @template E - ApiEndpoints
  * E is used to infer the type of the acceptable path, response body, and more
  */
-type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
+export type FetchT<
+  UrlPrefix extends UrlPrefixPattern,
+  E extends ApiEndpoints,
+> = <
   /**
    * Internal type for FetchT
    * They are not supposed to be specified by the user
@@ -295,8 +298,6 @@ type FetchT<UrlPrefix extends UrlPrefixPattern, E extends ApiEndpoints> = <
         >,
       ]
 ) => Promise<Response>;
-
-export default FetchT;
 
 export * from "./validation";
 export * from "./new-fetch";
