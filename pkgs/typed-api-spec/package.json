@@ -13,7 +13,7 @@
     "test:format": "oxfmt --check .",
     "test:type-check": "tsc --noEmit",
     "test:pack-smoke": "node scripts/pack-smoke.mjs",
-    "test:attw": "attw --pack --profile node16 --ignore-rules false-cjs"
+    "test:attw": "attw --pack --profile node16 --ignore-rules false-cjs && attw --pack --entrypoints . --ignore-rules false-cjs"
   },
   "author": "mpppk",
   "license": "MIT",
