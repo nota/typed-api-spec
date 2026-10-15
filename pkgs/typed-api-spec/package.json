@@ -12,7 +12,8 @@
     "test:lint": "oxlint .",
     "test:format": "oxfmt --check .",
     "test:type-check": "tsc --noEmit",
-    "test:pack-smoke": "node scripts/pack-smoke.mjs"
+    "test:pack-smoke": "node scripts/pack-smoke.mjs",
+    "test:attw": "attw --pack --profile node16 --ignore-rules false-cjs && attw --pack --entrypoints . --ignore-rules false-cjs"
   },
   "author": "mpppk",
   "license": "MIT",
@@ -21,6 +22,7 @@
     "url": "https://github.com/nota/typed-api-spec"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.15.1",
     "@types/supertest": "^7.2.1",
