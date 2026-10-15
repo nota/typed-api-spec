@@ -26,7 +26,8 @@ jobs:
         with:
           node-version-file: .node-version
           registry-url: 'https://registry.npmjs.org'
-          cache: npm
+          # Avoid cache poisoning in this id-token job. A `cache:` input would override this and re-enable caching
+          package-manager-cache: false
       - run: npm ci
       - run: npm run build -w pkgs/typed-api-spec
       - run: npm publish -w pkgs/typed-api-spec --access public --provenance
