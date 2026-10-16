@@ -1,9 +1,9 @@
-import { AnyApiResponses, Method, StatusCode } from "../core";
+import { AnyApiResponses, Method, StatusCode } from "../core/index.js";
 import {
   ApiEndpointSchema,
   ApiEndpointsSchema,
   ApiSpecSchema,
-} from "../core/schema";
+} from "../core/schema.js";
 
 const toFastifyResponse = <Responses extends AnyApiResponses>(
   responses: Responses,

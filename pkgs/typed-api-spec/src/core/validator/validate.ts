@@ -1,4 +1,4 @@
-import { Result } from "../../utils";
+import { Result } from "../../utils.js";
 import {
   AnyApiEndpoint,
   AnyApiEndpoints,
@@ -10,20 +10,20 @@ import {
   Method,
   MethodInvalidError,
   newMethodInvalidError,
-} from "../spec";
+} from "../spec.js";
 import {
   AnyStandardSchemaV1,
   ApiResponsesSchema,
   ApiSpecSchema,
-} from "../schema";
-import { ApiEndpointsSchema } from "../schema";
+} from "../schema.js";
+import { ApiEndpointsSchema } from "../schema.js";
 import {
   AnySpecValidator,
   listDefinedRequestApiSpecKeys,
   SpecValidator,
   SpecValidatorGeneratorInput,
   SpecValidatorGeneratorRawInput,
-} from "./request";
+} from "./request.js";
 import type {
   StandardSchemaV1 as SS,
   StandardSchemaV1,
@@ -32,8 +32,8 @@ import {
   listDefinedResponseApiSpecKeys,
   ResponseSpecValidator,
   ResponseSpecValidatorGeneratorInput,
-} from "./response";
-import { StatusCode } from "../hono-types";
+} from "./response.js";
+import { StatusCode } from "../hono-types.js";
 export type SSResult<Data> = SS.Result<Data> | Promise<SS.Result<Data>>;
 
 export type Validator<V extends AnyStandardSchemaV1 | undefined> =

@@ -1,10 +1,10 @@
-import { memoize, tupleIteratorToObject } from "../utils";
+import { memoize, tupleIteratorToObject } from "../utils.js";
 import { match } from "path-to-regexp";
-import { Method, newValidator, StatusCode } from "../core";
-import { AnySpecValidator, runSpecValidator } from "../core";
-import { runResponseSpecValidator } from "../core";
+import { Method, newValidator, StatusCode } from "../core/index.js";
+import { AnySpecValidator, runSpecValidator } from "../core/index.js";
+import { runResponseSpecValidator } from "../core/index.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { ApiEndpointsSchema } from "../core/schema";
+import { ApiEndpointsSchema } from "../core/schema.js";
 
 const dummyHost = "https://example.com";
 

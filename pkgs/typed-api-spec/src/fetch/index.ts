@@ -17,10 +17,10 @@ import {
   Method,
   CaseInsensitive,
   And,
-} from "../core";
-import { UrlPrefixPattern, ToUrlParamPattern } from "../core";
-import { TypedString } from "../json";
-import { C } from "../compile-error-utils";
+} from "../core/index.js";
+import { UrlPrefixPattern, ToUrlParamPattern } from "../core/index.js";
+import { TypedString } from "../json/index.js";
+import { C } from "../compile-error-utils.js";
 
 export type QueryParameterRequiredError = C.E<"query parameter required">;
 export type ValidateUrl<
@@ -299,5 +299,5 @@ export type FetchT<
       ]
 ) => Promise<Response>;
 
-export * from "./validation";
-export * from "./new-fetch";
+export * from "./validation.js";
+export * from "./new-fetch.js";

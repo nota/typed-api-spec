@@ -1,4 +1,4 @@
-import { Equal, Expect } from "./type-test";
+import { Equal, Expect } from "./type-test.js";
 import {
   PickExcessiveQuery,
   PickMissingQuery,
@@ -7,8 +7,8 @@ import {
   ToQueryUnion,
   ExcessiveQueryError,
   MissingQueryError,
-} from "./query-string";
-import { C } from "../compile-error-utils";
+} from "./query-string.js";
+import { C } from "../compile-error-utils.js";
 
 type ToQueryUnionCase = [
   Expect<Equal<ToQueryUnion<"a">, "a">>,
