@@ -3,8 +3,12 @@
   "version": "0.9.0",
   "scripts": {
     "install:optional-peer-dependencies": "npm install --no-save zod valibot@1 express@5 @types/express@5 fastify fastify-type-provider-zod@7",
-    "build": "tsup",
-    "watch:build": "tsup --watch",
+    "build": "run-s build:clean build:cjs build:esm build:pkg",
+    "build:clean": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\"",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json",
+    "build:esm": "tsc -p tsconfig.build.esm.json",
+    "build:pkg": "node scripts/write-dist-package-json.mjs",
+    "watch:build": "run-s build:clean build:pkg && run-p \"build:cjs -- --watch\" \"build:esm -- --watch\"",
     "format": "oxfmt .",
     "watch:type-check": "npx tsc --noEmit --watch",
     "test": "run-p -c test:*",
@@ -13,7 +17,7 @@
     "test:format": "oxfmt --check .",
     "test:type-check": "tsc --noEmit",
     "test:pack-smoke": "node scripts/pack-smoke.mjs",
-    "test:attw": "attw --pack --profile node16 --ignore-rules false-cjs && attw --pack --entrypoints . --ignore-rules false-cjs"
+    "test:attw": "attw --pack --profile node16 && attw --pack --entrypoints ."
   },
   "author": "mpppk",
   "license": "MIT",
@@ -35,7 +39,6 @@
     "oxfmt": "^0.73.0",
     "oxlint": "^1.85.0",
     "supertest": "^7.2.2",
-    "tsup": "^8.5.1",
     "tsx": "^4.23.13",
     "typescript": "^6.0.2",
     "vitest": "^4.1.6"
@@ -84,44 +87,79 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
     "./core": {
-      "types": "./dist/core/index.d.ts",
-      "require": "./dist/core/index.js",
-      "import": "./dist/core/index.mjs"
+      "require": {
+        "types": "./dist/cjs/core/index.d.ts",
+        "default": "./dist/cjs/core/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/core/index.d.ts",
+        "default": "./dist/esm/core/index.js"
+      }
     },
     "./express": {
-      "types": "./dist/express/index.d.ts",
-      "require": "./dist/express/index.js",
-      "import": "./dist/express/index.mjs"
+      "require": {
+        "types": "./dist/cjs/express/index.d.ts",
+        "default": "./dist/cjs/express/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/express/index.d.ts",
+        "default": "./dist/esm/express/index.js"
+      }
     },
     "./fastify": {
-      "types": "./dist/fastify/index.d.ts",
-      "require": "./dist/fastify/index.js",
-      "import": "./dist/fastify/index.mjs"
+      "require": {
+        "types": "./dist/cjs/fastify/index.d.ts",
+        "default": "./dist/cjs/fastify/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/fastify/index.d.ts",
+        "default": "./dist/esm/fastify/index.js"
+      }
     },
     "./fetch": {
-      "types": "./dist/fetch/index.d.ts",
-      "require": "./dist/fetch/index.js",
-      "import": "./dist/fetch/index.mjs"
+      "require": {
+        "types": "./dist/cjs/fetch/index.d.ts",
+        "default": "./dist/cjs/fetch/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/fetch/index.d.ts",
+        "default": "./dist/esm/fetch/index.js"
+      }
     },
     "./json": {
-      "types": "./dist/json/index.d.ts",
-      "require": "./dist/json/index.js",
-      "import": "./dist/json/index.mjs"
+      "require": {
+        "types": "./dist/cjs/json/index.d.ts",
+        "default": "./dist/cjs/json/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/json/index.d.ts",
+        "default": "./dist/esm/json/index.js"
+      }
     },
     "./msw": {
-      "types": "./dist/msw/index.d.ts",
-      "require": "./dist/msw/index.js",
-      "import": "./dist/msw/index.mjs"
+      "require": {
+        "types": "./dist/cjs/msw/index.d.ts",
+        "default": "./dist/cjs/msw/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/msw/index.d.ts",
+        "default": "./dist/esm/msw/index.js"
+      }
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
   "dependencies": {
     "@standard-schema/spec": "^1.0.0",
     "json-schema": "^0.4.0",

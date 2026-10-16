@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    // nodenextはCJS出力にimport()を残し、--experimental-vm-modulesなしのJestではzod-openapi等の動的importが落ちるので、requireに変換させる
+    "module": "commonjs",
+    "moduleResolution": "bundler",
+    "outDir": "dist/cjs"
+  }
+}
