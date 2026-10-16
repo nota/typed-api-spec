@@ -1,5 +1,9 @@
-import { AnyResponse, ApiSpecResponseKey, apiSpecResponseKeys } from "../spec";
-import { AnyValidator } from "./validate";
+import {
+  AnyResponse,
+  ApiSpecResponseKey,
+  apiSpecResponseKeys,
+} from "../spec.js";
+import { AnyValidator } from "./validate.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
 export const listDefinedResponseApiSpecKeys = <Response extends AnyResponse>(

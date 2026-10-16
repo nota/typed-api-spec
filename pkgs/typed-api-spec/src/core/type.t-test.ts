@@ -1,4 +1,4 @@
-import { Equal, Expect } from "./type-test";
+import { Equal, Expect } from "./type-test.js";
 import {
   AllKeys,
   AllValues,
@@ -13,8 +13,8 @@ import {
   ReplaceAll,
   SameSlashNum,
   Split,
-} from "./type";
-import { NormalizePath } from "./url";
+} from "./type.js";
+import { NormalizePath } from "./url.js";
 
 type FilterNeverCases = [
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { z } from "zod";
-import { withValidation, SpecValidatorError } from "./validation";
-import { ApiEndpointsSchema } from "../core/schema";
+import { withValidation, SpecValidatorError } from "./validation.js";
+import { ApiEndpointsSchema } from "../core/schema.js";
 
 const origin = "https://example.com";
 

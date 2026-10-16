@@ -1,6 +1,6 @@
-import { ParseQueryString } from "./query-string";
-import { ExtractByPrefix, SameSlashNum, Split, UndefinedTo } from "./type";
-import { C } from "../compile-error-utils";
+import { ParseQueryString } from "./query-string.js";
+import { ExtractByPrefix, SameSlashNum, Split, UndefinedTo } from "./type.js";
+import { C } from "../compile-error-utils.js";
 
 type ExtractParams<T extends string> = ExtractByPrefix<T, ":">;
 

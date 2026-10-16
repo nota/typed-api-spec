@@ -1,4 +1,4 @@
-import { Equal, Expect } from "./type-test";
+import { Equal, Expect } from "./type-test.js";
 import { z } from "zod";
 import {
   ApiP,
@@ -6,8 +6,8 @@ import {
   ToSSResponseValidators,
   ToValidators,
   Validators,
-} from ".";
-import { ApiEndpointsSchema } from "./schema";
+} from "./index.js";
+import { ApiEndpointsSchema } from "./schema.js";
 
 const SSResponse = z.object({ a: z.string() });
 

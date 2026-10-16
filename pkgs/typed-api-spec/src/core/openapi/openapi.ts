@@ -4,9 +4,9 @@ import {
   extractExtraResponseProps,
   JsonSchemaApiResponses,
   Method,
-} from "../spec";
+} from "../spec.js";
 import { JSONSchema7 } from "json-schema";
-import { StatusCode } from "../hono-types";
+import { StatusCode } from "../hono-types.js";
 import {
   AnyOpenApiSpec,
   BaseOpenApiSpec,
@@ -15,10 +15,10 @@ import {
   JsonSchemaOpenApiEndpoints,
   JsonSchemaOpenApiSpec,
   ToOpenApiResponse,
-} from "./spec";
+} from "./spec.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { AnyStandardSchemaV1, ApiResponseSchema } from "../schema";
-import { toJsonSchemaApiEndpoints } from "../jsonschema";
+import { AnyStandardSchemaV1, ApiResponseSchema } from "../schema.js";
+import { toJsonSchemaApiEndpoints } from "../jsonschema.js";
 
 export type OpenApiEndpointsSchema = {
   [Path in string]: OpenApiEndpointSchema;

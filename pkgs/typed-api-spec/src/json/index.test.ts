@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { JsonStringifyResult } from ".";
-import { Equal, Expect } from "../core/type-test";
+import { JsonStringifyResult } from "./index.js";
+import { Equal, Expect } from "../core/type-test.js";
 
 const l: unique symbol = Symbol("l");
 describe("JsonStringifyResult", () => {

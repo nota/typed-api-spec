@@ -1,4 +1,4 @@
-export * from "./core";
+export * from "./core/index.js";
 export {
   Handler as ExpressHandler,
   ToHandler as ToExpressHandler,
@@ -11,14 +11,14 @@ export {
   wrap as expressWrap,
   asAsync as expressAsAsync,
   typed as expressTyped,
-} from "./express";
+} from "./express/index.js";
 
 export {
   toSchema as toFastifySchema,
   toRoutes as toFastifyRoutes,
-} from "./fastify";
+} from "./fastify/index.js";
 
-export type { FetchT, RequestInitT } from "./fetch";
+export type { FetchT, RequestInitT } from "./fetch/index.js";
 
 export type {
   JSONT,
@@ -27,4 +27,4 @@ export type {
   JsonStringifyResult,
   Jsonify,
   JsonifyObject,
-} from "./json";
+} from "./json/index.js";

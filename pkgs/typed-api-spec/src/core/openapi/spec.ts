@@ -3,7 +3,7 @@ import {
   DefineApiResponses,
   JsonSchemaResponse,
   Method,
-} from "../spec";
+} from "../spec.js";
 import { OpenAPIV3_1 } from "openapi-types";
 import { JSONSchema7 } from "json-schema";
 

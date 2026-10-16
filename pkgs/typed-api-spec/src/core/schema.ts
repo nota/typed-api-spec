@@ -4,7 +4,7 @@ import {
   DefineResponse,
   Method,
   StatusCode,
-} from ".";
+} from "./index.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyStandardSchemaV1 = StandardSchemaV1<any>;
