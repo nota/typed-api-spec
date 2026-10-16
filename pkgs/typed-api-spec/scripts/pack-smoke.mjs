@@ -75,6 +75,52 @@ function checkSubpath(dir, subpath, failures) {
   }
 }
 
+// zod-openapiと@valibot/to-json-schemaは関数を呼んだ時に初めて動的importされるので、importするだけでは読み込みを検査できない
+const OPENAPI_CHECK_BODY = `
+  for (const [vendor, body] of [
+    ["zod", z.object({ name: z.string() })],
+    ["valibot", v.object({ name: v.string() })],
+  ]) {
+    const doc = await toOpenApiDoc(
+      { openapi: "3.1.0", info: { title: "t", version: "1" } },
+      { "/x": { get: { responses: { 200: { body } } } } },
+    );
+    const schema =
+      doc.paths["/x"].get.responses["200"].content["application/json"].schema;
+    if (schema.properties?.name?.type !== "string") {
+      throw new Error(vendor + ": " + JSON.stringify(schema));
+    }
+  }
+`;
+
+function checkOpenApi(dir, failures) {
+  writeFileSync(
+    join(dir, "openapi.cjs"),
+    `const { toOpenApiDoc } = require("@notainc/typed-api-spec");
+const z = require("zod");
+const v = require("valibot");
+(async () => {${OPENAPI_CHECK_BODY}})().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+`,
+  );
+  writeFileSync(
+    join(dir, "openapi.mjs"),
+    `import { toOpenApiDoc } from "@notainc/typed-api-spec";
+import * as z from "zod";
+import * as v from "valibot";
+${OPENAPI_CHECK_BODY}`,
+  );
+  for (const file of ["openapi.cjs", "openapi.mjs"]) {
+    try {
+      run(`node ${file}`, dir);
+    } catch (e) {
+      failures.push(`[toOpenApiDoc] ${file} failed:\n${e.stdout}\n${e.stderr}`);
+    }
+  }
+}
+
 function groupByPeers(peerMap) {
   const groups = new Map();
   for (const [subpath, peers] of Object.entries(peerMap)) {
@@ -101,6 +147,7 @@ try {
   for (const subpath of Object.keys(REQUIRED_PEERS)) {
     checkSubpath(fullDir, subpath, failures);
   }
+  checkOpenApi(fullDir, failures);
 } finally {
   for (const dir of cleanupDirs) rmSync(dir, { recursive: true, force: true });
 }
