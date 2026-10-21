@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, assert } from "vitest";
 import { HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { newHttp } from "./index";
+import { newHttp } from "./index.js";
 import { z } from "zod";
-import { ApiEndpointsSchema } from "../core";
-import { newFetch } from "../fetch";
-import type { JSONT } from "../json";
+import { ApiEndpointsSchema } from "../core/index.js";
+import { newFetch } from "../fetch/index.js";
+import type { JSONT } from "../json/index.js";
 
 const JSONT = JSON as JSONT;
 

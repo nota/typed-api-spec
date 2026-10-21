@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as v from "valibot";
 import { OpenAPIV3_1 } from "openapi-types";
-import { OpenApiEndpointsSchema, toOpenApiDoc } from "..";
+import { OpenApiEndpointsSchema, toOpenApiDoc } from "../index.js";
 
 describe("openapi", () => {
   const endpoints = {

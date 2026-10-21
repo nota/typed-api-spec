@@ -5,11 +5,11 @@ import {
   ExcessiveQueryError,
   MissingQueryError,
   ToApiEndpoints,
-} from "../core";
-import type { FetchT, ValidateUrl } from "./index";
-import type { JSONT, JsonStringifyResult } from "../json";
-import { Equal, Expect } from "../core/type-test";
-import { C } from "../compile-error-utils";
+} from "../core/index.js";
+import type { FetchT, ValidateUrl } from "./index.js";
+import type { JSONT, JsonStringifyResult } from "../json/index.js";
+import { Equal, Expect } from "../core/type-test.js";
+import { C } from "../compile-error-utils.js";
 import z from "zod";
 const JSONT = JSON as JSONT;
 

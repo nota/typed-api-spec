@@ -7,16 +7,16 @@ import {
   typed,
   ValidateLocals,
   validatorMiddleware,
-} from "./index";
+} from "./index.js";
 import { z } from "zod";
 import { Request } from "express";
-import { ParseUrlParams } from "../core";
+import { ParseUrlParams } from "../core/index.js";
 import {
   newValidatorMethodNotFoundError,
   newValidatorPathNotFoundError,
   Validators,
-} from "../core/validator/validate";
-import { ApiEndpointsSchema, ApiSpecSchema } from "../core/schema";
+} from "../core/validator/validate.js";
+import { ApiEndpointsSchema, ApiSpecSchema } from "../core/schema.js";
 
 type SSValidateLocals<
   AS extends ApiSpecSchema,

@@ -3,8 +3,8 @@ import {
   ApiSpecRequestKey,
   apiSpecRequestKeys,
   Method,
-} from "../spec";
-import { AnyValidator } from "./validate";
+} from "../spec.js";
+import { AnyValidator } from "./validate.js";
 import { ParsedQs } from "qs";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 

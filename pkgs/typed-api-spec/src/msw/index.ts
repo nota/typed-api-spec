@@ -20,7 +20,7 @@ import {
   ToApiEndpoints,
   ToValidators,
   UrlPrefixPattern,
-} from "../core";
+} from "../core/index.js";
 
 // ported from msw(src/core/handlers/HttpHandler.ts)
 export type HttpRequestResolverExtras<Params extends PathParams> = {

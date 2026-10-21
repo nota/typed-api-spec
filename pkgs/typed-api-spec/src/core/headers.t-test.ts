@@ -1,4 +1,4 @@
-import { ImmutableHeaders } from "./headers";
+import { ImmutableHeaders } from "./headers.js";
 
 {
   type ContentType =

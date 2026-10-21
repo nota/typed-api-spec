@@ -1,9 +1,9 @@
-import { ParseUrlParams } from "./url";
-import { ClientResponse, StatusCode } from "./hono-types";
-import { C } from "../compile-error-utils";
+import { ParseUrlParams } from "./url.js";
+import { ClientResponse, StatusCode } from "./hono-types.js";
+import { C } from "../compile-error-utils.js";
 import { JSONSchema7 } from "json-schema";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { JsonStringifyResult } from "../json";
+import { JsonStringifyResult } from "../json/index.js";
 
 /**
  * { // ApiEndpoints

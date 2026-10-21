@@ -1,6 +1,6 @@
 // https://github.com/type-challenges/type-challenges/issues/21419
-import { C } from "../compile-error-utils";
-import { Replace } from "./type";
+import { C } from "../compile-error-utils.js";
+import { Replace } from "./type.js";
 
 export type ParseQueryString<S extends string> = S extends ""
   ? Record<string, never>

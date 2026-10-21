@@ -1,4 +1,4 @@
-import { Equal, Expect } from "./type-test";
+import { Equal, Expect } from "./type-test.js";
 import {
   MatchedPatterns,
   NoPathError,
@@ -9,7 +9,7 @@ import {
   ToUrlParamPattern,
   ToUrlPattern,
   HasEmptyPathVariableMatch,
-} from "./url";
+} from "./url.js";
 
 type ParseUrlParamsTestCases = [
   // @ts-expect-error undefined is not a string
