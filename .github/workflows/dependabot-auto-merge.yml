@@ -26,8 +26,64 @@ jobs:
         with:
           github-token: ${{ steps.app-token.outputs.token }}
 
+      # peerDependenciesの範囲は利用者が入れたpackageのversionを縛るので、変わるPRは人が判断できるよう自動でmergeしない
+      - name: Check whether peerDependencies of the published package change
+        id: peer-deps
+        run: |
+          set -o pipefail
+          peer_deps() {
+            gh api "repos/$GH_REPO/contents/pkgs/typed-api-spec/package.json?ref=$1" \
+              -H "Accept: application/vnd.github.raw" \
+              | jq -S '.peerDependencies'
+          }
+          # 取得に失敗した時に、空文字列同士の比較で「変更なし」にならないよう、代入の時点で止める
+          base=$(peer_deps "$BASE_SHA")
+          head=$(peer_deps "$HEAD_SHA")
+          if [ "$base" = "$head" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            diff -u --label base --label head <(echo "$base") <(echo "$head") > "$RUNNER_TEMP/peer-deps.diff" || true
+            cat "$RUNNER_TEMP/peer-deps.diff"
+          fi
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+      - name: Comment on PR about peerDependencies change
+        if: steps.peer-deps.outputs.changed == 'true'
+        run: |
+          set -o pipefail
+          marker='<!-- dependabot-auto-merge:peer-deps -->'
+          {
+            echo "$marker"
+            echo 'pkgs/typed-api-spec の peerDependencies の範囲が変わるので、auto-merge しません。'
+            echo
+            echo '```diff'
+            cat "$RUNNER_TEMP/peer-deps.diff"
+            echo '```'
+            echo
+            echo '範囲を変えてよければ、merge して次のリリースノートに書いてください。変えたくなければ、peerDependencies の行を元に戻してから merge してください。'
+          } > "$RUNNER_TEMP/comment.md"
+          # 他の人が目印を真似たコメントを書き換えようとしないよう、このAppが書いたものに限る
+          comment_id=$(gh api --paginate "repos/$GH_REPO/issues/$PR_NUMBER/comments" \
+            --jq ".[] | select(.user.login == \"$APP_SLUG[bot]\" and (.body | startswith(\"$marker\"))) | .id" \
+            | sed -n 1p)
+          if [ -n "$comment_id" ]; then
+            gh api --silent -X PATCH "repos/$GH_REPO/issues/comments/$comment_id" -F "body=@$RUNNER_TEMP/comment.md"
+          else
+            gh pr comment "$PR_NUMBER" --body-file "$RUNNER_TEMP/comment.md"
+          fi
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+
       - name: Approve PR
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.peer-deps.outputs.changed == 'false'
         run: gh pr review --approve "$PR_NUMBER"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -35,7 +91,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
 
       - name: Enable auto-merge for non-major updates
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.peer-deps.outputs.changed == 'false'
         run: gh pr merge "$PR_NUMBER" --squash --auto
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
