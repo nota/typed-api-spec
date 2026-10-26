@@ -1,4 +1,4 @@
-import type FetchT from "./index.js";
+import type { FetchT } from "./index.js";
 import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema.js";
 import { withValidation } from "./index.js";
 

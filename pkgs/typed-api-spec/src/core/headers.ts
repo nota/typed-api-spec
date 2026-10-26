@@ -1,4 +1,4 @@
-import { AllKeys, AllValues, IsOptional } from "./type";
+import { AllKeys, AllValues, IsOptional } from "./type.js";
 
 export interface ImmutableHeaders<
   H extends Record<string, string>,

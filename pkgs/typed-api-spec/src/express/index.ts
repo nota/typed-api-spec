@@ -5,18 +5,18 @@ import {
   ApiResBody,
   ApiSpec,
   AnyApiEndpoints,
-} from "../index";
+} from "../core/index.js";
 import {
   NextFunction,
   ParamsDictionary,
   Request,
   Response,
 } from "express-serve-static-core";
-import { newValidator, StatusCode, ToValidators } from "../core";
+import { newValidator, StatusCode, ToValidators } from "../core/index.js";
 import { ParsedQs } from "qs";
-import { AnySpecValidator } from "../core/validator/request";
+import { AnySpecValidator } from "../core/validator/request.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema";
+import { ApiEndpointsSchema, ToApiEndpoints } from "../core/schema.js";
 
 /**
  * Express Request Handler, but with more strict type information.

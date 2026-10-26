@@ -1,13 +1,13 @@
 import { describe, it, expect, assert } from "vitest";
-import { ApiEndpointsSchema } from "./schema";
+import { ApiEndpointsSchema } from "./schema.js";
 import * as v from "valibot";
 import {
   newValidator,
   newValidatorPathNotFoundError,
-} from "./validator/validate";
-import { AnyResponseSpecValidator } from "./validator/response";
-import { AnySpecValidator } from "./validator/request";
-import { newMethodInvalidError } from ".";
+} from "./validator/validate.js";
+import { AnyResponseSpecValidator } from "./validator/response.js";
+import { AnySpecValidator } from "./validator/request.js";
+import { newMethodInvalidError } from "./index.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
 describe("newSSValidator", () => {

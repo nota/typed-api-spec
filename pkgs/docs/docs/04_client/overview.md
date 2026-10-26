@@ -156,7 +156,7 @@ zero-fetch accepts only the body that is defined in the API specification.
 Please note that when converting an object to a string, you must use the `JSONT` type provided by typed-api-spec.
 
 ```typescript
-import { JSONT } from "@notainc/typed-api-spec/json";
+import type { JSONT } from "@notainc/typed-api-spec/json";
 type Spec = DefineApiEndpoints<{
   "/users": {
     post: {
@@ -249,7 +249,7 @@ JSONT is a type that adds type information to native JSON.
 If you want to check body parameter type, you need to use JSONT.stringify to convert object to string.
 
 ```typescript
-import { JSONT } from "@notainc/typed-api-spec/json";
+import type { JSONT } from "@notainc/typed-api-spec/json";
 const JSONT = JSON as JSONT;
 // body parameter type will be checked by using JSONT.stringify
 await fetchT("/users", {

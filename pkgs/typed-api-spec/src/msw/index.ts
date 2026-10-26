@@ -20,7 +20,7 @@ import {
   ToApiEndpoints,
   ToValidators,
   UrlPrefixPattern,
-} from "../core";
+} from "../core/index.js";
 
 // ported from msw(src/core/handlers/HttpHandler.ts)
 export type HttpRequestResolverExtras<Params extends PathParams> = {
@@ -123,7 +123,7 @@ interface HttpResponseInit<SC extends StatusCode> extends ResponseInit<SC> {
 }
 
 /**
- * Typed HTTP response interface extending MSW's HttpResponse
+ * Typed HTTP response interface for MSW's HttpResponse
  *
  * @template Responses - API response definitions with status codes
  * @template DefaultSC - Default status code
@@ -134,7 +134,8 @@ interface HttpResponse<
   DefaultSC extends keyof Responses & StatusCode = 200 & StatusCode,
   ResponseBody extends ApiResBody<Responses, DefaultSC> & DefaultBodyType =
     ApiResBody<Responses, DefaultSC> & DefaultBodyType,
-> extends Omit<MswHttpResponse, "json"> {
+  // MSW's HttpResponse takes a type argument only since msw 2.8, so referencing it would break the emitted .d.ts for msw < 2.8
+> extends Omit<Response, "json"> {
   /**
    * Returns a typed JSON response
    *

@@ -10,8 +10,8 @@ import {
   JsonSchemaApiResponses,
   JsonSchemaApiSpec,
   Method,
-} from "./spec";
-import { StatusCode } from "./hono-types";
+} from "./spec.js";
+import { StatusCode } from "./hono-types.js";
 import { JSONSchema7 } from "json-schema";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 

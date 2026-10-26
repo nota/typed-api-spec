@@ -1,4 +1,4 @@
-import { ImmutableHeaders } from "./headers";
+import { ImmutableHeaders } from "./headers.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type BlankRecordToNever<T> = T extends any
