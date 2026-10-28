@@ -4,6 +4,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -140,6 +141,25 @@ ${OPENAPI_CHECK_BODY}`,
   }
 }
 
+function installedPackageDir(fixtureDir) {
+  return join(fixtureDir, "node_modules", "@notainc/typed-api-spec");
+}
+
+// requireとimportはexportsを優先するので、top-levelのフィールドはcheckSubpathでは読まれない
+function checkTopLevelEntries(dir, failures) {
+  const pkgDir = installedPackageDir(dir);
+  const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
+  for (const field of ["main", "module", "types"]) {
+    if (pkg[field] === undefined) {
+      failures.push(`[${field}] is not set`);
+    } else if (
+      !statSync(join(pkgDir, pkg[field]), { throwIfNoEntry: false })?.isFile()
+    ) {
+      failures.push(`[${field}] ${pkg[field]} is not a file`);
+    }
+  }
+}
+
 function groupByPeers(peerMap) {
   const groups = new Map();
   for (const [subpath, peers] of Object.entries(peerMap)) {
@@ -165,6 +185,7 @@ try {
     checkSubpath(fullDir, subpath, failures);
   }
   checkOpenApi(fullDir, failures);
+  checkTopLevelEntries(fullDir, failures);
 } finally {
   for (const dir of cleanupDirs) rmSync(dir, { recursive: true, force: true });
 }
