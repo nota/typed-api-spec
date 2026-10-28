@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import {
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   rmSync,
   statSync,
@@ -160,6 +161,22 @@ function checkTopLevelEntries(dir, failures) {
   }
 }
 
+// CJSに残ったimport()は、--experimental-vm-modulesを付けずに動かすJestで落ちる
+function checkNoDynamicImportInCjs(dir, failures) {
+  const cjsDir = join(installedPackageDir(dir), "dist/cjs");
+  for (const file of readdirSync(cjsDir, { recursive: true })) {
+    if (!file.endsWith(".js")) continue;
+    const lines = readFileSync(join(cjsDir, file), "utf8").split("\n");
+    lines.forEach((line, i) => {
+      if (/\bimport\s*\(/.test(line)) {
+        failures.push(
+          `[dist/cjs] ${file}:${i + 1} has import():\n${line.trim()}`,
+        );
+      }
+    });
+  }
+}
+
 function groupByPeers(peerMap) {
   const groups = new Map();
   for (const [subpath, peers] of Object.entries(peerMap)) {
@@ -186,6 +203,7 @@ try {
   }
   checkOpenApi(fullDir, failures);
   checkTopLevelEntries(fullDir, failures);
+  checkNoDynamicImportInCjs(fullDir, failures);
 } finally {
   for (const dir of cleanupDirs) rmSync(dir, { recursive: true, force: true });
 }
