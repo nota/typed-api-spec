@@ -1,5 +1,11 @@
 import { execSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -22,6 +28,10 @@ const ALL_OPTIONAL_PEERS = [
   "zod",
   "@valibot/to-json-schema",
 ];
+
+const { peerDependencies } = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+);
 
 const cacheDir = join(tmpdir(), "tas-pack-smoke-npm-cache");
 mkdirSync(cacheDir, { recursive: true });
@@ -46,14 +56,23 @@ function packTarball() {
   return join(packDir, JSON.parse(json)[0].filename);
 }
 
-function makeFixture(tarball, extraPeers, { omitOptional }) {
+function peerSpec(name) {
+  const range = peerDependencies[name];
+  if (range === undefined) {
+    throw new Error(`${name} is not in peerDependencies`);
+  }
+  return `"${name}@${range}"`;
+}
+
+function makeFixture(tarball, extraPeers, { minimal }) {
   const dir = mkdtempSync(join(tmpdir(), "tas-fixture-"));
   cleanupDirs.push(dir);
   run("npm init -y", dir);
-  const omitFlag = omitOptional ? "--omit=optional" : "";
-  const peers = extraPeers.join(" ");
+  // npmは必須のpeerとoptionalDependenciesを自動で入れるので、止めないと依存漏れを検出できない
+  const minimalFlags = minimal ? "--legacy-peer-deps --omit=optional" : "";
+  const peers = extraPeers.map(peerSpec).join(" ");
   run(
-    `npm install --no-audit --no-fund ${omitFlag} ${peers} "${tarball}"`.trim(),
+    `npm install --no-audit --no-fund ${minimalFlags} ${peers} "${tarball}"`,
     dir,
   );
   return dir;
@@ -137,13 +156,11 @@ try {
   const tarball = packTarball();
 
   for (const { peers, subpaths } of groupByPeers(REQUIRED_PEERS)) {
-    const dir = makeFixture(tarball, peers, { omitOptional: true });
+    const dir = makeFixture(tarball, peers, { minimal: true });
     for (const subpath of subpaths) checkSubpath(dir, subpath, failures);
   }
 
-  const fullDir = makeFixture(tarball, ALL_OPTIONAL_PEERS, {
-    omitOptional: false,
-  });
+  const fullDir = makeFixture(tarball, ALL_OPTIONAL_PEERS, { minimal: false });
   for (const subpath of Object.keys(REQUIRED_PEERS)) {
     checkSubpath(fullDir, subpath, failures);
   }
