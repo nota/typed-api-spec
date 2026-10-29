@@ -1,12 +1,9 @@
 # Dependencies
 /node_modules
 
-# Production
-/build
-
 # Generated files
-.docusaurus
-.cache-loader
+/.vitepress/dist
+/.vitepress/cache
 
 # Misc
 .DS_Store

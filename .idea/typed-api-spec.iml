@@ -7,8 +7,8 @@
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/pkgs/docs/.docusaurus" />
-      <excludeFolder url="file://$MODULE_DIR$/pkgs/docs/build" />
+      <excludeFolder url="file://$MODULE_DIR$/pkgs/docs/.vitepress/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/pkgs/docs/.vitepress/dist" />
       <excludeFolder url="file://$MODULE_DIR$/pkgs/typed-api-spec/dist" />
     </content>
     <orderEntry type="inheritedJdk" />

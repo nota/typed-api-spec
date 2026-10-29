@@ -1,0 +1,279 @@
+/* Colors and fonts of the former Docusaurus site (Infima defaults) */
+:root {
+  --vp-c-brand-1: #3578e5;
+  --vp-c-brand-2: #306cce;
+  --vp-c-brand-3: #3578e5;
+  --vp-c-brand-soft: rgba(53, 120, 229, 0.1);
+
+  --vp-font-family-base:
+    system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans",
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --vp-font-family-mono:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+
+  --vp-layout-max-width: 100%;
+  --vp-sidebar-width: 300px;
+  --vp-sidebar-bg-color: var(--vp-c-bg);
+  --vp-code-block-bg: #f6f8fa;
+
+  --vp-custom-block-info-border: #4cb3d4;
+  --vp-custom-block-info-text: #193c47;
+  --vp-custom-block-info-bg: #eef9fd;
+  --vp-custom-block-info-code-bg: rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  --vp-c-bg: #1b1b1d;
+  --vp-c-bg-alt: #242526;
+  --vp-c-bg-elv: #242526;
+  --vp-c-bg-soft: #242526;
+
+  --vp-code-block-bg: #282a36;
+
+  --vp-custom-block-info-text: #eef9fd;
+  --vp-custom-block-info-bg: #193c47;
+  --vp-custom-block-info-code-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Nav: one full-width bar with the menu right after the title, and only an icon button for the appearance at the right end. Selectors are doubled to win over the scoped styles of the default theme */
+.VPNavBar {
+  /* The default theme leaves the nav background off above the sidebar and lets the sidebar paint there */
+  --vp-nav-col-offset: 0px !important;
+}
+
+.VPNavBar.VPNavBar .container {
+  max-width: none;
+}
+
+/* Between 60rem and 80rem the default theme clears the nav background and lets the local nav paint behind it from the sidebar edge */
+@media (min-width: 60rem) and (max-width: 79.99rem) {
+  .VPNavBar.has-local-nav::before {
+    background-color: var(--vp-nav-bg-color) !important;
+  }
+}
+
+.VPNavBar.VPNavBar.has-sidebar .divider::before {
+  display: none;
+}
+
+.VPNavBar.VPNavBar:not(.home) .container > .title,
+.VPNavBar.VPNavBar .VPNavBarTitle.has-sidebar {
+  min-width: 0;
+  max-width: none;
+}
+
+/* The search slot has margin-right: auto, which would push the menu to the middle together with the margin of the appearance button */
+.VPNavBar .container .content-body > .search {
+  margin-right: 0;
+}
+
+.VPNavBar .VPNavBarMenu.VPNavBarMenu {
+  flex-grow: 0;
+  margin-left: 1rem;
+}
+
+.VPNavBar .VPNavBarMenu .list.list {
+  justify-content: flex-start;
+}
+
+.VPNavBar .content-body > .appearance {
+  display: none;
+}
+
+.VPNavBar .content-body > .menu + .appearance::before,
+.VPNavBar .content-body > .menu + .extra::before {
+  display: none;
+}
+
+/* Sidebar: plain list without group headings and separators */
+.VPSidebar {
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+.VPSidebar .group,
+.VPSidebar .group + .group {
+  border-top: none;
+  padding-top: 0;
+}
+
+.VPSidebar .VPSidebarItem.level-0,
+.VPSidebar .VPSidebarItem.collapsed.level-0 {
+  padding-bottom: 0;
+}
+
+.VPSidebar .VPSidebarItem .item {
+  padding: 0 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.VPSidebar .VPSidebarItem .item:hover {
+  background-color: var(--vp-c-default-soft);
+}
+
+.VPSidebar .VPSidebarItem.is-active > .item {
+  background-color: var(--vp-c-default-soft);
+}
+
+.VPSidebar .VPSidebarItem .item > .indicator {
+  display: none;
+}
+
+.VPSidebar .VPSidebarItem .text,
+.VPSidebar .VPSidebarItem.level-0 .text {
+  padding: 0.375rem 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--vp-c-text-1);
+}
+
+.VPSidebar .VPSidebarItem.is-active > .item .text,
+.VPSidebar .VPSidebarItem.level-0.has-active > .item .text {
+  color: var(--vp-c-brand-1);
+}
+
+.VPSidebar .VPSidebarItem.level-0.collapsible > .items {
+  padding-left: 0.75rem;
+}
+
+/* VitePress wraps top-level links of the sidebar config into a group without text, so they render as level-1 items */
+.VPSidebar .VPSidebarItem.level-0:not(.collapsible) > .items {
+  padding-left: 0;
+}
+
+/* Docs content: a fluid column that grows with the window up to Infima's container width */
+@media (min-width: 60rem) {
+  .VPDoc.VPDoc .container {
+    max-width: 1320px;
+  }
+
+  .VPDoc.VPDoc.has-aside .content-container {
+    max-width: none;
+  }
+}
+
+/* 75% / 25% like Infima's doc item columns. The outline column stays even on pages without headings */
+@media (min-width: 80rem) {
+  .VPDoc.VPDoc .content {
+    flex-grow: 1;
+  }
+
+  .VPDoc.VPDoc .aside {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+.vp-doc h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: normal;
+}
+
+@media (max-width: 996px) {
+  .vp-doc h1 {
+    font-size: 2rem;
+  }
+}
+
+.vp-doc h2 {
+  border-top: none;
+  padding-top: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.vp-doc h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.vp-doc div[class*="language-"] > span.lang {
+  display: none;
+}
+
+/* Admonition: Infima's info alert */
+.vp-doc .custom-block.info {
+  border-width: 0 0 0 5px;
+  border-radius: 0.4rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.vp-doc .custom-block.info .custom-block-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Lucide "info", the icon set VitePress uses for its own icons */
+.vp-doc .custom-block.info .custom-block-title::before {
+  display: inline-block;
+  margin-right: 0.4rem;
+  vertical-align: -0.2em;
+  width: 1.1rem;
+  height: 1.1rem;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  content: "";
+}
+
+/* Outline: list only, without the "On this page" title */
+.VPDocAsideOutline .outline-title {
+  display: none;
+}
+
+.VPDocAsideOutline .outline-link.outline-link {
+  padding: 0.25rem 0;
+  line-height: 1.5;
+  white-space: normal;
+  overflow: visible;
+}
+
+/* Prev / next links */
+.VPDocFooter .pager-link .title {
+  font-weight: 700;
+}
+
+.VPDocFooter .pager-link.prev .title::before {
+  content: "« ";
+}
+
+.VPDocFooter .pager-link.next .title::after {
+  content: " »";
+}
+
+/* Home features: centered columns without cards */
+.VPHome .VPFeatures {
+  padding-top: 2rem;
+}
+
+.VPHome .VPFeature {
+  border: none;
+  background-color: transparent;
+  text-align: center;
+}
+
+.VPHome .VPFeature .icon {
+  width: auto;
+  height: auto;
+  margin: 0 auto 1rem;
+  font-size: 5rem;
+  line-height: 1.2;
+  background-color: transparent;
+}
+
+.VPHome .VPFeature .title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.VPHome .VPFeature .details {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--vp-c-text-1);
+}
