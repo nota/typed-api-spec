@@ -62,5 +62,3 @@ app.get("/openapi", async (req, res) => {
 ## Swagger UI
 
 You can use [Swagger UI](https://swagger.io/tools/swagger-ui/) to visualize and interact with the API's resources.
-
-[![Image from Gyazo](https://i.gyazo.com/e8489d011b00c4a635d269d09e37c237.png)](https://gyazo.com/e8489d011b00c4a635d269d09e37c237)
