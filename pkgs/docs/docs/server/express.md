@@ -79,4 +79,4 @@ The upcoming Express5 release will support async error handling, making this met
 
 ## Playground
 
-<iframe style="width: 100%; height: 85svh" src="https://stackblitz.com/edit/vitejs-vite-7x2cnq?embed=1&file=src%2Fexamples%2Fexpress.ts&hideExplorer=1&hideNavigation=1"></iframe>
+[Open the playground on StackBlitz](https://stackblitz.com/edit/vitejs-vite-7x2cnq?file=src%2Fexamples%2Fexpress.ts)
