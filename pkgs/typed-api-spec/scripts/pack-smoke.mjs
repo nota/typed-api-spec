@@ -146,7 +146,7 @@ function installedPackageDir(fixtureDir) {
   return join(fixtureDir, "node_modules", "@notainc/typed-api-spec");
 }
 
-// requireとimportはexportsを優先するので、top-levelのフィールドはcheckSubpathでは読まれない
+// checkSubpathはexports経由で読むので、top-levelのフィールドはそこでは検査されない
 function checkTopLevelEntries(dir, failures) {
   const pkgDir = installedPackageDir(dir);
   const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
