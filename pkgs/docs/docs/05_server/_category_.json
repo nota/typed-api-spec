@@ -1,8 +1,0 @@
-{
-  "label": "Server",
-  "position": 5,
-  "link": {
-    "type": "generated-index",
-    "description": "typed-api-spec provides server integrations that support implementing handler based on API Specification."
-  }
-}

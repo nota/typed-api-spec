@@ -12,9 +12,6 @@ updates:
       semver-minor-days: 7
       semver-patch-days: 3
     groups:
-      docusaurus:
-        patterns:
-          - '@docusaurus/*'
       react:
         patterns:
           - 'react'
