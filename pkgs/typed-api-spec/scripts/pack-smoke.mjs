@@ -1,5 +1,13 @@
 import { execSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -22,6 +30,10 @@ const ALL_OPTIONAL_PEERS = [
   "zod",
   "@valibot/to-json-schema",
 ];
+
+const { peerDependencies } = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+);
 
 const cacheDir = join(tmpdir(), "tas-pack-smoke-npm-cache");
 mkdirSync(cacheDir, { recursive: true });
@@ -46,14 +58,23 @@ function packTarball() {
   return join(packDir, JSON.parse(json)[0].filename);
 }
 
-function makeFixture(tarball, extraPeers, { omitOptional }) {
+function peerSpec(name) {
+  const range = peerDependencies[name];
+  if (range === undefined) {
+    throw new Error(`${name} is not in peerDependencies`);
+  }
+  return `"${name}@${range}"`;
+}
+
+function makeFixture(tarball, extraPeers, { minimal }) {
   const dir = mkdtempSync(join(tmpdir(), "tas-fixture-"));
   cleanupDirs.push(dir);
   run("npm init -y", dir);
-  const omitFlag = omitOptional ? "--omit=optional" : "";
-  const peers = extraPeers.join(" ");
+  // npmは必須のpeerとoptionalDependenciesを自動で入れるので、止めないと依存漏れを検出できない
+  const minimalFlags = minimal ? "--legacy-peer-deps --omit=optional" : "";
+  const peers = extraPeers.map(peerSpec).join(" ");
   run(
-    `npm install --no-audit --no-fund ${omitFlag} ${peers} "${tarball}"`.trim(),
+    `npm install --no-audit --no-fund ${minimalFlags} ${peers} "${tarball}"`,
     dir,
   );
   return dir;
@@ -121,6 +142,41 @@ ${OPENAPI_CHECK_BODY}`,
   }
 }
 
+function installedPackageDir(fixtureDir) {
+  return join(fixtureDir, "node_modules", "@notainc/typed-api-spec");
+}
+
+// checkSubpathはexports経由で読むので、top-levelのフィールドはそこでは検査されない
+function checkTopLevelEntries(dir, failures) {
+  const pkgDir = installedPackageDir(dir);
+  const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
+  for (const field of ["main", "module", "types"]) {
+    if (pkg[field] === undefined) {
+      failures.push(`[${field}] is not set`);
+    } else if (
+      !statSync(join(pkgDir, pkg[field]), { throwIfNoEntry: false })?.isFile()
+    ) {
+      failures.push(`[${field}] ${pkg[field]} is not a file`);
+    }
+  }
+}
+
+// CJSに残ったimport()は、--experimental-vm-modulesを付けずに動かすJestで落ちる
+function checkNoDynamicImportInCjs(dir, failures) {
+  const cjsDir = join(installedPackageDir(dir), "dist/cjs");
+  for (const file of readdirSync(cjsDir, { recursive: true })) {
+    if (!file.endsWith(".js")) continue;
+    const lines = readFileSync(join(cjsDir, file), "utf8").split("\n");
+    lines.forEach((line, i) => {
+      if (/\bimport\s*\(/.test(line)) {
+        failures.push(
+          `[dist/cjs] ${file}:${i + 1} has import():\n${line.trim()}`,
+        );
+      }
+    });
+  }
+}
+
 function groupByPeers(peerMap) {
   const groups = new Map();
   for (const [subpath, peers] of Object.entries(peerMap)) {
@@ -137,17 +193,17 @@ try {
   const tarball = packTarball();
 
   for (const { peers, subpaths } of groupByPeers(REQUIRED_PEERS)) {
-    const dir = makeFixture(tarball, peers, { omitOptional: true });
+    const dir = makeFixture(tarball, peers, { minimal: true });
     for (const subpath of subpaths) checkSubpath(dir, subpath, failures);
   }
 
-  const fullDir = makeFixture(tarball, ALL_OPTIONAL_PEERS, {
-    omitOptional: false,
-  });
+  const fullDir = makeFixture(tarball, ALL_OPTIONAL_PEERS, { minimal: false });
   for (const subpath of Object.keys(REQUIRED_PEERS)) {
     checkSubpath(fullDir, subpath, failures);
   }
   checkOpenApi(fullDir, failures);
+  checkTopLevelEntries(fullDir, failures);
+  checkNoDynamicImportInCjs(fullDir, failures);
 } finally {
   for (const dir of cleanupDirs) rmSync(dir, { recursive: true, force: true });
 }
