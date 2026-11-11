@@ -9,7 +9,7 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "typescript": "~5.6.0",
+    "typescript": "~6.0.3",
     "vitepress": "2.0.0-alpha.20"
   },
   "engines": {
