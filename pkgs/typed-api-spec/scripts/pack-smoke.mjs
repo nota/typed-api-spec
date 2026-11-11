@@ -99,7 +99,6 @@ function checkSubpath(dir, subpath, failures) {
   }
 }
 
-// CIはサポートする下限の版をPACK_SMOKE_TYPESCRIPTで渡す。未指定ならpeerDependenciesの範囲で最新の版になる
 function typescriptSpec() {
   const version = process.env.PACK_SMOKE_TYPESCRIPT;
   return version ? `"typescript@${version}"` : peerSpec("typescript");
@@ -110,7 +109,6 @@ const TYPE_CHECK_MODULE_OPTIONS = {
   esm: "--module esnext --moduleResolution bundler",
 };
 
-// 利用者のTypeScriptが、公開した.d.tsを読めるかを検査する。返り値は使ったTypeScriptの版
 function checkTypes(dir, failures) {
   // /expressの.d.tsはexpressの型を、fastifyの型はNode.jsの型を参照する
   const typePackages = [
@@ -139,7 +137,6 @@ function checkTypes(dir, failures) {
     TYPE_CHECK_MODULE_OPTIONS,
   )) {
     try {
-      // skipLibCheckを切らないと、node_modulesにある公開した.d.tsが検査されない
       run(
         `${tsc} --noEmit --strict --skipLibCheck false --target es2022 --lib es2022,dom ${moduleOptions} types.ts`,
         dir,

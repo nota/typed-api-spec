@@ -17,7 +17,7 @@ jobs:
       - run: npm ci -w pkgs/typed-api-spec
       - run: npm run build  -w pkgs/typed-api-spec
       - run: npm test -w pkgs/typed-api-spec
-  # 利用者に約束するNode.jsとTypeScriptの下限で検査する。版はpkgs/typed-api-spec/package.jsonのenginesとpeerDependenciesの下限に合わせる
+  # 版はpkgs/typed-api-spec/package.jsonのenginesとpeerDependenciesの下限に合わせる
   test-lowest-supported:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +29,6 @@ jobs:
       - run: npm ci -w pkgs/typed-api-spec
       - run: npm run build -w pkgs/typed-api-spec
       - run: npm run test:unit -w pkgs/typed-api-spec
-      # *.t-test.tsが検査する型の推論は、TypeScriptのminor versionでも変わる事がある
       - run: npm exec --yes --package=typescript@~5.8.0 -- sh -c 'tsc -v && tsc --noEmit'
         working-directory: pkgs/typed-api-spec
       - run: npm run test:pack-smoke -w pkgs/typed-api-spec
