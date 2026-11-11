@@ -21,6 +21,9 @@
   },
   "author": "mpppk",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/nota/typed-api-spec"
@@ -51,7 +54,7 @@
     "fastify": "^5.5.0",
     "fastify-type-provider-zod": "^7.0.0",
     "msw": "^2",
-    "typescript": "^5.3 || ^6",
+    "typescript": "^5.8 || ^6",
     "valibot": "^1.4.2",
     "zod": "^4.6.5"
   },

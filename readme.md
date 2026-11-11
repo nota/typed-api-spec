@@ -12,6 +12,10 @@
   * [examples/vite-react-openapi](examples/vite-react-openapi) — React + Vite + Swagger UI（OpenAPI 自動生成の可視化デモ）
   * [examples/misc](examples/misc) — Express / Fastify / fetch 系サンプル
 
+## Node.jsやTypeScriptのversionを上げる時
+
+利用者が使えるversionは、docsの[Requirements](pkgs/docs/docs/getting-started.md#requirements)に書いてあります。
+
 ## Publishing
 
 `v*.*.*` 形式のタグを push すると、GitHub Actions によって自動的に以下が実行されます。

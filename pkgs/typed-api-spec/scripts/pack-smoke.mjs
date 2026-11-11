@@ -80,11 +80,14 @@ function makeFixture(tarball, extraPeers, { minimal }) {
   return dir;
 }
 
+function specifier(subpath) {
+  return subpath === "."
+    ? "@notainc/typed-api-spec"
+    : `@notainc/typed-api-spec/${subpath}`;
+}
+
 function checkSubpath(dir, subpath, failures) {
-  const spec =
-    subpath === "."
-      ? "@notainc/typed-api-spec"
-      : `@notainc/typed-api-spec/${subpath}`;
+  const spec = specifier(subpath);
   writeFileSync(join(dir, "c.cjs"), `require(${JSON.stringify(spec)})`);
   writeFileSync(join(dir, "e.mjs"), `await import(${JSON.stringify(spec)})`);
   for (const file of ["c.cjs", "e.mjs"]) {
@@ -94,6 +97,57 @@ function checkSubpath(dir, subpath, failures) {
       failures.push(`[${subpath}] ${file} failed:\n${e.stdout}\n${e.stderr}`);
     }
   }
+}
+
+function typescriptSpec() {
+  const version = process.env.PACK_SMOKE_TYPESCRIPT;
+  return version ? `"typescript@${version}"` : peerSpec("typescript");
+}
+
+const TYPE_CHECK_MODULE_OPTIONS = {
+  cjs: "--module nodenext",
+  esm: "--module esnext --moduleResolution bundler",
+};
+
+function checkTypes(dir, failures) {
+  // /expressの.d.tsはexpressの型を、fastifyの型はNode.jsの型を参照する
+  const typePackages = [
+    peerSpec("@types/express"),
+    peerSpec("@types/express-serve-static-core"),
+    '"@types/node"',
+  ];
+  run(
+    `npm install --no-audit --no-fund ${typescriptSpec()} ${typePackages.join(" ")}`,
+    dir,
+  );
+  const tsc = `node ${join("node_modules", "typescript", "bin", "tsc")}`;
+  const version = run(`${tsc} -v`, dir)
+    .trim()
+    .replace(/^Version /, "TypeScript ");
+  writeFileSync(
+    join(dir, "types.ts"),
+    Object.keys(REQUIRED_PEERS)
+      .map(
+        (subpath, i) =>
+          `import * as m${i} from ${JSON.stringify(specifier(subpath))};`,
+      )
+      .join("\n") + "\n",
+  );
+  for (const [name, moduleOptions] of Object.entries(
+    TYPE_CHECK_MODULE_OPTIONS,
+  )) {
+    try {
+      run(
+        `${tsc} --noEmit --strict --skipLibCheck false --target es2022 --lib es2022,dom ${moduleOptions} types.ts`,
+        dir,
+      );
+    } catch (e) {
+      failures.push(
+        `[types] ${name} with ${version} failed:\n${e.stdout}\n${e.stderr}`,
+      );
+    }
+  }
+  return version;
 }
 
 // zod-openapiと@valibot/to-json-schemaは関数を呼んだ時に初めて動的importされるので、importするだけでは読み込みを検査できない
@@ -188,6 +242,7 @@ function groupByPeers(peerMap) {
 }
 
 const failures = [];
+let typescriptVersion;
 
 try {
   const tarball = packTarball();
@@ -204,6 +259,7 @@ try {
   checkOpenApi(fullDir, failures);
   checkTopLevelEntries(fullDir, failures);
   checkNoDynamicImportInCjs(fullDir, failures);
+  typescriptVersion = checkTypes(fullDir, failures);
 } finally {
   for (const dir of cleanupDirs) rmSync(dir, { recursive: true, force: true });
 }
@@ -213,4 +269,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("pack smoke: OK");
+console.log(`pack smoke: OK (types checked with ${typescriptVersion})`);
