@@ -19,7 +19,7 @@ console.log(names); // => ["api-spec", "fetch", "typescript"]
 ## Requirements
 
 - Node.js 22 or later
-- TypeScript 5.8 to 6.x
+- TypeScript 5.8 to 7.x
 
 Future releases may drop Node.js versions that have reached end of life and TypeScript versions released more than two years ago. The release notes announce each drop.
 
