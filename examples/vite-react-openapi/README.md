@@ -7,12 +7,14 @@
 repo のルートから 2 プロセス起動。
 
 サーバー側:
+
 ```bash
 npm run ex:express:zod:openapi -w examples/misc
 # localhost:3000
 ```
 
 Swagger UI 側:
+
 ```bash
 npm run build -w pkgs/typed-api-spec
 npm run dev -w examples/vite-react-openapi

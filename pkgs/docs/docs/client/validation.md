@@ -53,7 +53,7 @@ So we'll rewrite the code as follows (assuming you are using Vite):
 ```typescript
 const fetchGitHub = newFetch(
   () => import("./gh.ts").then((m) => m.Spec),
-  import.meta.env.DEV
+  import.meta.env.DEV,
 )<typeof GITHUB_API_ORIGIN>();
 ```
 
@@ -69,7 +69,7 @@ newFetch() is a function that generates a type-safe fetch function with runtime 
 type newFetch = (
   specLoader: () => Promise<Spec>,
   validation: boolean,
-  ft = fetch
+  ft = fetch,
 ) => () => FetchT<Origin, Spec>;
 ```
 
