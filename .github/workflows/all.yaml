@@ -44,6 +44,7 @@ jobs:
           cache: npm
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - run: npm ci -w pkgs/docs
+      - run: npm run test:format -w pkgs/docs
       - run: npm run build -w pkgs/docs
   examples:
     runs-on: ubuntu-latest
@@ -56,5 +57,7 @@ jobs:
       - run: npm ci
       - run: npm run build -w pkgs/typed-api-spec
       - run: npm test -w examples/misc
+      - run: npm run test:format -w examples/vite
       - run: npm run build -w examples/vite
+      - run: npm run test:format -w examples/vite-react-openapi
       - run: npm run build -w examples/vite-react-openapi

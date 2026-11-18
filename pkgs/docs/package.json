@@ -6,9 +6,12 @@
     "dev": "vitepress dev",
     "build": "tsc && vitepress build",
     "preview": "vitepress preview",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "format": "oxfmt .",
+    "test:format": "oxfmt --check ."
   },
   "devDependencies": {
+    "oxfmt": "^0.73.0",
     "typescript": "~6.0.3",
     "vitepress": "2.0.0-alpha.20"
   },
