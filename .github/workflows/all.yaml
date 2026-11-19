@@ -34,6 +34,12 @@ jobs:
       - run: npm run test:pack-smoke -w pkgs/typed-api-spec
         env:
           PACK_SMOKE_TYPESCRIPT: ~5.8.0
+      # 下限に加え、JS実装の最後のmajorであるTypeScript 6でも、ソースと公開する型定義を検査する
+      - run: npm exec --yes --package=typescript@^6 -- sh -c 'tsc -v && tsc --noEmit'
+        working-directory: pkgs/typed-api-spec
+      - run: npm run test:pack-smoke -w pkgs/typed-api-spec
+        env:
+          PACK_SMOKE_TYPESCRIPT: ^6
   doc:
     runs-on: ubuntu-latest
     steps:
