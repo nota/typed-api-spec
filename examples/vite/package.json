@@ -11,6 +11,6 @@
   "devDependencies": {
     "rollup-plugin-visualizer": "^7.1.1",
     "typescript": "~7.0.2",
-    "vite": "^8.2.4"
+    "vite": "^8.2.6"
   }
 }
