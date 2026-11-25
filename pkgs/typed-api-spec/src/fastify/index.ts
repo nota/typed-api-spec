@@ -30,13 +30,25 @@ type FastifySchema<Spec extends ApiSpecSchema> = {
 export const toSchema = <Spec extends ApiSpecSchema>(
   spec: Spec,
 ): FastifySchema<Spec> => {
-  return {
-    querystring: spec.query,
-    params: spec.params,
-    body: spec.body,
-    headers: spec.headers,
+  // Fastify emits FSTWRN001 for every schema key which is present but
+  // undefined, so keys the spec does not define are omitted instead of being
+  // set to undefined.
+  const schema = {
     response: toFastifyResponse(spec.responses),
-  };
+  } as FastifySchema<Spec>;
+  if (spec.query !== undefined) {
+    schema.querystring = spec.query;
+  }
+  if (spec.params !== undefined) {
+    schema.params = spec.params;
+  }
+  if (spec.body !== undefined) {
+    schema.body = spec.body;
+  }
+  if (spec.headers !== undefined) {
+    schema.headers = spec.headers;
+  }
+  return schema;
 };
 
 type FastifyRoute<
